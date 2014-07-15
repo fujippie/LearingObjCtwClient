@@ -102,13 +102,22 @@ static NSString* const _cellId = @"CustomTVC";
 //-(CGFloat) tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
 //    
 //}//propaty tableFooterView
--(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 10.0;
+    return 150.0;
 }
--(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+-(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     UIView *view = [[UIView alloc] init];
-    view.backgroundColor =[UIColor redColor];
+    view.backgroundColor = [UIColor blackColor];
+    UIActivityIndicatorView* ai = [[UIActivityIndicatorView alloc]init];
+//TODO:[位置調整が必要]
+    ai.frame = CGRectMake(0,0,100,100);
+    
+    ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    ai.hidesWhenStopped = NO;
+    //[ai startAnimating];
+    [tableView addSubview:ai];
+    
     return view;
 }
 
@@ -142,6 +151,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
      */
     
     return cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
+//三項演算子構文↑↑
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -186,10 +196,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     if (self.refreshControl.refreshing == NO) {
         [self.refreshControl endRefreshing];
     }
-    
-    for (Tweet* tweet in self.tweetData) {
-        //printf("_REFRESH_CALLED_%d: %llu\n", [self.tweetData indexOfObject:tweet], tweet.id);// [[tweet.body substringToIndex:5] UTF8String]);
-    }
+//    
+//    for (Tweet* tweet in self.tweetData) {
+//        printf("_REFRESH_CALLED_%d: %llu\n", [self.tweetData indexOfObject:tweet], tweet.id);// [[tweet.body substringToIndex:5] UTF8String]);
+//    }
 }
 
 - (void)_requestTweets:(unsigned long long)maxId
