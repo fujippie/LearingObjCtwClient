@@ -8,13 +8,14 @@
 
 #import "MainViewController.h"
 #import "CustomTVC.h"
-
+#import "Tweet.h"
 @interface MainViewController  ()
 
-@property (nonatomic, strong) NSMutableArray* sampleData;
-@property (nonatomic, assign) CGRect  defaultCellBodyFrame;
-@property (nonatomic, assign) CGRect  defaultCellFrame;
+@property (nonatomic, strong) NSMutableArray*   tweetData;
+@property (nonatomic, assign) CGRect            defaultCellBodyFrame;
+@property (nonatomic, assign) CGRect            defaultCellFrame;
 @property (nonatomic, strong) UIRefreshControl* refreshControl;
+@property (nonatomic, assign) BOOL isLoading;
 
 @end
 
@@ -37,6 +38,7 @@ static NSString* const _cellId = @"CustomTVC";
     self.defaultCellFrame = [[self.tableView dequeueReusableCellWithIdentifier:_cellId] frame];
     
     [self.tableView addSubview:self.refreshControl];
+    //self.tableView.tableFooterView.backgroundColor=[UIColor redColor];
     
 }
 
@@ -52,7 +54,7 @@ static NSString* const _cellId = @"CustomTVC";
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
-    return self.sampleData.count;
+    return self.tweetData.count;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView
@@ -61,7 +63,8 @@ static NSString* const _cellId = @"CustomTVC";
    
     CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
     
-    cell.body.text = [NSString stringWithFormat:@"%@", self.sampleData[indexPath.row]];
+    Tweet* tweet = self.tweetData[indexPath.row];
+    cell.body.text = [NSString stringWithFormat:@"%@", tweet.body];
 //    cell.textLabel.text = [NSString stringWithFormat:@"%@", self.sampleData[indexPath.row]];
     cell.textLabel.lineBreakMode = NSLineBreakByCharWrapping;
     cell.textLabel.numberOfLines = 0;
@@ -92,12 +95,29 @@ static NSString* const _cellId = @"CustomTVC";
     return cell;
 }
 
+
+
 #pragma mark UITableViewDelegate
+
+//-(CGFloat) tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+//    
+//}//propaty tableFooterView
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 10.0;
+}
+-(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIView *view = [[UIView alloc] init];
+    view.backgroundColor =[UIColor redColor];
+    return view;
+}
+
 
 -(CGFloat)    tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString* body = self.sampleData[indexPath.row];
+    Tweet* tweet = self.tweetData[indexPath.row];
+    NSString* body = tweet.body;
     UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
     
     CGFloat cellBodyH = [body boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
@@ -130,9 +150,20 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 #pragma mark ScrollViewDelegate
+
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    DLog(@"scrolling....\n\tpoint:%@", NSStringFromCGPoint(scrollView.contentOffset));
+//    DLog(@"scrolling....\n\tpoint:%@", NSStringFromCGPoint(scrollView.contentOffset));
+    
+    CGSize  contentSize   = self.tableView.contentSize;
+    CGPoint contentOffset = self.tableView.contentOffset;
+    
+    CGFloat remain = contentSize.height - contentOffset.y;
+    if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO) {
+        Tweet* lastTweet = self.tweetData.lastObject;
+        
+        [self _requestTweets:lastTweet.id];
+    }
 }
 
 #pragma mark - Event
@@ -140,7 +171,12 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 -(void) _refreshData:(UIRefreshControl *) refreshControl
 {
     DLog(@"___REFRESH___");
-    [self requestTweets:0];
+    
+    [self.tweetData removeAllObjects];
+    [self.tableView reloadData];
+    
+    [self _requestTweets:0];
+    
     DLog(@"END___REFRESH___");
 }
 
@@ -150,10 +186,21 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     if (self.refreshControl.refreshing == NO) {
         [self.refreshControl endRefreshing];
     }
+    
+    for (Tweet* tweet in self.tweetData) {
+        //printf("_REFRESH_CALLED_%d: %llu\n", [self.tweetData indexOfObject:tweet], tweet.id);// [[tweet.body substringToIndex:5] UTF8String]);
+    }
 }
 
-- (void)requestTweets:(NSInteger)maxId
+- (void)_requestTweets:(unsigned long long)maxId
 {
+    printf("RequestTweet_Called %ld ¥n",(long)maxId);
+    
+    if (self.isLoading == YES) {
+        return;
+    }
+    
+    self.isLoading = YES;
 //    Twiitter
 //    DLog(@"NSThred isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");
 
@@ -193,13 +240,13 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
          // リクエストのパラメータを設定
          NSMutableDictionary* params = @{
 //                                  @"screen_name" : [accounts.firstObject username],
-                                  @"count"       : @(30).description,
+                                  @"count"       : @(3).description,
                                   @"q"           : @"",
                                   @"geocode"     : @"34.701909,135.494977,1km"
                                   }.mutableCopy;
          // ロードモア時に使用
          if (maxId != 0) {
-             [params setObject:@(maxId).description forKey:@"max_id"];
+             [params setObject:@(maxId - 1).description forKey:@"max_id"];
          }
          
          // リクエストを作成
@@ -217,13 +264,17 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
            NSHTTPURLResponse* urlResponse,
            NSError* error)
           {
+              self.isLoading = YES;
+              
               dispatch_async(dispatch_get_main_queue(), ^{
                   [self.refreshControl endRefreshing];
               });
 
 //              DLog(@"responsData\n%@", [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+              
               // エラー処理
               if (error) {
+                  self.isLoading = NO;
                   DLog(@"urlResponse:%@, error:%@", urlResponse, error);
                   return;
               }
@@ -240,11 +291,14 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                   // エラー処理
                   if (e) {
                       DLog(@"e:%@", e);
+                      self.isLoading = NO;
                       return;
                   }
                   
                   // データ取得成功時
                   if (jsonDic.count > 0) {
+                      
+                      self.isLoading = NO;
                       /*
                        NSDictionary* jsonDic;
                        jsonDic[@"apple"]
@@ -252,17 +306,22 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                        */
                       
                       // 見つかったツイート配列を格納
-                      NSArray* twAr = [jsonDic objectForKey:@"statuses"];
-                      
-                      // 初期化
-                      self.sampleData = @[].mutableCopy;
+                      NSArray* twAr = jsonDic[@"statuses"];
                       
                       // ツイート配列からテキストのみを抽出
+                      //ツイート内容,緯度経度,IDを取得
+                      
                       for(int index = 0; index < [twAr count]; index++)
                       {
                           NSDictionary* status = [twAr objectAtIndex:index];
+                          Tweet* tweet = [Tweet tweetWithDic:status];
+
+                        //  tweet.latitude
+//                          DLog(@"body:%@",tweet.body);
+//                          DLog(@"profileImageUrl:%@",tweet.profileImageUrl);
+//                          DLog(@"lati %f , long%f",tweet.latitude,tweet.longitude);
                           
-                          [self.sampleData addObject:status[@"text"]];
+                          [self.tweetData addObject:tweet];
                       }
                       
                       // メインスレッドで実行(GCD)
@@ -298,7 +357,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
               // 通信失敗時
               else {
                   DLog(@"request error:%@", urlResponse);
+                  self.isLoading = NO;
               }
+              
+              self.isLoading = NO;
           }];
      }];
     //
@@ -306,15 +368,24 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 #pragma mark - Accessor
 
-- (NSMutableArray *) sampleData
+- (NSMutableArray *) tweetData
 {
-    if (_sampleData == nil) {
+    if(_tweetData == nil)
+    {
+        _tweetData = @[].mutableCopy;
+        
         NSBundle* bundle = [NSBundle mainBundle];
         NSString* path = [bundle pathForResource:@"sampleData" ofType:@"plist"];
-        _sampleData = [NSMutableArray arrayWithContentsOfFile:path];
+        NSArray* sampleData = [NSMutableArray arrayWithContentsOfFile:path];
+        
+        for (NSString* tmpSampleData in sampleData) {
+            Tweet* tweet =[[Tweet alloc] init];
+            tweet.body = tmpSampleData;
+            [_tweetData addObject:tweet];
+        }
     }
     
-    return  _sampleData;
+    return _tweetData;
 }
 
 -(ACAccountStore *)accountStore

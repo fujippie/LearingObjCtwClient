@@ -5,36 +5,36 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>D2E479FF-710B-47A0-85CA-1706ABB2348B</string>
+	<string>18D4976A-FF35-4AFA-9A5E-51BD5E5E28B0</string>
 	<key>IDESourceControlProjectName</key>
 	<string>MyTwitterClient</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>FA8D87A4-9461-4AA1-B2B7-079795229FCC</key>
-		<string>ssh://github.com/fujippie/LearingObjCtwClient.git</string>
+		<key>3E9CDE55-ED67-4211-BB7C-3BD98C2E74D7</key>
+		<string>ssh://github.com/fujippie/LearingObjCtwClient2.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>MyTwitterClient/MyTwitterClient.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>FA8D87A4-9461-4AA1-B2B7-079795229FCC</key>
+		<key>3E9CDE55-ED67-4211-BB7C-3BD98C2E74D7</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/fujippie/LearingObjCtwClient.git</string>
+	<string>ssh://github.com/fujippie/LearingObjCtwClient2.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>FA8D87A4-9461-4AA1-B2B7-079795229FCC</string>
+	<string>3E9CDE55-ED67-4211-BB7C-3BD98C2E74D7</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>FA8D87A4-9461-4AA1-B2B7-079795229FCC</string>
+			<string>3E9CDE55-ED67-4211-BB7C-3BD98C2E74D7</string>
 			<key>IDESourceControlWCCName</key>
-			<string>LearingObjCtwClient</string>
+			<string>LearingObjCtwClient 2</string>
 		</dict>
 	</array>
 </dict>

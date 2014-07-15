@@ -15,6 +15,7 @@
 		22B75B68196D0F62008A669B /* female.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 22B75B64196D0F62008A669B /* female.jpeg */; };
 		22B75B73196D2091008A669B /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B75B71196D2091008A669B /* MainViewController.m */; };
 		22B75B74196D2091008A669B /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22B75B72196D2091008A669B /* MainViewController.xib */; };
+		22CD2D331974D2C700CCB6B4 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 22CD2D321974D2C700CCB6B4 /* Tweet.m */; };
 		22D0A402196F9A72008A3CED /* sampleData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 22D0A401196F9A72008A3CED /* sampleData.plist */; };
 		22E61C22196BEA600051AD01 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E61C21196BEA600051AD01 /* Foundation.framework */; };
 		22E61C24196BEA600051AD01 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E61C23196BEA600051AD01 /* CoreGraphics.framework */; };
@@ -53,6 +54,8 @@
 		22B75B70196D2091008A669B /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		22B75B71196D2091008A669B /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		22B75B72196D2091008A669B /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		22CD2D311974D2C700CCB6B4 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
+		22CD2D321974D2C700CCB6B4 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
 		22D0A401196F9A72008A3CED /* sampleData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sampleData.plist; sourceTree = "<group>"; };
 		22E61C1E196BEA600051AD01 /* MyTwitterClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyTwitterClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22E61C21196BEA600051AD01 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -158,6 +161,8 @@
 		22CD2D301974C3BF00CCB6B4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				22CD2D311974D2C700CCB6B4 /* Tweet.h */,
+				22CD2D321974D2C700CCB6B4 /* Tweet.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -366,6 +371,7 @@
 				22E61C32196BEA600051AD01 /* AppDelegate.m in Sources */,
 				22B75B41196CD9B4008A669B /* BaseViewController.m in Sources */,
 				22E61C2E196BEA600051AD01 /* main.m in Sources */,
+				22CD2D331974D2C700CCB6B4 /* Tweet.m in Sources */,
 				30746E9E196E919B0005F5F0 /* UIViewController+Extensions.m in Sources */,
 				22B75B73196D2091008A669B /* MainViewController.m in Sources */,
 				226470EC19736D5600A4FD4A /* CustomTVC.m in Sources */,
