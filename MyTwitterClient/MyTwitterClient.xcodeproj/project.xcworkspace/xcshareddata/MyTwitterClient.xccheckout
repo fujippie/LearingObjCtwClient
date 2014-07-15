@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>D2E479FF-710B-47A0-85CA-1706ABB2348B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MyTwitterClient</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>FA8D87A4-9461-4AA1-B2B7-079795229FCC</key>
+		<string>ssh://github.com/fujippie/LearingObjCtwClient.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>MyTwitterClient/MyTwitterClient.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>FA8D87A4-9461-4AA1-B2B7-079795229FCC</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/fujippie/LearingObjCtwClient.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>FA8D87A4-9461-4AA1-B2B7-079795229FCC</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>FA8D87A4-9461-4AA1-B2B7-079795229FCC</string>
+			<key>IDESourceControlWCCName</key>
+			<string>LearingObjCtwClient</string>
+		</dict>
+	</array>
+</dict>
+</plist>
