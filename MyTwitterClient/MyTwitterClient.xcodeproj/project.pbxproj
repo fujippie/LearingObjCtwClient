@@ -138,8 +138,8 @@
 			isa = PBXGroup;
 			children = (
 				22B6792A197646A9006F700C /* Post */,
-				22B75B3F196CD9B4008A669B /* BaseViewController.h */,
 				22B75B40196CD9B4008A669B /* BaseViewController.m */,
+				22B75B3F196CD9B4008A669B /* BaseViewController.h */,
 				22B75B42196CDD45008A669B /* Main */,
 			);
 			path = Controller;

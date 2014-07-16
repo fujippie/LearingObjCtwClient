@@ -113,8 +113,7 @@ static NSString* const _cellId = @"CustomTVC";
     return 50.0;
 }
 
--(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
+-(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     UIView *view = [[UIView alloc] init];
    
     
@@ -130,8 +129,7 @@ static NSString* const _cellId = @"CustomTVC";
     return 50.0;
 }
 
--(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
+-(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
     UIView *view = [[UIView alloc] init];
     view.backgroundColor = [UIColor blackColor];
     

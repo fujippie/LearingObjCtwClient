@@ -16,11 +16,18 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor brownColor];
     
-//    self.mainViewController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
-//    self.mainViewController = [[MainViewController alloc] initWithNibName:NSStringFromClass(MainViewController.class) bundle:nil];
+//1    self.mainViewController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
+//2    self.mainViewController = [[MainViewController alloc] initWithNibName:NSStringFromClass(MainViewController.class) bundle:nil];
     
     self.mainViewController = [MainViewController newBindNib];
-    self.window.rootViewController = self.mainViewController;
+    
+    UINavigationController * naviCtr =[[UINavigationController alloc]
+                                       initWithRootViewController:_mainViewController];
+    
+    
+    self.window.rootViewController = naviCtr;
+
+
     
     [self.window makeKeyAndVisible];
     
