@@ -9,6 +9,7 @@
 #import "MainViewController.h"
 #import "CustomTVC.h"
 #import "Tweet.h"
+#import "PostViewController.h"
 @interface MainViewController  ()
 
 @property (nonatomic, strong) NSMutableArray*   tweetData;
@@ -17,6 +18,8 @@
 @property (nonatomic, strong) UIRefreshControl* refreshControl;
 @property (nonatomic, assign) BOOL isLoading;
 @property (nonatomic, strong) UIActivityIndicatorView* ai ;
+
+@property (nonatomic, strong) PostViewController* postViewCtr;
 
 
 
@@ -110,7 +113,8 @@ static NSString* const _cellId = @"CustomTVC";
     return 50.0;
 }
 
--(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+-(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
     UIView *view = [[UIView alloc] init];
    
     
@@ -126,7 +130,8 @@ static NSString* const _cellId = @"CustomTVC";
     return 50.0;
 }
 
--(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+-(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
     UIView *view = [[UIView alloc] init];
     view.backgroundColor = [UIColor blackColor];
     
@@ -469,8 +474,11 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //    return _isLoading;
 //}
 
-
 - (IBAction)btn:(id)sender {
     DLog("BTN");
+    PostViewController* postView=[[PostViewController alloc] init];
+    [self presentViewController:postView animated:YES completion:nil];
+//    void (^b)(int) = ^(int i){Dlog("%d",i);};
+//   [self dismissViewControllerAnimated:YES completion:nil];
 }
 @end

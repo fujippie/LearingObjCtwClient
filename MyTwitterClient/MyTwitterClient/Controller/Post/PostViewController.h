@@ -9,5 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @interface PostViewController : UIViewController
+<UITextFieldDelegate>
+
+- (IBAction)postBtn:(id)sender;
+
+@property (weak, nonatomic) IBOutlet UITextField *postText;
 
 @end
