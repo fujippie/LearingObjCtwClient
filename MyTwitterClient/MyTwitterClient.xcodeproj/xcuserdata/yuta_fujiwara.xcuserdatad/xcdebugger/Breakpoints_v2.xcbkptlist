@@ -4,13 +4,22 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         BreakpointExtensionID = "Xcode.Breakpoint.AddressBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            scope = "0"
-            stopOnStyle = "0">
+            symbolName = "*0x384f9b">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "UIApplicationMain"
+                  moduleName = "UIKit"
+                  offsetFromSymbolStart = "1225">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

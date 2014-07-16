@@ -16,6 +16,9 @@
 @property (nonatomic, assign) CGRect            defaultCellFrame;
 @property (nonatomic, strong) UIRefreshControl* refreshControl;
 @property (nonatomic, assign) BOOL isLoading;
+@property (nonatomic, strong) UIActivityIndicatorView* ai ;
+
+
 
 @end
 
@@ -36,9 +39,11 @@ static NSString* const _cellId = @"CustomTVC";
     
     self.defaultCellBodyFrame = [[[self.tableView dequeueReusableCellWithIdentifier:_cellId] body] frame];
     self.defaultCellFrame = [[self.tableView dequeueReusableCellWithIdentifier:_cellId] frame];
-    
     [self.tableView addSubview:self.refreshControl];
-    //self.tableView.tableFooterView.backgroundColor=[UIColor redColor];
+
+    
+//    [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
+//    [self.tableView addSubview:self.btn];
     
 }
 
@@ -99,24 +104,34 @@ static NSString* const _cellId = @"CustomTVC";
 
 #pragma mark UITableViewDelegate
 
-//-(CGFloat) tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-//    
-//}//propaty tableFooterView
+
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 150.0;
+    return 50.0;
 }
+
 -(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     UIView *view = [[UIView alloc] init];
-    view.backgroundColor = [UIColor blackColor];
-    UIActivityIndicatorView* ai = [[UIActivityIndicatorView alloc]init];
-//TODO:[位置調整が必要]
-    ai.frame = CGRectMake(0,0,100,100);
+   
     
-    ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-    ai.hidesWhenStopped = NO;
     //[ai startAnimating];
-    [tableView addSubview:ai];
+    
+    return view;
+}
+
+
+
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 50.0;
+}
+
+-(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIView *view = [[UIView alloc] init];
+    view.backgroundColor = [UIColor blackColor];
+    
+    //[ai startAnimating];
+    [tableView addSubview:self.ai];
     
     return view;
 }
@@ -164,30 +179,31 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
 //    DLog(@"scrolling....\n\tpoint:%@", NSStringFromCGPoint(scrollView.contentOffset));
-    
     CGSize  contentSize   = self.tableView.contentSize;
     CGPoint contentOffset = self.tableView.contentOffset;
     
     CGFloat remain = contentSize.height - contentOffset.y;
+    
     if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO) {
         Tweet* lastTweet = self.tweetData.lastObject;
         
         [self _requestTweets:lastTweet.id];
     }
+    self.ai.frame = CGRectMake(contentSize.width/2,contentSize.height,0,30);
+    //DLog("TableViewHeight::%f",contentSize.height );
 }
 
 #pragma mark - Event
 
+
 -(void) _refreshData:(UIRefreshControl *) refreshControl
 {
-    DLog(@"___REFRESH___");
-    
     [self.tweetData removeAllObjects];
     [self.tableView reloadData];
     
     [self _requestTweets:0];
+
     
-    DLog(@"END___REFRESH___");
 }
 
 -(void) _refresh
@@ -207,14 +223,16 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     printf("RequestTweet_Called %ld ¥n",(long)maxId);
     
     if (self.isLoading == YES) {
+//        [self.ai startAnimating];
         return;
     }
-    
     self.isLoading = YES;
+    [self.ai startAnimating];
 //    Twiitter
 //    DLog(@"NSThred isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");
 
-    ACAccountType* accountType = [self.accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+    ACAccountType* accountType = [self.accountStore
+                                  accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
     
     [self.accountStore
      requestAccessToAccountsWithType:accountType
@@ -275,7 +293,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
            NSError* error)
           {
               self.isLoading = YES;
-              
+              [self.ai startAnimating];
               dispatch_async(dispatch_get_main_queue(), ^{
                   [self.refreshControl endRefreshing];
               });
@@ -285,6 +303,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
               // エラー処理
               if (error) {
                   self.isLoading = NO;
+                  [self.ai stopAnimating];
                   DLog(@"urlResponse:%@, error:%@", urlResponse, error);
                   return;
               }
@@ -302,6 +321,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                   if (e) {
                       DLog(@"e:%@", e);
                       self.isLoading = NO;
+                      [self.ai stopAnimating];
                       return;
                   }
                   
@@ -309,6 +329,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                   if (jsonDic.count > 0) {
                       
                       self.isLoading = NO;
+                      [self.ai stopAnimating];
                       /*
                        NSDictionary* jsonDic;
                        jsonDic[@"apple"]
@@ -368,12 +389,15 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
               else {
                   DLog(@"request error:%@", urlResponse);
                   self.isLoading = NO;
+                  [self.ai stopAnimating];
               }
               
               self.isLoading = NO;
+              [self.ai stopAnimating];
           }];
      }];
     //
+    
 }
 
 #pragma mark - Accessor
@@ -419,4 +443,34 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     return _refreshControl;
 }
 
+-(UIActivityIndicatorView*) ai
+{
+    if(_ai == nil){
+        _ai =[[UIActivityIndicatorView alloc] init];
+        _ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+//        _ai.hidesWhenStopped = NO;//ActivityIndicatorを残すとき
+    }
+    
+    return _ai;
+}
+
+//-(BOOL)isLoading
+//{
+////更新中にUIActivityIndicatorViewのアニメーションをスタートさせる.
+//    if(_isLoading == YES){
+//        
+//        //DLog("StartAi");
+//        //[self.ai startAnimating];
+//    }
+//    else{
+//        DLog("StopAi");
+//        [self.ai stopAnimating];
+//    }
+//    return _isLoading;
+//}
+
+
+- (IBAction)btn:(id)sender {
+    DLog("BTN");
+}
 @end
