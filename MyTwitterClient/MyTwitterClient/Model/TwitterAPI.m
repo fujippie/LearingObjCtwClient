@@ -26,6 +26,7 @@
 //    self.isLoading = YES;
 //    [self.ai startAnimating];
 
+
     //    Twiitter
     //    DLog(@"NSThred isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");
     

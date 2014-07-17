@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-
+#import "PostViewController.h"
 
 @interface MainViewController : BaseViewController
 // デリゲートプロトコル参照定義
 <
 UITableViewDataSource
 , UITableViewDelegate
+, PostViewDelegate
 >
 
 

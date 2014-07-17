@@ -13,6 +13,15 @@
 @end
 
 @implementation PostViewController
+@synthesize delegate;
+
+#pragma mark - testDelegate
+-(void) helloPostDel
+{
+    DLog("デリゲートでHelloMainを呼びます");
+    [self.delegate helloMain];
+
+}
 
 #pragma mark - LifeCycle
 
@@ -35,6 +44,7 @@
 {
     NSString* str = self.postText.text;
     DLog(@"投稿内容:%@",str);
+    [self helloPostDel];
 //    画面上部の通信中エフェクト
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
@@ -50,6 +60,7 @@
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
+    
 //    [self dismissViewControllerAnimated:YES completion:nil];
 }
 

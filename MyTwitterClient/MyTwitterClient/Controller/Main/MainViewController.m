@@ -29,7 +29,10 @@
 @end
 
 @implementation MainViewController
-
+-(void) helloMain
+{
+    DLog("MainView");
+}
 #pragma mark - Consts
 
 static NSString* const _cellId = @"CustomTVC";
@@ -66,6 +69,8 @@ static NSString* const _cellId = @"CustomTVC";
 }
 
 #pragma mark - Delegate
+
+
 
 #pragma mark UITableViewDataSource
 
@@ -245,7 +250,11 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DLog("\n左上のボタンが押されました.");
     PostViewController* postView=[[PostViewController alloc] init];
+//    デリゲート使用宣言
+    postView.delegate =self;
+    
     [self presentViewController:postView animated:YES completion:nil];
+//    [postView helloPostDel];
     
 }
 - (void)_requestTweets:(unsigned long long)maxId
