@@ -23,7 +23,7 @@
  @param  (unsigned long long) maxTweetID 最後に取得したTweetID
  @return (NSArray*) Tweet型配列
  */
-- (NSArray*) tweetsInNeighborWithCoordinate:(CLLocationCoordinate2D)coordinate
+- (NSMutableArray*) tweetsInNeighborWithCoordinate:(CLLocationCoordinate2D)coordinate
                                      radius:(CGFloat)radius
                                       count:(NSInteger)count
                                       maxId:(unsigned long long)maxTweetID;
@@ -46,5 +46,6 @@
  Tweetの編集
  @param
  */
+@property(strong, nonatomic) ACAccountStore* accountStore;
 
 @end

@@ -12,6 +12,7 @@
 <UITextFieldDelegate>
 
 - (IBAction)postBtn:(id)sender;
+- (IBAction)backBtn:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UITextField *postText;
 

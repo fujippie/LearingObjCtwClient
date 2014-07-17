@@ -20,14 +20,12 @@
 //2    self.mainViewController = [[MainViewController alloc] initWithNibName:NSStringFromClass(MainViewController.class) bundle:nil];
     
     self.mainViewController = [MainViewController newBindNib];
+    self.mainViewController.title = @"title";
+    self.navigationController = [[UINavigationController alloc]
+                                       initWithRootViewController:self.mainViewController];
+    self.navigationController.navigationItem.title = @"title";
+    self.window.rootViewController = self.navigationController;
     
-    UINavigationController * naviCtr =[[UINavigationController alloc]
-                                       initWithRootViewController:_mainViewController];
-    
-    
-    self.window.rootViewController = naviCtr;
-
-
     
     [self.window makeKeyAndVisible];
     

@@ -7,7 +7,7 @@
 //
 
 #import "PostViewController.h"
-
+#import "TwitterAPI.h"
 @interface PostViewController ()
 
 @end
@@ -33,8 +33,9 @@
 
 - (IBAction)postBtn:(id)sender
 {
-    DLog(@"投稿内容:%@",self.postText.text);
-    
+    NSString* str = self.postText.text;
+    DLog(@"投稿内容:%@",str);
+//    画面上部の通信中エフェクト
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     /* 
@@ -45,10 +46,26 @@
      4.APIでエラーが出た場合はUIAlertをだし、投稿ボタンを有効化。
      */
     
+    [self postedTweet:str];
+    
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
+//    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)backBtn:(id)sender {
+    DLog("モーダルを閉じます");
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-#pragma mark -
+#pragma mark - SubFunction
+-(void) postedTweet:(NSString*)text
+{
+
+    CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
+    TwitterAPI* twApi = [[TwitterAPI alloc] init];
+    UIImage* icon = [[UIImage alloc] initWithContentsOfFile:@"femail"];
+    BOOL flag=[twApi postTweetWithBody:text coordinate:OsakaEki image:icon];
+    DLog("flag:%hhd",flag);
+}
 @end

@@ -9,7 +9,11 @@
 #import "MainViewController.h"
 #import "CustomTVC.h"
 #import "Tweet.h"
+#import "TwitterAPI.h"
 #import "PostViewController.h"
+#import "AppDelegate.h"
+
+
 @interface MainViewController  ()
 
 @property (nonatomic, strong) NSMutableArray*   tweetData;
@@ -20,7 +24,6 @@
 @property (nonatomic, strong) UIActivityIndicatorView* ai ;
 
 @property (nonatomic, strong) PostViewController* postViewCtr;
-
 
 
 @end
@@ -37,15 +40,22 @@ static NSString* const _cellId = @"CustomTVC";
 {
     [super viewDidLoad];
     
+//    AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    if([self.navigationController isEqual:appDelegate.navigationController])=>YESを返す
+
+//TableViewの追加と設定
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(CustomTVC.class) bundle:nil]
          forCellReuseIdentifier:_cellId];
-    
+//TableViewのCellの登録と設定
     self.defaultCellBodyFrame = [[[self.tableView dequeueReusableCellWithIdentifier:_cellId] body] frame];
     self.defaultCellFrame = [[self.tableView dequeueReusableCellWithIdentifier:_cellId] frame];
     [self.tableView addSubview:self.refreshControl];
 
-    
-//    [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
+//  NavigationBarの設定
+    self.title = [NSString stringWithFormat:@"%@:%d", NSStringFromClass(self.class), [self.navigationController.viewControllers indexOfObject:self]];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"投稿" style:UIBarButtonItemStylePlain  target:self action:@selector(leftBarBtnPushed:)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
+// 確認事項   [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
 //    [self.tableView addSubview:self.btn];
     
 }
@@ -84,7 +94,6 @@ static NSString* const _cellId = @"CustomTVC";
                                  cell.frame.size.height
                                  );
     [cell.body sizeToFit];
-    
     /*
     DLog(
          @"%d"
@@ -107,20 +116,21 @@ static NSString* const _cellId = @"CustomTVC";
 
 #pragma mark UITableViewDelegate
 
-
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 50.0;
-}
-
--(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-    UIView *view = [[UIView alloc] init];
-   
-    
-    //[ai startAnimating];
-    
-    return view;
-}
+//
+//-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+//{
+//    return 50.0;
+//}
+//
+//-(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    UIView *view = [[UIView alloc] init];
+//   
+//    
+//    //[ai startAnimating];
+//    
+//    return view;
+//}
 
 
 
@@ -129,13 +139,14 @@ static NSString* const _cellId = @"CustomTVC";
     return 50.0;
 }
 
--(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+-(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
     UIView *view = [[UIView alloc] init];
-    view.backgroundColor = [UIColor blackColor];
     
-    //[ai startAnimating];
-    [tableView addSubview:self.ai];
+    [view addSubview:self.ai];
     
+    
+
     return view;
 }
 
@@ -192,8 +203,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         
         [self _requestTweets:lastTweet.id];
     }
-    self.ai.frame = CGRectMake(contentSize.width/2,contentSize.height,0,30);
-    //DLog("TableViewHeight::%f",contentSize.height );
+
 }
 
 #pragma mark - Event
@@ -205,7 +215,13 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     [self.tableView reloadData];
     
     [self _requestTweets:0];
-
+    TwitterAPI* tweetApi= [[TwitterAPI alloc] init];
+    
+    CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
+    
+    [tweetApi tweetsInNeighborWithCoordinate:OsakaEki radius:10.0 count:30 maxId:0];
+    
+    
     
 }
 
@@ -221,9 +237,22 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //    }
 }
 
+-(IBAction) rightBarBtnPushed:(id)sender
+{
+    DLog("\n右上のボタンが押されました.");
+}
+-(IBAction)leftBarBtnPushed:(id)sender
+{
+    DLog("\n左上のボタンが押されました.");
+    PostViewController* postView=[[PostViewController alloc] init];
+    [self presentViewController:postView animated:YES completion:nil];
+    
+}
 - (void)_requestTweets:(unsigned long long)maxId
 {
     printf("RequestTweet_Called %ld ¥n",(long)maxId);
+//TwitterAPI
+    
     
     if (self.isLoading == YES) {
 //        [self.ai startAnimating];
@@ -264,6 +293,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
              
              return;
          }
+         
+         
          
          // リクエストを出すAPIを指定
          NSURL* url = [NSURL URLWithString:@"https://api.twitter.com/1.1/search/tweets.json"];
@@ -338,6 +369,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                        jsonDic[@"apple"]
                        jsonDic objectForKey:@"apple"]
                        */
+                      
+                      
+                      
                       
                       // 見つかったツイート配列を格納
                       NSArray* twAr = jsonDic[@"statuses"];
@@ -448,11 +482,17 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 -(UIActivityIndicatorView*) ai
 {
+//TODO:[位置の調整]
+//    CGFloat h = self.view.frame.size.height;
+//    CGFloat w = self.view.frame.size.width;
+//    self.ai.frame = CGRectMake(w/2,h,0,30);
+
     if(_ai == nil){
         _ai =[[UIActivityIndicatorView alloc] init];
-        _ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-//        _ai.hidesWhenStopped = NO;//ActivityIndicatorを残すとき
-    }
+        _ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+        _ai.hidesWhenStopped = NO;//ActivityIndicatorを残すとき
+        
+            }
     
     return _ai;
 }
@@ -472,11 +512,5 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //    return _isLoading;
 //}
 
-- (IBAction)btn:(id)sender {
-    DLog("BTN");
-    PostViewController* postView=[[PostViewController alloc] init];
-    [self presentViewController:postView animated:YES completion:nil];
-//    void (^b)(int) = ^(int i){Dlog("%d",i);};
-//   [self dismissViewControllerAnimated:YES completion:nil];
-}
+
 @end

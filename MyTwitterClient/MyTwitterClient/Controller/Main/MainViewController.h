@@ -17,11 +17,11 @@ UITableViewDataSource
 , UITableViewDelegate
 >
 
-@property (strong, nonatomic) IBOutlet UIButton *btn;
+
 @property(weak, nonatomic) IBOutlet UITableView *tableView;
 @property(strong, nonatomic) ACAccountStore* accountStore;
 //@property(weak, nonatomic) UIRefreshControl *uiRefreshControl;
 
-- (IBAction)btn:(id)sender;
+
 
 @end
