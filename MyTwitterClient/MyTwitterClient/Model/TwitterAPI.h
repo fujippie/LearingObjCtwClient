@@ -13,6 +13,15 @@
 
 #import "Tweet.h"
 
+@protocol TwitterAPIDelegate <NSObject>
+-(void) animateAi:(BOOL) isAnimation;
+//デリゲート先のアクセサメソッドの扱い方??
+-(BOOL) isLoading;
+-(void) setIsLoading:(BOOL)bl;
+-(void) _refresh;
+-(void) endRefresh;
+@end
+
 @interface TwitterAPI : NSObject
 
 /**
@@ -42,10 +51,11 @@
  */
 - (BOOL) deleteTweetWithTweetId:(unsigned long long)tweetId;
 
+
 /**
  Tweetの編集
  @param
  */
 @property(strong, nonatomic) ACAccountStore* accountStore;
-
+@property(nonatomic,assign) id <TwitterAPIDelegate> delegate;
 @end

@@ -22,17 +22,13 @@
 @property (nonatomic, strong) UIRefreshControl* refreshControl;
 @property (nonatomic, assign) BOOL isLoading;
 @property (nonatomic, strong) UIActivityIndicatorView* ai ;
-
 @property (nonatomic, strong) PostViewController* postViewCtr;
 
 
 @end
 
 @implementation MainViewController
--(void) helloMain
-{
-    DLog("MainView");
-}
+@synthesize isLoading;
 #pragma mark - Consts
 
 static NSString* const _cellId = @"CustomTVC";
@@ -50,7 +46,9 @@ static NSString* const _cellId = @"CustomTVC";
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(CustomTVC.class) bundle:nil]
          forCellReuseIdentifier:_cellId];
 //TableViewのCellの登録と設定
-    self.defaultCellBodyFrame = [[[self.tableView dequeueReusableCellWithIdentifier:_cellId] body] frame];
+//    id型のもので型が確定するものはその型にしておく
+    CustomTVC* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    self.defaultCellBodyFrame = customTVC.body.frame;
     self.defaultCellFrame = [[self.tableView dequeueReusableCellWithIdentifier:_cellId] frame];
     [self.tableView addSubview:self.refreshControl];
 
@@ -60,6 +58,7 @@ static NSString* const _cellId = @"CustomTVC";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
 // 確認事項   [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
 //    [self.tableView addSubview:self.btn];
+
     
 }
 
@@ -69,7 +68,26 @@ static NSString* const _cellId = @"CustomTVC";
 }
 
 #pragma mark - Delegate
+#pragma mark  PostViewController
+-(void) helloMain
+{
+    DLog("MainView");
+}
 
+#pragma mark TwitterAPIDelegate
+-(void) animateAi:(BOOL) isAnimation
+{
+    if(isAnimation){
+        [self.ai startAnimating];
+    }
+    else{
+        [self.ai stopAnimating];
+    }
+}
+-(void) endRefresh
+{
+    [self.refreshControl endRefreshing];
+}
 
 
 #pragma mark UITableViewDataSource
@@ -147,11 +165,7 @@ static NSString* const _cellId = @"CustomTVC";
 -(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     UIView *view = [[UIView alloc] init];
-    
     [view addSubview:self.ai];
-    
-    
-
     return view;
 }
 
@@ -183,7 +197,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
          , cellH
          );
      */
-    
     return cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
 //三項演算子構文↑↑
 }
@@ -207,6 +220,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         Tweet* lastTweet = self.tweetData.lastObject;
         
         [self _requestTweets:lastTweet.id];
+        
+        
+        
     }
 
 }
@@ -219,15 +235,13 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     [self.tweetData removeAllObjects];
     [self.tableView reloadData];
     
-    [self _requestTweets:0];
+    //[self _requestTweets:0];
+    
     TwitterAPI* tweetApi= [[TwitterAPI alloc] init];
-    
     CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
-    
-    [tweetApi tweetsInNeighborWithCoordinate:OsakaEki radius:10.0 count:30 maxId:0];
-    
-    
-    
+    NSArray* tmpTW=[tweetApi tweetsInNeighborWithCoordinate:OsakaEki radius:10.0 count:30 maxId:0];
+    DLog("\n \t tmpTW:%@",tmpTW);
+   // [self.tweetData addObjectsFromArray:tmpTWar];
 }
 
 -(void) _refresh
@@ -302,7 +316,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
              
              return;
          }
-         
          
          
          // リクエストを出すAPIを指定

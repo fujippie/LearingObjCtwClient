@@ -9,24 +9,33 @@
 #import "TwitterAPI.h"
 
 @implementation TwitterAPI
-- (NSArray*) tweetsInNeighborWithCoordinate:(CLLocationCoordinate2D)coordinate
+
+
+
+- (NSMutableArray*) tweetsInNeighborWithCoordinate:(CLLocationCoordinate2D)coordinate
                                      radius:(CGFloat)radius
                                       count:(NSInteger)count
                                       maxId:(unsigned long long)maxTweetID
 {
+    
+    
     printf("RequestTweet_Called %ld ¥n",(long)maxTweetID);
-    NSMutableArray* tweetData = [[NSMutableArray alloc] init];
+    NSMutableArray* tweetData = @"".mutableCopy;
     //TwitterAPI
+//すでにロード中であればReturn
+    if([self.delegate isLoading])
+    {
+        return tweetData;
+    }
+    if (self.delegate
+        && [self.delegate respondsToSelector:@selector(setIsLoading:)]
+        && [self.delegate respondsToSelector:@selector(animateAi:)])
+    {
+        [self.delegate setIsLoading:YES];
+        [self.delegate animateAi:YES];
+    }
     
     
-//    if (self.isLoading == YES) {
-//        //        [self.ai startAnimating];
-//        return;
-//    }
-//    self.isLoading = YES;
-//    [self.ai startAnimating];
-
-
     //    Twiitter
     //    DLog(@"NSThred isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");
     
@@ -43,7 +52,11 @@
              DLog(@"error :%@", error);
              
              dispatch_async(dispatch_get_main_queue(), ^{
-//                 [self.refreshControl endRefreshing];
+                 
+                 if(self.delegate
+                    && [self.delegate respondsToSelector:@selector(endRefresh)]){
+                     [self.delegate endRefresh];
+                 }
              });
              
              return;
@@ -55,9 +68,11 @@
              DLog(@"account 0");
              
              dispatch_async(dispatch_get_main_queue(), ^{
-//                 [self.refreshControl endRefreshing];
+                 if(self.delegate
+                    &&[self.delegate respondsToSelector:@selector(endRefresh)]){
+                     [self.delegate endRefresh];
+                 }
              });
-             
              return;
          }
          
@@ -93,18 +108,18 @@
            NSHTTPURLResponse* urlResponse,
            NSError* error)
           {
-//              self.isLoading = YES;
-//              [self.ai startAnimating];
+              [self.delegate setIsLoading:YES];
+              [self.delegate animateAi:YES];
               dispatch_async(dispatch_get_main_queue(), ^{
-//                  [self.refreshControl endRefreshing];
+                  [self.delegate endRefresh];
               });
               
               //              DLog(@"responsData\n%@", [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
               
               // エラー処理
               if (error) {
-//                  self.isLoading = NO;
-//                  [self.ai stopAnimating];
+                  [self.delegate setIsLoading:NO];
+                  [self.delegate animateAi:NO];
                   DLog(@"urlResponse:%@, error:%@", urlResponse, error);
                   return;
               }
@@ -121,16 +136,15 @@
                   // エラー処理
                   if (e) {
                       DLog(@"e:%@", e);
-//                      self.isLoading = NO;
-//                      [self.ai stopAnimating];
+                      [self.delegate setIsLoading:NO];
+                      [self.delegate animateAi:NO];
                       return;
                   }
                   
                   // データ取得成功時
                   if (jsonDic.count > 0) {
-                      
-//                      self.isLoading = NO;
-//                      [self.ai stopAnimating];
+                      [self.delegate setIsLoading:NO];
+                      [self.delegate animateAi:NO];
                       /*
                        NSDictionary* jsonDic;
                        jsonDic[@"apple"]
@@ -161,7 +175,7 @@
                       
                       // メインスレッドで実行(GCD)
                       dispatch_async(dispatch_get_main_queue(), ^{
-//                          [self _refresh];
+                          [self.delegate _refresh];
                       });
                       
                       // メインスレッドで実行(NSThread)
@@ -192,12 +206,12 @@
               // 通信失敗時
               else {
                   DLog(@"request error:%@", urlResponse);
-//                  self.isLoading = NO;
-//                  [self.ai stopAnimating];
+                  [self.delegate setIsLoading:NO];
+                  [self.delegate animateAi:NO];
               }
               
-//              self.isLoading = NO;
-//              [self.ai stopAnimating];
+              [self.delegate setIsLoading:NO];
+              [self.delegate animateAi:NO];
           }];
      }];
     //
