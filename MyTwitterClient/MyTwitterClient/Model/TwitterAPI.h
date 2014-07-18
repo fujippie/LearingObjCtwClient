@@ -13,13 +13,22 @@
 
 #import "Tweet.h"
 
+@class TwitterAPI;
+
 @protocol TwitterAPIDelegate <NSObject>
+
+- (void) twitterAPI:(TwitterAPI*)twitterAPI tweetData:(NSArray*)tweetData;
+- (void) twitterAPI:(TwitterAPI*)twitterAPI errorAtLoadData:(NSError*)error;
+
+/*
 -(void) animateAi:(BOOL) isAnimation;
 //デリゲート先のアクセサメソッドの扱い方??
 -(BOOL) isLoading;
 -(void) setIsLoading:(BOOL)bl;
 -(void) _refresh;
 -(void) endRefresh;
+ */
+
 @end
 
 @interface TwitterAPI : NSObject
@@ -27,13 +36,13 @@
 /**
  近辺のTweet一覧を取得
  @param (CLLocationCoordinate2D) coordinate 緯度,経度
- @param (CGFloat) radius 半径
+ @param (NSInteger) radius 半径[km]
  @param  (NSInteger) count 取得する件数
  @param  (unsigned long long) maxTweetID 最後に取得したTweetID
- @return (NSArray*) Tweet型配列
+ @description [TwitterAPIDelegate twitterAPI:defaultTweetData:]で(NSArray*) Tweet型配列を取得のこと
  */
-- (NSMutableArray*) tweetsInNeighborWithCoordinate:(CLLocationCoordinate2D)coordinate
-                                     radius:(CGFloat)radius
+- (void) tweetsInNeighborWithCoordinate:(CLLocationCoordinate2D)coordinate
+                                     radius:(NSInteger)radius
                                       count:(NSInteger)count
                                       maxId:(unsigned long long)maxTweetID;
 
@@ -56,6 +65,5 @@
  Tweetの編集
  @param
  */
-@property(strong, nonatomic) ACAccountStore* accountStore;
 @property(nonatomic,assign) id <TwitterAPIDelegate> delegate;
 @end
