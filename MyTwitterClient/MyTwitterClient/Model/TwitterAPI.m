@@ -80,7 +80,8 @@
               DLog(@"TW1.1");
              return ;
          }
-         
+     
+     
          // titterアカウント取得（複数あるかも。。）
          NSArray* accounts = [self.accountStore accountsWithAccountType:accountType];
          if (accounts.count == 0)
@@ -288,18 +289,228 @@
     
 }
 
-- (BOOL) postTweetWithBody:(NSString*)body coordinate:(CLLocationCoordinate2D)coordinate image:(UIImage*)image{
+- (BOOL) postTweetWithBody:(NSString*)body coordinate:(CLLocationCoordinate2D)coordinate image:(UIImage*)image
+{
+    DLog("start");
     
     
+    ACAccountType* accountType = [self.accountStore
+                                  accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+    
+    [self.accountStore
+     requestAccessToAccountsWithType:accountType
+     options:nil
+     completion:^void (BOOL granted, NSError* error)
+     {
+         
+         // アカウント取得失敗時
+         if (error) {
+             DLog(@"Accounterror :%@", error);
+             
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 
+                 if(
+                    self.delegate
+                    && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
+                    )
+                 {
+                     [self.delegate twitterAPI:self errorAtLoadData:error];
+                 }
+             });
+             DLog(@"TW1.1");
+             return ;
+         }
+         
+         
+         // titterアカウント取得（複数あるかも。。）
+         NSArray* accounts = [self.accountStore accountsWithAccountType:accountType];
+         if (accounts.count == 0)
+         {
+             DLog(@"account 0");
+             
+             dispatch_async(dispatch_get_main_queue(), ^
+                            {
+                                
+                                if(
+                                   self.delegate
+                                   && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
+                                   )
+                                {
+                                    [self.delegate twitterAPI:self errorAtLoadData:nil];
+                                }
+                                
+                            });
+             DLog(@"TW1.1");
+             return ;
+         }
+         
+         DLog("TW4");//DontPass
+         
+         // リクエストを出すAPIを指定
+//         NSURL* url = [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/update.json"];
+         NSURL* url = [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/update_with_media.json"];
+      
+         // リクエストのパラメータを設定
+//         (NSString*)body coordinate:(CLLocationCoordinate2D)coordinate image:(UIImage*)image
+
+         NSMutableDictionary* params = @{
+                                         @"status"      : body,
+                                         @"lat"         : @(coordinate.latitude).description,
+                                         @"long"        : @(coordinate.longitude).description,
+//                                         @"media[]"       :@(image).description
+                                         }.mutableCopy;
+     
+         
+         // リクエストを作成
+         SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter
+                                                 requestMethod:SLRequestMethodPOST
+                                                           URL:url
+                                                    parameters:params];
+         // 1つ目のアカウントを指定
+         request.account   = accounts.firstObject;
+//         NSData* imageData = UIImageJPEGRepresentation(image, 1.0f);
+//         [request addMultipartData:imageData withName:@"media[]" type:@"image/jpg" filename:@"image.jpg"];
+         DLog("TW5");
+         
+         // リクエストを投げる
+         [request
+          performRequestWithHandler:^ void
+          (NSData* responseData,
+           NSHTTPURLResponse* urlResponse,
+           NSError* error)
+          {
+              
+              
+              // エラー処理
+              if (error) {
+                                DLog(@"urlResponse:%@, error:%@", urlResponse, error);
+                  if(
+                     self.delegate
+                     && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
+                     )
+                  {
+                      [self.delegate twitterAPI:self errorAtLoadData:error];
+                  }
+                  return;
+              }
+              
+              NSMutableArray* tweetData = @[].mutableCopy;
+              
+              // 通信成功時(200系)
+              if (200 <= urlResponse.statusCode && urlResponse.statusCode < 300) {
+                  DLog(@"通信成功時(200系)");
+                  NSError* e = nil;
+                  NSDictionary* jsonDic = [NSJSONSerialization
+                                           JSONObjectWithData:responseData
+                                           options:NSJSONReadingAllowFragments
+                                           error:&e
+                                           ];
+                  // エラー処理
+                  if (e) {
+                      DLog(@"e:%@", e);
+                      if(
+                         self.delegate
+                         && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
+                         )
+                      {
+                          [self.delegate twitterAPI:self errorAtLoadData:error];
+                      }
+                      return;
+                  }
+                  
+                  // データ取得成功時
+                  if (jsonDic.count > 0)
+                  {
+                      
+                      // 見つかったツイート配列を格納
+                      NSArray* twAr = jsonDic[@"statuses"];
+                      DLog("\n\tJSON.count:%d", twAr.count);
+                      // ツイート配列からテキストのみを抽出
+                      //ツイート内容,緯度経度,IDを取得
+                      
+                      for(int index = 0; index < [twAr count]; index++)
+                      {
+                          DLog("TW6 index:%d", index);
+                          
+                          NSDictionary* status = [twAr objectAtIndex:index];
+                          Tweet* tweet = [Tweet tweetWithDic:status];
+                          
+                          
+                          [tweetData addObject:tweet];
+                      }
+                      // メインスレッドで実行(NSThread)
+                      //                      [self performSelectorOnMainThread:@selector(_refresh)
+                      //                                             withObject:nil
+                      //                                          waitUntilDone:NO];
+                      
+                      /*
+                       Tweet
+                       id
+                       user.profile_image_url
+                       text
+                       geo.coordinates
+                       */
+                      
+                      /*
+                       34.683015999977,135.477230003533
+                       34.683015999977,135.527178003877
+                       34.7177310034282,135.527178003877
+                       34.7177310034282,135.477230003533
+                       */
+                      //                      DLog(@"jsonArr:\n%@", jsonDic);
+                  }
+                  else {
+                      DLog(@"json なし");
+                  }
+                  
+                  // メインスレッドで実行(GCD)
+                  dispatch_async(dispatch_get_main_queue(), ^{
+                      //                          [self.delegate _refresh];
+                      DLog(@"delegate:%@", self.delegate);
+                      if(
+                         self.delegate
+                         && [self.delegate respondsToSelector:@selector(twitterAPI:tweetData:)]
+                         )
+                      {
+                          DLog(@"");
+                          [self.delegate twitterAPI:self tweetData:tweetData];
+                      }
+                      
+                  });
+              }
+              // 通信失敗時
+              else {
+                  DLog(@"request error:%@", urlResponse);
+                  //                  [self.delegate setIsLoading:NO];
+                  //                  [self.delegate animateAi:NO];
+                  
+                  if(
+                     self.delegate
+                     && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
+                     )
+                  {
+                      [self.delegate twitterAPI:self errorAtLoadData:nil];
+                  }
+              }
+              
+              //              [self.delegate setIsLoading:NO];
+              //              [self.delegate animateAi:NO];
+          }];
+     }];
+    //
+    DLog("TWLast");//passed
     
     
-    return NO;
+        return NO;
 }
 
 - (BOOL) deleteTweetWithTweetId:(unsigned long long)tweetId
 {
-    return NO;
+//    POST statuses/destroy/:id
+      return NO;
 }
+
+                
 
 
 #pragma mark - Accessor

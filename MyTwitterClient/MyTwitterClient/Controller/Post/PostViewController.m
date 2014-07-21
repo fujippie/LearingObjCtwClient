@@ -9,7 +9,7 @@
 #import "PostViewController.h"
 #import "TwitterAPI.h"
 @interface PostViewController ()
-
+@property (nonatomic, strong)  TwitterAPI* twitterApi;
 @end
 
 @implementation PostViewController
@@ -74,7 +74,7 @@
     //UI操作禁止を解除する
     //    self.view.userInteractionEnabled=YES;
     
-    [self postedTweet:str];
+    [self _postedTweet:str];
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
@@ -100,13 +100,25 @@
 }
 
 #pragma mark - SubFunction
--(void) postedTweet:(NSString*)text
+-(void) _postedTweet:(NSString*)text
 {
     
     CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
-    TwitterAPI* twApi = [[TwitterAPI alloc] init];
+    
     UIImage* icon = [[UIImage alloc] initWithContentsOfFile:@"femail"];
-    BOOL flag=[twApi postTweetWithBody:text coordinate:OsakaEki image:icon];
+    BOOL flag=[self.twitterApi postTweetWithBody:text coordinate:OsakaEki image:icon];
     DLog("flag:%hhd",flag);
 }
+
+
+-(TwitterAPI *)twitterApi
+{
+    if(_twitterApi == nil)
+    {
+        _twitterApi = [[TwitterAPI alloc] init];
+//        _twitterApi.delegate = self;
+    }
+    return _twitterApi;
+}
+
 @end
