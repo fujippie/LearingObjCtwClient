@@ -8,8 +8,14 @@
 
 #import "PostViewController.h"
 #import "TwitterAPI.h"
+
 @interface PostViewController ()
-@property (nonatomic, strong)  TwitterAPI* twitterApi;
+
+@property (nonatomic, strong) TwitterAPI* twitterApi;
+@property (nonatomic, strong) UIView* waitView;
+@property (nonatomic, strong) UIActivityIndicatorView* waitAi;
+@property (nonatomic, strong) IBOutlet UIButton* postButton;
+
 @end
 
 @implementation PostViewController
@@ -22,8 +28,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     // Do any additional setup after loading the view from its nib.
+}
+
+- (void) viewWillAppear:(BOOL)animated
+{//画面が表示される直前の処理
+    [super viewWillAppear:animated];
+
+    self.postButton.enabled = YES;
+    
+    self.postText.text = @"";
 }
 
 - (void)didReceiveMemoryWarning
@@ -34,8 +48,25 @@
 
 #pragma mark - IBAction
 
-- (IBAction)postBtn:(UIButton*)button
+- (IBAction) postBtn:(UIButton*)button
 {
+    if (self.postText.text.length <= 0)
+    {
+        UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"エラー"
+                                                     message:@"ツイートするメッセージがありません"
+                                                    delegate:nil
+                                           cancelButtonTitle:@"OK"
+                                           otherButtonTitles:nil];
+        [av show];
+    
+        return;
+    }
+    
+    if ([self.postText isFirstResponder])
+    {
+        [self.postText resignFirstResponder];
+    }
+
     [button setEnabled:NO];
     
     NSString* str = self.postText.text;
@@ -47,21 +78,10 @@
     // 画面全体のUI操作を禁止する
     //    self.view.userInteractionEnabled = NO;
     
-    //処理待ち時に表示する画面
-    UIView *waitView = [[UIView alloc] initWithFrame:self.view.frame];
-    [waitView setBackgroundColor:[UIColor grayColor]];
-    waitView.alpha   = 0.7;
-    
-    //処理待ち画面中央にActivityIndicatorを表示
-    UIActivityIndicatorView *waitAi = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [waitAi setCenter:self.view.center];
-    [waitView addSubview:waitAi];
-    [self.view addSubview:waitView];
-    [waitAi startAnimating];
+    [self.view addSubview:self.waitView];
+    [self.waitAi startAnimating];
     //遅延実行　waitViewにremoveIndicatorメッセージが送られ実行される.
-    [self performSelector:@selector(_finishOperation:) withObject:@[waitView, button] afterDelay:2.0f];
-    
-    //[waitView removeFromSuperview];
+//    [self performSelector:@selector(_finishOperation:) withObject:@[waitView, button] afterDelay:2.0f];
     
     /*
      1.投稿ボタンを無効化。
@@ -76,49 +96,107 @@
     
     [self _postedTweet:str];
     
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    
-    // delegate実行のパターン
-    if (self.delegate && [self.delegate respondsToSelector:@selector(helloMain)])
-    {
-        [self.delegate helloMain];
-    }
-    
-    //    [self dismissViewControllerAnimated:YES completion:nil];
+//    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void) _finishOperation:(NSArray*)objs
 {
     [((UIView*)objs[0]) removeFromSuperview];
     ((UIButton*)objs[1]).enabled = YES;
-    //    self.view.userInteractionEnabled = YES;
+//    self.view.userInteractionEnabled = YES;
 }
 
-- (IBAction)backBtn:(id)sender {
+- (IBAction) closeBtn:(id)sender
+{
     DLog("モーダルを閉じます");
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - SubFunction
+
 -(void) _postedTweet:(NSString*)text
 {
-    
     CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
     
-    UIImage* icon = [[UIImage alloc] initWithContentsOfFile:@"femail"];
-    BOOL flag=[self.twitterApi postTweetWithBody:text coordinate:OsakaEki image:icon];
-    DLog("flag:%hhd",flag);
+//    UIImage* icon = [[UIImage alloc] initWithContentsOfFile:@"female"];
+    UIImage* icon = [UIImage imageNamed:@"female.jpeg"];
+    [self.twitterApi asyncPostTweetWithBody:text coordinate:OsakaEki image:icon];
 }
 
+#pragma mark - Delegate
+
+#pragma mark TwitterAPIDelegate
+
+- (void) twitterAPI:(TwitterAPI *)twitterAPI
+        postedTweet:(Tweet *)tweet
+{
+    DLog(@"isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");
+    
+    if (self.delegate != nil &&
+       [self.delegate respondsToSelector:@selector(postViewController:postedTweet:)])
+    {
+        [self.delegate postViewController:self postedTweet:tweet];
+    }
+    
+    self.postButton.enabled = YES;
+
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    [self.waitView removeFromSuperview];
+
+    //completion PostViewCtrが破棄されたあとの処理
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+-(void)twitterAPI:(TwitterAPI *)twitterAPI
+  errorAtLoadData:(NSError *)error
+{
+    DLog(@"error:\n%@", error);
+    
+    self.postButton.enabled = YES;
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    [self.waitView removeFromSuperview];
+}
+
+#pragma mark - Accessor
 
 -(TwitterAPI *)twitterApi
 {
     if(_twitterApi == nil)
     {
         _twitterApi = [[TwitterAPI alloc] init];
-//        _twitterApi.delegate = self;
+        _twitterApi.delegate = self;
     }
     return _twitterApi;
+}
+
+- (UIView *) waitView
+{
+    if (_waitView == nil) {
+        //処理待ち時に表示する画面
+        _waitView = [[UIView alloc] initWithFrame:self.view.frame];
+        [_waitView setBackgroundColor:[UIColor grayColor]];
+        _waitView.alpha   = 0.7;
+        
+        self.waitAi.center = _waitView.center;
+        [_waitView addSubview:self.waitAi];
+        
+        [self.waitAi startAnimating];
+    }
+    
+    return _waitView;
+}
+
+- (UIActivityIndicatorView *) waitAi
+{
+    if (_waitAi == nil) {
+        //処理待ち画面中央にActivityIndicatorを表示
+        _waitAi
+        = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        _waitAi.hidesWhenStopped = NO;
+    }
+    
+    return _waitAi;
 }
 
 @end

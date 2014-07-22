@@ -9,7 +9,7 @@
 #import "Tweet.h"
 
 @implementation Tweet
-
+//+(instancetype) tweetWithPost{}
 +(instancetype) tweetWithDic:(NSDictionary*)dic
 {
     Tweet* tweet = [[Tweet alloc] init];

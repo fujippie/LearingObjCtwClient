@@ -15,7 +15,7 @@
 <
 UITableViewDataSource
 , UITableViewDelegate
-, PostViewDelegate
+, PostViewControllerDelegate
 , TwitterAPIDelegate
 >
 

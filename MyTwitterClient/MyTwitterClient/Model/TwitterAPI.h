@@ -17,17 +17,12 @@
 
 @protocol TwitterAPIDelegate <NSObject>
 
-- (void) twitterAPI:(TwitterAPI*)twitterAPI tweetData:(NSArray*)tweetData;
+@required
 - (void) twitterAPI:(TwitterAPI*)twitterAPI errorAtLoadData:(NSError*)error;
 
-/*
--(void) animateAi:(BOOL) isAnimation;
-//デリゲート先のアクセサメソッドの扱い方??
--(BOOL) isLoading;
--(void) setIsLoading:(BOOL)bl;
--(void) _refresh;
--(void) endRefresh;
- */
+@optional
+- (void) twitterAPI:(TwitterAPI*)twitterAPI tweetData:(NSArray*)tweetData;
+- (void) twitterAPI:(TwitterAPI*)twitterAPI postedTweet:(Tweet*)tweet;
 
 @end
 
@@ -42,9 +37,9 @@
  @description [TwitterAPIDelegate twitterAPI:defaultTweetData:]で(NSArray*) Tweet型配列を取得のこと
  */
 - (void) tweetsInNeighborWithCoordinate:(CLLocationCoordinate2D)coordinate
-                                     radius:(NSInteger)radius
-                                      count:(NSInteger)count
-                                      maxId:(unsigned long long)maxTweetID;
+                                 radius:(NSInteger)radius
+                                  count:(NSInteger)count
+                                  maxId:(unsigned long long)maxTweetID;
 
 /**
  Tweetする
@@ -52,7 +47,7 @@
  @param (CLLocationCoordinate2D) coordinate 緯度,経度
  @param (UIImage*) image
  */
-- (BOOL) postTweetWithBody:(NSString*)body coordinate:(CLLocationCoordinate2D)coordinate image:(UIImage*)image;
+- (void) asyncPostTweetWithBody:(NSString*)body coordinate:(CLLocationCoordinate2D)coordinate image:(UIImage*)image;
 
 /**
  Tweetの削除

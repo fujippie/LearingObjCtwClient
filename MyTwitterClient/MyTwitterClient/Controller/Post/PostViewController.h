@@ -7,18 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TwitterAPI.h"
+#import "Tweet.h"
 //委譲先で使用するメソッドを記述
-@protocol PostViewDelegate <NSObject>
--(void) helloMain;
+@class PostViewController;
+@protocol PostViewControllerDelegate <NSObject>
+
+-(void) postViewController:(PostViewController*)postViewController
+               postedTweet:(Tweet*)tweet;
 @end
 
 @interface PostViewController : UIViewController
-<UITextFieldDelegate>
-
-- (IBAction)postBtn:(id)sender;
-- (IBAction)backBtn:(id)sender;
+<UITextFieldDelegate, TwitterAPIDelegate>
 
 //デリゲートメソッドを呼ぶためのメソッド.内部で別クラスのメソッドを呼び出す
 @property (weak, nonatomic) IBOutlet UITextField *postText;
-@property (nonatomic,assign) id<PostViewDelegate> delegate;
+@property (nonatomic,assign) id<PostViewControllerDelegate> delegate;
+
 @end

@@ -22,8 +22,8 @@
 @property (nonatomic, strong) UIRefreshControl* refreshControl;
 @property (nonatomic, assign) BOOL isLoading;
 @property (nonatomic, strong) UIActivityIndicatorView* ai ;
-@property (nonatomic, strong) PostViewController* postViewCtr;
-@property (nonatomic, strong)  TwitterAPI* twitterApi;
+@property (nonatomic, strong) PostViewController* postViewController;
+@property (nonatomic, strong) TwitterAPI* twitterApi;
 
 @property (nonatomic, assign) BOOL isInitialized;
 
@@ -84,12 +84,12 @@ static NSString* const _cellId = @"CustomTVC";
 
 #pragma mark  PostViewController
 
--(void) helloMain
+-(void) postViewController:(PostViewController *)postViewController postedTweet:(Tweet*)tweet
 {
-    DLog("MainView");
+    DLog("________MainView");
 }
 
-#pragma mark TwitterAPIDelegate
+
 
 /*
 -(void) animateAi:(BOOL) isAnimation
@@ -107,6 +107,9 @@ static NSString* const _cellId = @"CustomTVC";
     [self.refreshControl endRefreshing];
 }
  */
+#pragma mark TwitterAPIDelegate
+
+
 
 -(void)twitterAPI:(TwitterAPI *)twitterAPI tweetData:(NSArray *)tweetData
 {
@@ -313,11 +316,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 -(IBAction)leftBarBtnPushed:(id)sender
 {
     DLog("\n左上のボタンが押されました.");
-    PostViewController* postView=[[PostViewController alloc] init];
-//    デリゲート使用宣言
-    postView.delegate =self;
-    
-    [self presentViewController:postView animated:YES completion:nil];
+    [self presentViewController:self.postViewController animated:YES completion:nil];
 //    [postView helloPostDel];
     
 }
@@ -510,13 +509,23 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //}
 //
 #pragma mark - Accessor
+-(PostViewController *) postViewController
+{
+    if(_postViewController == nil)
+    {
+        _postViewController = [[PostViewController alloc] init];
+        _postViewController.delegate = self;
+    }
+    
+    return _postViewController;
+}
 
 -(TwitterAPI *)twitterApi
 {
     if(_twitterApi == nil)
     {
-        DLog(@"@po:gawejgr swaepghjp:awjghrparweojajwegoptakjpo");
         _twitterApi = [[TwitterAPI alloc] init];
+        //デリゲートを使う場合は必ず必要
         _twitterApi.delegate = self;
     }
     return _twitterApi;
