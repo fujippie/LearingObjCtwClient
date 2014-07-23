@@ -19,7 +19,10 @@
 @end
 
 @interface PostViewController : UIViewController
-<UITextFieldDelegate, TwitterAPIDelegate>
+<UITextFieldDelegate,
+TwitterAPIDelegate,
+UINavigationControllerDelegate,
+UIImagePickerControllerDelegate>
 
 //デリゲートメソッドを呼ぶためのメソッド.内部で別クラスのメソッドを呼び出す
 @property (weak, nonatomic) IBOutlet UITextField *postText;

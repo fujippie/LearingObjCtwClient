@@ -86,29 +86,19 @@ static NSString* const _cellId = @"CustomTVC";
 
 -(void) postViewController:(PostViewController *)postViewController postedTweet:(Tweet*)tweet
 {
-    DLog("________MainView");
+    
+    
+    
+    
+    DLog("________ツイート内容(引数:tweet)をTableViewに挿入する");
+
+
+    
+    
+    
 }
 
-
-
-/*
--(void) animateAi:(BOOL) isAnimation
-{
-    if(isAnimation){
-        [self.ai startAnimating];
-    }
-    else{
-        [self.ai stopAnimating];
-    }
-}
-
--(void) endRefresh
-{
-    [self.refreshControl endRefreshing];
-}
- */
 #pragma mark TwitterAPIDelegate
-
 
 
 -(void)twitterAPI:(TwitterAPI *)twitterAPI tweetData:(NSArray *)tweetData
