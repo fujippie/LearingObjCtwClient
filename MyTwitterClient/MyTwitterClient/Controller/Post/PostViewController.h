@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "TwitterAPI.h"
 #import "Tweet.h"
-//委譲先で使用するメソッドを記述
+
 @class PostViewController;
+
 @protocol PostViewControllerDelegate <NSObject>
 
 -(void) postViewController:(PostViewController*)postViewController

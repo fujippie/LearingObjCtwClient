@@ -51,38 +51,42 @@
 - (IBAction) postBtn:(UIButton*)button
 {
     if (self.postText.text.length <= 0)
-    {
+    {//テクストフィールドに文字列がないとき,アラートを表示
+//アラートViewオブジェクトの生成
         UIAlertView* av = [[UIAlertView alloc] initWithTitle:@"エラー"
                                                      message:@"ツイートするメッセージがありません"
                                                     delegate:nil
                                            cancelButtonTitle:@"OK"
                                            otherButtonTitles:nil];
-        [av show];
-    
+        [av show];//アラートビューの表示
         return;
     }
+//ファーストレスポンダかどうか，
+//PostTextをタップしたときキーボード（ユーザの入力）が立ち上がる．
+//タップしてPostText以外を選択したときにキーボードを下げる．
     
     if ([self.postText isFirstResponder])
     {
+//ファーストレスポンダでなくす
         [self.postText resignFirstResponder];
     }
-
+    
+    
+    
+//ボタンを無効化する
     [button setEnabled:NO];
     
     NSString* str = self.postText.text;
-    DLog(@"投稿内容:%@",str);
     
     // 画面上部の通信中エフェクト
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     // 画面全体のUI操作を禁止する
-    //    self.view.userInteractionEnabled = NO;
-    
+    //    self.view.userInteractionEnabled = NO;//UI操作禁止を解除する　=YES;
+//通信待ちの半透明の画面を被せる
     [self.view addSubview:self.waitView];
     [self.waitAi startAnimating];
-    //遅延実行　waitViewにremoveIndicatorメッセージが送られ実行される.
-//    [self performSelector:@selector(_finishOperation:) withObject:@[waitView, button] afterDelay:2.0f];
-    
+  
     /*
      1.投稿ボタンを無効化。
      2.twitterAPIにて投稿。
@@ -90,17 +94,13 @@
      ref. http://www.objectivec-iphone.com/introduction/delegate/delegate.html
      4.APIでエラーが出た場合はUIAlertをだし、投稿ボタンを有効化。
      */
-    
-    //UI操作禁止を解除する
-    //    self.view.userInteractionEnabled=YES;
-    
     [self _postedTweet:str];
-    
-//    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
 }
 
 - (void) _finishOperation:(NSArray*)objs
 {
+//    ツイート投稿処理終了後の処理　半透明画面の消去，ボタン有効化
     [((UIView*)objs[0]) removeFromSuperview];
     ((UIButton*)objs[1]).enabled = YES;
 //    self.view.userInteractionEnabled = YES;
@@ -117,20 +117,36 @@
 -(void) _postedTweet:(NSString*)text
 {
     CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
-    
+//    画像を読み込まなかった↓
 //    UIImage* icon = [[UIImage alloc] initWithContentsOfFile:@"female"];
+//    画像をファイル名で指定してUiimage型に格納
     UIImage* icon = [UIImage imageNamed:@"female.jpeg"];
+//    ツイート(Text)，画像，位置情報をツイッターに投稿
     [self.twitterApi asyncPostTweetWithBody:text coordinate:OsakaEki image:icon];
 }
 
 #pragma mark - Delegate
+
+#pragma mark UITextViewController
+
+//Returnを押してもキーボードが下がらない:デリゲートのセットしていなかった．
+//UI系の場合はXibファイルでFile's　OwnerにUI部品のDelegateを線でつなぐ
+
+-(BOOL) textFieldShouldReturn:(UITextField *)postText
+{
+    //  Return Value　YES if the text field should implement its default behavior for the return button; otherwise, NO.　=>返り値について:デフォルトのふるまいでよければYesそうでなければNO
+    DLog("TEXTFieldShouldReturn");
+    [self.postText resignFirstResponder];
+    
+    return NO;
+}
 
 #pragma mark TwitterAPIDelegate
 
 - (void) twitterAPI:(TwitterAPI *)twitterAPI
         postedTweet:(Tweet *)tweet
 {
-    DLog(@"isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");
+    DLog(@"isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");//YES
     
     if (self.delegate != nil &&
        [self.delegate respondsToSelector:@selector(postViewController:postedTweet:)])
