@@ -15,6 +15,7 @@
 
 
 @interface MainViewController  ()
+<UIAlertViewDelegate>
 
 @property (nonatomic, strong) NSMutableArray*   tweetData;
 @property (nonatomic, assign) CGRect            defaultCellBodyFrame;
@@ -32,6 +33,14 @@
 @implementation MainViewController
 // TODO: synthesizeの意味を理解する。
 //@synthesize isLoading;
+#pragma mark UITableView
+
+
+-(void) setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    [self.tableView setEditing:editing animated:animated];
+}
 
 #pragma mark - Consts
 
@@ -63,7 +72,9 @@ static NSString* const _cellId = @"CustomTVC";
 //  NavigationBarの設定　（更新中に表示するアイコン）
     self.title = [NSString stringWithFormat:@"%@:%d", NSStringFromClass(self.class), [self.navigationController.viewControllers indexOfObject:self]];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"投稿" style:UIBarButtonItemStylePlain  target:self action:@selector(leftBarBtnPushed:)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
 // 確認事項   [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
 //    [self.tableView addSubview:self.btn];
 }
@@ -86,13 +97,13 @@ static NSString* const _cellId = @"CustomTVC";
 
 -(void) postViewController:(PostViewController *)postViewController postedTweet:(Tweet*)tweet
 {
-    DLog("________ツイート内容(引数:tweet)をTableViewに挿入する");
     [self.tweetData insertObject:tweet atIndex:0];
-    NSIndexPath* indexPath = [NSIndexPath indexPathForItem:0 inSection:0];//先頭に追加
+//    NSIndexPath* indexPath = [NSIndexPath indexPathForItem:0 inSection:0];//先頭に追加
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];//先頭に追加
     // インサート 指定したIndexPathの要素に対してだけデリゲートが呼ばれる
     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     // アップデート
-    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+//    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 #pragma mark TwitterAPIDelegate
@@ -100,7 +111,7 @@ static NSString* const _cellId = @"CustomTVC";
 //TwitterAPI.mから,取得時に呼び出される.ツイート配列を引数とするデリゲートメソッド,
 -(void)twitterAPI:(TwitterAPI *)twitterAPI tweetData:(NSArray *)tweetData
 {
-    DLog(@"tweetData:\n%@", tweetData);
+//    DLog(@"tweetData:\n%@", tweetData);
     
     self.isLoading = NO;
     [self.refreshControl endRefreshing];
@@ -111,10 +122,37 @@ static NSString* const _cellId = @"CustomTVC";
 
 -(void)twitterAPI:(TwitterAPI *)twitterAPI errorAtLoadData:(NSError *)error
 {
-    DLog(@"error:\n%@", error);
+    [self.refreshControl endRefreshing];
+
+    NSDictionary* dic = error.userInfo;
+//    NSString* erSt = dic[@"NSLocalizedDescription"];
+    DLog(@"\n___________error:\n%@", dic[@"NSLocalizedDescription"]);
+    DLog("%@", error.domain);
+    DLog("%d", error.code);
+//error.domain error.code error.userInfo
+    
+//    if([erSt isEqualToString:@"The request timed out."])
+//    if(error.code == kCFURLErrorTimedOut)
+//    {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"タイムアウト"
+                                                        message:@"ツイート取得失敗"
+                                                       delegate:self
+                                              cancelButtonTitle:@"閉じる"
+                                              otherButtonTitles:nil];
+        [alert show];
+//    }
+    
+}
+
+#pragma mark UIAlertViewDelegate
+
+- (void)   alertView:(UIAlertView *)alertView
+clickedButtonAtIndex:(NSInteger)buttonIndex
+{
     self.isLoading = NO;
     [self.refreshControl endRefreshing];
 }
+
 
 #pragma mark UITableViewDataSource
 
@@ -122,7 +160,6 @@ static NSString* const _cellId = @"CustomTVC";
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
-    DLog("\n NUMBER OF ROW IN");
     return self.tweetData.count;
 }
 
@@ -130,10 +167,10 @@ static NSString* const _cellId = @"CustomTVC";
 -(UITableViewCell *)tableView:(UITableView *)tableView
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-   DLog("\n CELL FOR ROW INDEX PATH");
     CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
     
     Tweet* tweet = self.tweetData[indexPath.row];
+//  CELLにツイート(文字列)をセット
     cell.body.text = [NSString stringWithFormat:@"%@", tweet.body];
 //    cell.textLabel.text = [NSString stringWithFormat:@"%@", self.sampleData[indexPath.row]];
     cell.textLabel.lineBreakMode = NSLineBreakByCharWrapping;
@@ -146,6 +183,18 @@ static NSString* const _cellId = @"CustomTVC";
                                  cell.frame.size.height
                                  );
     [cell.body sizeToFit];
+//  CELLにアイコン(プロフィール)画像をセット
+    DLog("IMAGE____%f",tweet.profileImage.size.height);
+//    [cell.prfImage setImage:Twitter型からImageを取得];
+    if (tweet.profileImage)
+    {
+        cell.prfImage.image = tweet.profileImage;
+    }
+    else
+    {
+        cell.prfImage.image = [UIImage imageNamed:@"noImage"];
+    }
+    
     /*
     DLog(
          @"%d"
@@ -184,24 +233,22 @@ static NSString* const _cellId = @"CustomTVC";
 //    return view;
 //}
 
-
-
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 50.0;
 }
 
--(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    UIView *view = [[UIView alloc] init];
-    [view addSubview:self.ai];
-    return view;
-}
+//-(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+//{
+//    UIView *view = [[UIView alloc] init];
+//    //[view addSubview:self.ai];
+//    return view;
+//}
 
 -(CGFloat)    tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    DLog("HEIGHT FOR ROW AT INDEX PATH");
+    
     Tweet* tweet = self.tweetData[indexPath.row];
     NSString* body = tweet.body;
     UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
@@ -245,7 +292,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     CGFloat remain = contentSize.height - contentOffset.y;
     
-    if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized)
+    if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.tweetData.count)
     {
         self.isLoading = YES;
         
@@ -254,8 +301,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         //[self _requestTweets:lastTweet.id];
 //        TwitterAPI* tweetApi= [[TwitterAPI alloc] init];
         CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
+        
         DLog(@"lastTweet.id:%llu", lastTweet.id);
         DLog(@"self.twieetApi:%@", self.twitterApi);
+        
         [self.twitterApi tweetsInNeighborWithCoordinate:OsakaEki radius:1 count:30 maxId:lastTweet.id];
         
         
@@ -269,6 +318,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 -(void) _refreshData:(UIRefreshControl *) refreshControl
 {
     DLog("REFRESH");
+    
     if (self.isLoading) {
         return;
     }
@@ -301,7 +351,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 -(IBAction) rightBarBtnPushed:(id)sender
 {
-    DLog("\n右上のボタンが押されました.");
+    DLog("\n編集モードに変更.");
+    
+    
 }
 -(IBAction)leftBarBtnPushed:(id)sender
 {

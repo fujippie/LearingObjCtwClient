@@ -23,7 +23,7 @@
                                       count:(NSInteger)count
                                       maxId:(unsigned long long)maxTweetID
 {
-//    DLog("start");
+    DLog("start");
 
    // printf("RequestTweet_Called %ld ¥n",(long)maxTweetID);
     /*
@@ -59,7 +59,7 @@
 //         DLog(@"");
          
          // アカウント取得失敗時
-         if (error) {
+         if (error) { //
              DLog(@"error :%@", error);
              
              dispatch_async(dispatch_get_main_queue(), ^{
@@ -74,7 +74,9 @@
                     && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
                     )
                  {
+                     DLog(@"************* error ***********");
                      [self.delegate twitterAPI:self errorAtLoadData:error];
+                    
                  }
              });
              return ;
@@ -100,7 +102,9 @@
                     && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
                     )
                  {
+                     DLog(@"************* error ***********");
                      [self.delegate twitterAPI:self errorAtLoadData:nil];
+                     return ;
                  }
 
              });
@@ -133,6 +137,20 @@
          // 1つ目のアカウントを指定
          request.account = accounts.firstObject;
          
+         // タイムアウトセット用にSLRequestからNSMutableURLRequest変換
+         NSMutableURLRequest* muRequest = [request preparedURLRequest].mutableCopy;
+         muRequest.timeoutInterval = 0.1f;
+         
+         // 非同期リクエスト
+         [NSURLConnection
+          sendAsynchronousRequest:muRequest
+          queue:[NSOperationQueue mainQueue]
+          completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error)
+          {
+              NSHTTPURLResponse* urlResponse = (NSHTTPURLResponse*)response;
+             
+              /*
+          }];
          
          // リクエストを投げる
          [request
@@ -141,6 +159,7 @@
            NSHTTPURLResponse* urlResponse,
            NSError* error)
           {
+               */
 //              [self.delegate setIsLoading:YES];
 //              [self.delegate animateAi:YES];
 //              dispatch_async(dispatch_get_main_queue(), ^{
@@ -159,6 +178,7 @@
                      && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
                      )
                   {
+                      DLog(@"************* error ***********");
                       [self.delegate twitterAPI:self errorAtLoadData:error];
                   }
                   return;
@@ -185,6 +205,7 @@
                          && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
                          )
                       {
+                          DLog(@"************* error ***********");
                           [self.delegate twitterAPI:self errorAtLoadData:error];
                       }
                       return;
@@ -272,6 +293,7 @@
                      && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
                      )
                   {
+                      DLog(@"************* error ***********");
                       [self.delegate twitterAPI:self errorAtLoadData:nil];
                   }
               }

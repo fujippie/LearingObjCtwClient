@@ -29,6 +29,7 @@
             <color key="backgroundColor" red="0.13113987830255039" green="0.56876273777173914" blue="0.17635931069833147" alpha="1" colorSpace="calibratedRGB"/>
             <connections>
                 <outlet property="body" destination="TbT-CG-dtl" id="Lc5-La-9BV"/>
+                <outlet property="prfImage" destination="jBm-JP-MwE" id="dsu-u1-l4f"/>
             </connections>
         </tableViewCell>
     </objects>

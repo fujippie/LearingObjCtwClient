@@ -27,7 +27,7 @@
                         <action selector="postBtn:" destination="-1" eventType="touchUpInside" id="2Xk-bW-aEL"/>
                     </connections>
                 </button>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="U0g-VW-Cey">
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="例：あつい。。。" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="U0g-VW-Cey">
                     <rect key="frame" x="20" y="207" width="280" height="154"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>

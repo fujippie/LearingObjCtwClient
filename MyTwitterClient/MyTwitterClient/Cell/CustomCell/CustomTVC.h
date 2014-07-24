@@ -12,4 +12,6 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *body;
 
+@property (weak, nonatomic) IBOutlet UIImageView *prfImage;
+
 @end
