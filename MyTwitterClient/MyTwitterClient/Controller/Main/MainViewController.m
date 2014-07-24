@@ -39,7 +39,16 @@
 -(void) setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [super setEditing:editing animated:animated];
+    self.tableView.allowsMultipleSelectionDuringEditing = YES;
     [self.tableView setEditing:editing animated:animated];
+    
+}
+
+-(void)  tableView:(UITableView *)tableView
+commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+ forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
 }
 
 #pragma mark - Consts
