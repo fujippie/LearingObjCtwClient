@@ -23,7 +23,7 @@
                                       count:(NSInteger)count
                                       maxId:(unsigned long long)maxTweetID
 {
-    DLog("start");
+//    DLog("start");
 
    // printf("RequestTweet_Called %ld ¥n",(long)maxTweetID);
     /*
@@ -56,7 +56,7 @@
      options:nil
      completion:^void (BOOL granted, NSError* error)
      {
-         DLog(@"");
+//         DLog(@"");
          
          // アカウント取得失敗時
          if (error) {
@@ -77,7 +77,6 @@
                      [self.delegate twitterAPI:self errorAtLoadData:error];
                  }
              });
-              DLog(@"TW1.1");
              return ;
          }
      
@@ -86,7 +85,7 @@
          NSArray* accounts = [self.accountStore accountsWithAccountType:accountType];
          if (accounts.count == 0)
          {
-             DLog(@"account 0");
+             
              
              dispatch_async(dispatch_get_main_queue(), ^
              {
@@ -105,11 +104,10 @@
                  }
 
              });
-             DLog(@"TW1.1");
              return ;
          }
          
-         DLog("TW4");//DontPass
+       
          
          // リクエストを出すAPIを指定
          NSURL* url = [NSURL URLWithString:@"https://api.twitter.com/1.1/search/tweets.json"];
@@ -135,7 +133,6 @@
          // 1つ目のアカウントを指定
          request.account = accounts.firstObject;
          
-         DLog("TW5");
          
          // リクエストを投げる
          [request
@@ -284,9 +281,7 @@
           }];
      }];
     //
-    DLog("TWLast");//passed
-    
-//    return tweetData;
+    //    return tweetData;
     
 }
 

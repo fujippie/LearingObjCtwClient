@@ -117,6 +117,14 @@
      4.APIでエラーが出た場合はUIAlertをだし、投稿ボタンを有効化。
      */
 //    [self _postedTweet:str :self.uploadImageView.image];
+    
+    
+    if( self.uploadImageView.image == nil)
+    {//TODO:[画像がない場合は文字だけを投稿するよう変更する]
+        DLog("画像ないのでデフォルトの画像を使用します");
+        self.uploadImageView.image = [UIImage imageNamed:@"female.jpeg"];
+    }
+    
     [self _postedTweetWithText:str image:self.uploadImageView.image];
 }
 
@@ -165,12 +173,8 @@
 //    画像を読み込まなかった↓
 //    UIImage* icon = [[UIImage alloc] initWithContentsOfFile:@"female"];
 //    画像をファイル名で指定してUiimage型に格納
+    uploadImage = [UIImage imageNamed:@"female.jpeg"];
     
-    if(uploadImage == nil)
-    {//TODO:[画像がない場合は文字だけを投稿するよう変更する]
-        DLog("画像ないのでデフォルトの画像を使用します");
-        uploadImage = [UIImage imageNamed:@"female.jpeg"];
-    }
 //    ツイート(Text)，画像，位置情報をツイッターに投稿
     [self.twitterApi asyncPostTweetWithBody:text coordinate:OsakaEki image:uploadImage];
 }

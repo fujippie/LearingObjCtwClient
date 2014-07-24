@@ -60,7 +60,7 @@ static NSString* const _cellId = @"CustomTVC";
     
     [self.tableView addSubview:self.refreshControl];
 
-//  NavigationBarの設定
+//  NavigationBarの設定　（更新中に表示するアイコン）
     self.title = [NSString stringWithFormat:@"%@:%d", NSStringFromClass(self.class), [self.navigationController.viewControllers indexOfObject:self]];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"投稿" style:UIBarButtonItemStylePlain  target:self action:@selector(leftBarBtnPushed:)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
@@ -86,21 +86,18 @@ static NSString* const _cellId = @"CustomTVC";
 
 -(void) postViewController:(PostViewController *)postViewController postedTweet:(Tweet*)tweet
 {
-    
-    
-    
-    
     DLog("________ツイート内容(引数:tweet)をTableViewに挿入する");
-
-
-    
-    
-    
+    [self.tweetData insertObject:tweet atIndex:0];
+    NSIndexPath* indexPath = [NSIndexPath indexPathForItem:0 inSection:0];//先頭に追加
+    // インサート 指定したIndexPathの要素に対してだけデリゲートが呼ばれる
+    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    // アップデート
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 #pragma mark TwitterAPIDelegate
 
-
+//TwitterAPI.mから,取得時に呼び出される.ツイート配列を引数とするデリゲートメソッド,
 -(void)twitterAPI:(TwitterAPI *)twitterAPI tweetData:(NSArray *)tweetData
 {
     DLog(@"tweetData:\n%@", tweetData);
@@ -115,23 +112,25 @@ static NSString* const _cellId = @"CustomTVC";
 -(void)twitterAPI:(TwitterAPI *)twitterAPI errorAtLoadData:(NSError *)error
 {
     DLog(@"error:\n%@", error);
-
     self.isLoading = NO;
     [self.refreshControl endRefreshing];
 }
 
 #pragma mark UITableViewDataSource
 
+//TableViewがReloadされたときに呼び出される.Tableの要素数を返す.
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
+    DLog("\n NUMBER OF ROW IN");
     return self.tweetData.count;
 }
+
 
 -(UITableViewCell *)tableView:(UITableView *)tableView
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-   
+   DLog("\n CELL FOR ROW INDEX PATH");
     CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
     
     Tweet* tweet = self.tweetData[indexPath.row];
@@ -199,10 +198,10 @@ static NSString* const _cellId = @"CustomTVC";
     return view;
 }
 
-
 -(CGFloat)    tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    DLog("HEIGHT FOR ROW AT INDEX PATH");
     Tweet* tweet = self.tweetData[indexPath.row];
     NSString* body = tweet.body;
     UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
@@ -269,6 +268,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 -(void) _refreshData:(UIRefreshControl *) refreshControl
 {
+    DLog("REFRESH");
     if (self.isLoading) {
         return;
     }
@@ -501,6 +501,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 #pragma mark - Accessor
 -(PostViewController *) postViewController
 {
+    
     if(_postViewController == nil)
     {
         _postViewController = [[PostViewController alloc] init];
