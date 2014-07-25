@@ -188,7 +188,7 @@
 
               // 通信成功時(200系)
               if (200 <= urlResponse.statusCode && urlResponse.statusCode < 300) {
-                  DLog(@"通信成功時(200系)");
+//                  DLog(@"通信成功時(200系)");
                   NSError* e = nil;
                   NSDictionary* jsonDic = [NSJSONSerialization
                                            JSONObjectWithData:responseData
@@ -224,13 +224,13 @@
                       
                       // 見つかったツイート配列を格納
                       NSArray* twAr = jsonDic[@"statuses"];
-                      DLog("\n\tJSON.count:%d", twAr.count);
+//                      DLog("\n\tJSON.count:%d", twAr.count);
                       // ツイート配列からテキストのみを抽出
                       //ツイート内容,緯度経度,IDを取得
                       
                       for(int index = 0; index < [twAr count]; index++)
                       {
-                          DLog("TW6 index:%d", index);
+//                          DLog("TW6 index:%d", index);
                           
                           NSDictionary* status = [twAr objectAtIndex:index];
                           Tweet* tweet = [Tweet tweetWithDic:status];

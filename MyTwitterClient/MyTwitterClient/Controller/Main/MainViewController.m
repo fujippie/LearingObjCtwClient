@@ -198,10 +198,20 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 
     
     
-    cell.body.text = [NSString stringWithFormat:@"ROW:%d\nBODY:%@", indexPath.row,tweet.body];
+    cell.body.text = [NSString stringWithFormat:@"%@",tweet.body];
 //    cell.textLabel.text = [NSString stringWithFormat:@"%@", self.sampleData[indexPath.row]];
-    cell.textLabel.lineBreakMode = NSLineBreakByCharWrapping;
-    cell.textLabel.numberOfLines = 0;
+    
+//    
+//    cell.textLabel.lineBreakMode = NSLineBreakByCharWrapping;
+//    cell.textLabel.numberOfLines = 0;
+    
+
+    
+    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
+    cell.body.numberOfLines = 0;
+    
+    
+    
     
     cell.body.frame = CGRectMake(
                                  cell.body.frame.origin.x,
@@ -209,7 +219,9 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
                                  cell.body.frame.size.width,
                                  cell.frame.size.height
                                  );
+//    DLog("\n\t1BodyHeight:%f",cell.body.frame.size.height);
     [cell.body sizeToFit];
+//    DLog("\n\t2BodyHeight%f",cell.body.frame.size.height);
 //  CELLにアイコン(プロフィール)画像をセット
 //    [cell.prfImage setImage:Twitter型からImageを取得];
     if (tweet.profileImage)
@@ -220,6 +232,19 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     {
         cell.prfImage.image = [UIImage imageNamed:@"noImage"];
     }
+    
+    DLog("\n\t1BodyHeight:%f",cell.frame.size.height);
+    
+  
+    cell.frame = CGRectMake(
+                                 cell.body.frame.origin.x,
+                                 cell.body.frame.origin.y,
+                                 cell.body.frame.size.width,
+                                 cell.body.frame.size.height
+                                 );
+    [cell sizeToFit];
+    DLog("\n\t2BodyHeight%f",cell.frame.size.height);
+    
     
     /*
     DLog(
@@ -236,6 +261,8 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
          );
      */
     
+    
+//    [cell sizeToFit];
     return cell;
 }
 
