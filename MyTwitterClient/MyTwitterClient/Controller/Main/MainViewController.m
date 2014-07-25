@@ -157,8 +157,6 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 - (BOOL)    tableView:(UITableView *)tableView
 canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //
-    DLog("canEditRow");
     return YES;
 }
 
@@ -167,12 +165,12 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath
 commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
  forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    DLog(@"commitEditing");
-    
     //    editingStyleはUITableViewCellEditingStyleInsert,UITableViewCellEditingStyleDeleteのどちらかをとる
     if(editingStyle == UITableViewCellEditingStyleDelete)
     {
         DLog("DELETEButtonPushed");
+        [self.tweetData removeObjectAtIndex:indexPath.row];
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
 
@@ -191,7 +189,14 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     
     Tweet* tweet = self.tweetData[indexPath.row];
 //  CELLにツイート(文字列)をセット
-    cell.body.text = [NSString stringWithFormat:@"%@", tweet.body];
+    
+    
+    
+    //
+
+    
+    
+    cell.body.text = [NSString stringWithFormat:@"ROW:%d\nBODY:%@", indexPath.row,tweet.body];
 //    cell.textLabel.text = [NSString stringWithFormat:@"%@", self.sampleData[indexPath.row]];
     cell.textLabel.lineBreakMode = NSLineBreakByCharWrapping;
     cell.textLabel.numberOfLines = 0;
@@ -204,7 +209,6 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
                                  );
     [cell.body sizeToFit];
 //  CELLにアイコン(プロフィール)画像をセット
-    DLog("IMAGE____%f",tweet.profileImage.size.height);
 //    [cell.prfImage setImage:Twitter型からImageを取得];
     if (tweet.profileImage)
     {
@@ -287,7 +291,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     else
     {
 //       編集モードでなければ,CELLの選択を外す.
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
 
@@ -326,11 +330,31 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //    DLog("SETEDIT");
     [super setEditing:editing animated:animated];
-    
-    //複数選択を可能にするフラグ　タップしても選択状態を保持できない
+//  allowsMultipleSelec....が先に呼ばれると以下のIF文は複数選択のフラグが解除された状態で呼ばれる.
+    if(editing == NO)
+    {
+        DLog("DONE Pushed");
+        DLog("ここで一括削除処理を記述");
+        NSArray* selectedCells = [self.tableView indexPathsForSelectedRows];
+        DLog("%@",selectedCells);
+        DLog("SelectedCount%d",selectedCells.count);
+        
+//配列をindex.path.row順にソート
+        
+        for(NSIndexPath* indexPath in selectedCells)
+        {
+            [self.tweetData removeObjectAtIndex:indexPath.row];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            DLog("DeleteRow NO..%d",indexPath.row);
+        }
+
+    }
+    //複数選択を可能にするフラグ
     self.tableView.allowsMultipleSelectionDuringEditing = editing;
     
     [self.tableView setEditing:editing animated:animated];
+    
+    
 }
 
 #pragma mark - Event
