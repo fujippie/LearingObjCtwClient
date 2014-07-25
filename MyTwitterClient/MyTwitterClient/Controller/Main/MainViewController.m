@@ -33,23 +33,7 @@
 @implementation MainViewController
 // TODO: synthesizeの意味を理解する。
 //@synthesize isLoading;
-#pragma mark UITableView
 
-
--(void) setEditing:(BOOL)editing animated:(BOOL)animated
-{
-    [super setEditing:editing animated:animated];
-    self.tableView.allowsMultipleSelectionDuringEditing = YES;
-    [self.tableView setEditing:editing animated:animated];
-    
-}
-
--(void)  tableView:(UITableView *)tableView
-commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
- forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
-}
 
 #pragma mark - Consts
 
@@ -80,8 +64,12 @@ static NSString* const _cellId = @"CustomTVC";
 
 //  NavigationBarの設定　（更新中に表示するアイコン）
     self.title = [NSString stringWithFormat:@"%@:%d", NSStringFromClass(self.class), [self.navigationController.viewControllers indexOfObject:self]];
+    
+    //
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"投稿" style:UIBarButtonItemStylePlain  target:self action:@selector(leftBarBtnPushed:)];
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
+    
+//    編集ボタンを追加する.
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
 // 確認事項   [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
@@ -162,8 +150,31 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     [self.refreshControl endRefreshing];
 }
 
-
 #pragma mark UITableViewDataSource
+
+//スワイプすると横にDeleteボタンが出るようにするメッソド
+//セルが作られると呼ばれる
+- (BOOL)    tableView:(UITableView *)tableView
+canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //
+    DLog("canEditRow");
+    return YES;
+}
+
+//編集モード時でDeleteかInsertされた時に呼び出される
+-(void)  tableView:(UITableView *)tableView
+commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+ forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    DLog(@"commitEditing");
+    
+    //    editingStyleはUITableViewCellEditingStyleInsert,UITableViewCellEditingStyleDeleteのどちらかをとる
+    if(editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        DLog("DELETEButtonPushed");
+    }
+}
 
 //TableViewがReloadされたときに呼び出される.Tableの要素数を返す.
 - (NSInteger)tableView:(UITableView *)tableView
@@ -226,33 +237,13 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
 #pragma mark UITableViewDelegate
 
-//
-//-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-//{
-//    return 50.0;
-//}
-//
-//-(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    UIView *view = [[UIView alloc] init];
-//   
-//    
-//    //[ai startAnimating];
-//    
-//    return view;
-//}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 50.0;
 }
 
-//-(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-//{
-//    UIView *view = [[UIView alloc] init];
-//    //[view addSubview:self.ai];
-//    return view;
-//}
+
 
 -(CGFloat)    tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -286,9 +277,18 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //三項演算子構文↑↑
 }
 
+//セルが選択されたときに呼び出される.
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if (self.editing)
+    {
+    }
+    else
+    {
+//       編集モードでなければ,CELLの選択を外す.
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }
 }
 
 #pragma mark ScrollViewDelegate
@@ -315,14 +315,25 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         DLog(@"self.twieetApi:%@", self.twitterApi);
         
         [self.twitterApi tweetsInNeighborWithCoordinate:OsakaEki radius:1 count:30 maxId:lastTweet.id];
-        
-        
     }
 
 }
 
-#pragma mark - Event
+#pragma mark - Override
 
+//編集モードにするEdit/Doneボタンを押したときに呼び出される
+-(void) setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    //    DLog("SETEDIT");
+    [super setEditing:editing animated:animated];
+    
+    //複数選択を可能にするフラグ　タップしても選択状態を保持できない
+    self.tableView.allowsMultipleSelectionDuringEditing = editing;
+    
+    [self.tableView setEditing:editing animated:animated];
+}
+
+#pragma mark - Event
 
 -(void) _refreshData:(UIRefreshControl *) refreshControl
 {
@@ -371,194 +382,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //    [postView helloPostDel];
     
 }
-//- (void)_requestTweets:(unsigned long long)maxId
-//{
-//    printf("RequestTweet_Called %ld ¥n",(long)maxId);
-////TwitterAPI
-//    
-//    
-//    if (self.isLoading == YES) {
-////        [self.ai startAnimating];
-//        return;
-//    }
-//    self.isLoading = YES;
-//    [self.ai startAnimating];
-////    Twiitter
-////    DLog(@"NSThred isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");
-//
-//    ACAccountType* accountType = [self.accountStore
-//                                  accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
-//    
-//    [self.accountStore
-//     requestAccessToAccountsWithType:accountType
-//     options:NULL
-//     completion:^void (BOOL granted, NSError* error)
-//     {
-//         // アカウント取得失敗時
-//         if (error) {
-//             DLog(@"error :%@", error);
-//             
-//             dispatch_async(dispatch_get_main_queue(), ^{
-//                 [self.refreshControl endRefreshing];
-//             });
-//             
-//             return;
-//         }
-//         
-//         // titterアカウント取得（複数あるかも。。）
-//         NSArray* accounts = [self.accountStore accountsWithAccountType:accountType];
-//         if (accounts.count == 0) {
-//             DLog(@"account 0");
-//             
-//             dispatch_async(dispatch_get_main_queue(), ^{
-//                 [self.refreshControl endRefreshing];
-//             });
-//             
-//             return;
-//         }
-//         
-//         
-//         // リクエストを出すAPIを指定
-//         NSURL* url = [NSURL URLWithString:@"https://api.twitter.com/1.1/search/tweets.json"];
-////         [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/home_timeline.json"];
-//         // リクエストのパラメータを設定
-//         NSMutableDictionary* params = @{
-////                                  @"screen_name" : [accounts.firstObject username],
-//                                  @"count"       : @(3).description,
-//                                  @"q"           : @"",
-//                                  @"geocode"     : @"34.701909,135.494977,1km"
-//                                  }.mutableCopy;
-//         // ロードモア時に使用
-//         if (maxId != 0) {
-//             [params setObject:@(maxId - 1).description forKey:@"max_id"];
-//         }
-//         
-//         // リクエストを作成
-//         SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter
-//                                                 requestMethod:SLRequestMethodGET
-//                                                           URL:url
-//                                                    parameters:params];
-//         // 1つ目のアカウントを指定
-//         request.account = accounts.firstObject;
-//         
-//         // リクエストを投げる
-//         [request
-//          performRequestWithHandler:^ void
-//          (NSData* responseData,
-//           NSHTTPURLResponse* urlResponse,
-//           NSError* error)
-//          {
-//              self.isLoading = YES;
-//              [self.ai startAnimating];
-//              dispatch_async(dispatch_get_main_queue(), ^{
-//                  [self.refreshControl endRefreshing];
-//              });
-//
-////              DLog(@"responsData\n%@", [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
-//              
-//              // エラー処理
-//              if (error) {
-//                  self.isLoading = NO;
-//                  [self.ai stopAnimating];
-//                  DLog(@"urlResponse:%@, error:%@", urlResponse, error);
-//                  return;
-//              }
-//              
-//              // 通信成功時(200系)
-//              if (200 <= urlResponse.statusCode && urlResponse.statusCode < 300) {
-//                  DLog(@"通信成功時(200系)");
-//                  NSError* e = nil;
-//                  NSDictionary* jsonDic = [NSJSONSerialization
-//                                           JSONObjectWithData:responseData
-//                                           options:NSJSONReadingAllowFragments
-//                                           error:&e
-//                                           ];
-//                  // エラー処理
-//                  if (e) {
-//                      DLog(@"e:%@", e);
-//                      self.isLoading = NO;
-//                      [self.ai stopAnimating];
-//                      return;
-//                  }
-//                  
-//                  // データ取得成功時
-//                  if (jsonDic.count > 0) {
-//                      
-//                      self.isLoading = NO;
-//                      [self.ai stopAnimating];
-//                      /*
-//                       NSDictionary* jsonDic;
-//                       jsonDic[@"apple"]
-//                       jsonDic objectForKey:@"apple"]
-//                       */
-//                      
-//                      
-//                      
-//                      
-//                      // 見つかったツイート配列を格納
-//                      NSArray* twAr = jsonDic[@"statuses"];
-//                      
-//                      // ツイート配列からテキストのみを抽出
-//                      //ツイート内容,緯度経度,IDを取得
-//                      
-//                      for(int index = 0; index < [twAr count]; index++)
-//                      {
-//                          NSDictionary* status = [twAr objectAtIndex:index];
-//                          Tweet* tweet = [Tweet tweetWithDic:status];
-//
-//                        //  tweet.latitude
-////                          DLog(@"body:%@",tweet.body);
-////                          DLog(@"profileImageUrl:%@",tweet.profileImageUrl);
-////                          DLog(@"lati %f , long%f",tweet.latitude,tweet.longitude);
-//                          
-//                          [self.tweetData addObject:tweet];
-//                      }
-//                      
-//                      // メインスレッドで実行(GCD)
-//                      dispatch_async(dispatch_get_main_queue(), ^{
-//                          [self _refresh];
-//                      });
-//                      
-//                      // メインスレッドで実行(NSThread)
-////                      [self performSelectorOnMainThread:@selector(_refresh)
-////                                             withObject:nil
-////                                          waitUntilDone:NO];
-//                      
-//                      /*
-//                       Tweet
-//                       id
-//                       user.profile_image_url
-//                       text
-//                       geo.coordinates
-//                       */
-//                      
-//                      /*
-//                       34.683015999977,135.477230003533
-//                       34.683015999977,135.527178003877
-//                       34.7177310034282,135.527178003877
-//                       34.7177310034282,135.477230003533
-//                       */
-////                      DLog(@"jsonArr:\n%@", jsonDic);
-//                  }
-//                  else {
-//                      DLog(@"json なし");
-//                  }
-//              }
-//              // 通信失敗時
-//              else {
-//                  DLog(@"request error:%@", urlResponse);
-//                  self.isLoading = NO;
-//                  [self.ai stopAnimating];
-//              }
-//              
-//              self.isLoading = NO;
-//              [self.ai stopAnimating];
-//          }];
-//     }];
-//    //
-//    
-//}
-//
+
 #pragma mark - Accessor
 -(PostViewController *) postViewController
 {

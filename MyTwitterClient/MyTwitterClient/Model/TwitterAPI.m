@@ -139,7 +139,7 @@
          
          // タイムアウトセット用にSLRequestからNSMutableURLRequest変換
          NSMutableURLRequest* muRequest = [request preparedURLRequest].mutableCopy;
-         muRequest.timeoutInterval = 0.1f;
+         muRequest.timeoutInterval = 3.0f;
          
          // 非同期リクエスト
          [NSURLConnection
