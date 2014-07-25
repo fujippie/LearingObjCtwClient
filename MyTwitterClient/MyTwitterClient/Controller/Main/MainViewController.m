@@ -70,10 +70,15 @@ static NSString* const _cellId = @"CustomTVC";
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
     
 //    編集ボタンを追加する.
+    [self.editButtonItem setTitle:@"削除"];
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
 // 確認事項   [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
 //    [self.tableView addSubview:self.btn];
+    
+    
+    [self.view addSubview:self.ai];
+    [self.view bringSubviewToFront:self.ai];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -111,6 +116,7 @@ static NSString* const _cellId = @"CustomTVC";
 //    DLog(@"tweetData:\n%@", tweetData);
     
     self.isLoading = NO;
+    [self.ai stopAnimating];
     [self.refreshControl endRefreshing];
     
     [self.tweetData addObjectsFromArray:tweetData.mutableCopy];
@@ -126,18 +132,13 @@ static NSString* const _cellId = @"CustomTVC";
     DLog(@"\n___________error:\n%@", dic[@"NSLocalizedDescription"]);
     DLog("%@", error.domain);
     DLog("%d", error.code);
-//error.domain error.code error.userInfo
-    
-//    if([erSt isEqualToString:@"The request timed out."])
-//    if(error.code == kCFURLErrorTimedOut)
-//    {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"タイムアウト"
                                                         message:@"ツイート取得失敗"
                                                        delegate:self
                                               cancelButtonTitle:@"閉じる"
                                               otherButtonTitles:nil];
         [alert show];
-//    }
+
     
 }
 
@@ -147,6 +148,7 @@ static NSString* const _cellId = @"CustomTVC";
 clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     self.isLoading = NO;
+    [self.ai stopAnimating];
     [self.refreshControl endRefreshing];
 }
 
@@ -241,12 +243,21 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 
 #pragma mark UITableViewDelegate
 
-
--(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    return 50.0;
-}
-
+//
+//-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+//{
+//    
+//    return 50.0;
+//}
+//-(UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+//{
+//    UIView* ui= [[UIView alloc] init];
+//    ui.backgroundColor = [UIColor blackColor];
+//    [ui addSubview:self.ai];
+//    [ui center];
+//    return ui;
+//
+//}
 
 
 -(CGFloat)    tableView:(UITableView *)tableView
@@ -308,7 +319,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.tweetData.count)
     {
         self.isLoading = YES;
-        
+        [self.ai startAnimating];
         Tweet* lastTweet = self.tweetData.lastObject;
         
         //[self _requestTweets:lastTweet.id];
@@ -333,6 +344,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //  allowsMultipleSelec....が先に呼ばれると以下のIF文は複数選択のフラグが解除された状態で呼ばれる.
     if(editing == NO)
     {
+        [self.editButtonItem setTitle:@"削除"];
         DLog("DONE Pushed");
         DLog("ここで一括削除処理を記述");
         NSArray* selectedCells = [self.tableView indexPathsForSelectedRows];
@@ -340,21 +352,27 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         DLog("SelectedCount%d",selectedCells.count);
         
 //配列をindex.path.row順にソート
+        [self.tableView beginUpdates];
         
-        for(NSIndexPath* indexPath in selectedCells)
-        {
-            [self.tweetData removeObjectAtIndex:indexPath.row];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            DLog("DeleteRow NO..%d",indexPath.row);
+       
+        NSMutableIndexSet* indexSet=[[NSMutableIndexSet alloc] init];
+        for (NSIndexPath* indexPath in selectedCells) {
+            [indexSet addIndex:indexPath.row];
         }
+        
+        [self.tweetData removeObjectsAtIndexes:indexSet];
+        [self.tableView deleteRowsAtIndexPaths:selectedCells withRowAnimation:UITableViewRowAnimationFade];
+        
+        [self.tableView endUpdates];
 
+    }
+    else{
+        [self.editButtonItem setTitle:@"確定"];
     }
     //複数選択を可能にするフラグ
     self.tableView.allowsMultipleSelectionDuringEditing = editing;
     
     [self.tableView setEditing:editing animated:animated];
-    
-    
 }
 
 #pragma mark - Event
@@ -473,10 +491,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     if(_ai == nil){
         _ai =[[UIActivityIndicatorView alloc] init];
         _ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
-        _ai.hidesWhenStopped = NO;//ActivityIndicatorを残すとき
-        
-            }
-    
+        _ai.hidesWhenStopped = YES;//ActivityIndicatorを残すとき
+        [_ai setCenter:CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height+50)];
+    }
     return _ai;
 }
 
