@@ -37,6 +37,7 @@
 #pragma mark - Consts
 
 static NSString* const _cellId = @"CustomTVC";
+static NSString* const _oclCellId = @"OcoloTableViewCell";
 
 #pragma mark - LifeCycle
 
@@ -159,9 +160,25 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
 #pragma mark UITableViewDataSource
 
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 100;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHearderInSection:(NSInteger)section
+{
+    DLog("FOOOTER_IN_SECTION");
+//    UIViewは必ずFrameを作って初期化すること
+    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 44) ];
+    view.backgroundColor = [UIColor grayColor];
+    
+    return view;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 25;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
@@ -320,7 +337,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //セルが選択されたときに呼び出される.
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     if (self.editing)
     {
     }
@@ -342,8 +358,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     CGFloat remain = contentSize.height - contentOffset.y;
     
     if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.tweetData.count
-       // FIXME : for debug
-       && self.tweetData.count < 100
+//ツイートを100以降,読み込まない
+//       && self.tweetData.count < 100
        )
     {
         self.isLoading = YES;

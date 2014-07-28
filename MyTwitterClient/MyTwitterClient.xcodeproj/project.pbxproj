@@ -20,6 +20,8 @@
 		22B75B73196D2091008A669B /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B75B71196D2091008A669B /* MainViewController.m */; };
 		22B75B74196D2091008A669B /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22B75B72196D2091008A669B /* MainViewController.xib */; };
 		22B8C1CA1980C2280012EC26 /* noImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B8C1C91980C2280012EC26 /* noImage.png */; };
+		22B9BC90198620C100676F07 /* OcoloTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9BC8E198620C100676F07 /* OcoloTableViewCell.m */; };
+		22B9BC91198620C100676F07 /* OcoloTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22B9BC8F198620C100676F07 /* OcoloTableViewCell.xib */; };
 		22CD2D331974D2C700CCB6B4 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 22CD2D321974D2C700CCB6B4 /* Tweet.m */; };
 		22D0A402196F9A72008A3CED /* sampleData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 22D0A401196F9A72008A3CED /* sampleData.plist */; };
 		22E61C22196BEA600051AD01 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22E61C21196BEA600051AD01 /* Foundation.framework */; };
@@ -66,6 +68,9 @@
 		22B75B71196D2091008A669B /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		22B75B72196D2091008A669B /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
 		22B8C1C91980C2280012EC26 /* noImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noImage.png; sourceTree = "<group>"; };
+		22B9BC8D198620C100676F07 /* OcoloTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OcoloTableViewCell.h; sourceTree = "<group>"; };
+		22B9BC8E198620C100676F07 /* OcoloTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OcoloTableViewCell.m; sourceTree = "<group>"; };
+		22B9BC8F198620C100676F07 /* OcoloTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OcoloTableViewCell.xib; sourceTree = "<group>"; };
 		22CD2D311974D2C700CCB6B4 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
 		22CD2D321974D2C700CCB6B4 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
 		22D0A401196F9A72008A3CED /* sampleData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sampleData.plist; sourceTree = "<group>"; };
@@ -183,6 +188,16 @@
 			path = 4_iii;
 			sourceTree = "<group>";
 		};
+		22B9BC8C1986209300676F07 /* OcoloCell */ = {
+			isa = PBXGroup;
+			children = (
+				22B9BC8D198620C100676F07 /* OcoloTableViewCell.h */,
+				22B9BC8E198620C100676F07 /* OcoloTableViewCell.m */,
+				22B9BC8F198620C100676F07 /* OcoloTableViewCell.xib */,
+			);
+			path = OcoloCell;
+			sourceTree = "<group>";
+		};
 		22CD2D301974C3BF00CCB6B4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -283,6 +298,7 @@
 		30746E8D196E873C0005F5F0 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				22B9BC8C1986209300676F07 /* OcoloCell */,
 				226470E819736D5600A4FD4A /* CustomCell */,
 			);
 			path = Cell;
@@ -380,6 +396,7 @@
 				22B75B68196D0F62008A669B /* female.jpeg in Resources */,
 				22B8C1CA1980C2280012EC26 /* noImage.png in Resources */,
 				22B6792F19764C7C006F700C /* PostViewController.xib in Resources */,
+				22B9BC91198620C100676F07 /* OcoloTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +417,7 @@
 			files = (
 				22E61C32196BEA600051AD01 /* AppDelegate.m in Sources */,
 				22B6793219766277006F700C /* TwitterAPI.m in Sources */,
+				22B9BC90198620C100676F07 /* OcoloTableViewCell.m in Sources */,
 				22B75B41196CD9B4008A669B /* BaseViewController.m in Sources */,
 				22E61C2E196BEA600051AD01 /* main.m in Sources */,
 				22CD2D331974D2C700CCB6B4 /* Tweet.m in Sources */,
