@@ -10,7 +10,11 @@
 
 @interface OcoloTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UILabel *tweetBody;
+@property (weak, nonatomic) IBOutlet UILabel *body;//ツイート内容
 @property (weak, nonatomic) IBOutlet UIImageView *prfImage;
+//iconの画像
+@property (weak, nonatomic) IBOutlet UILabel *spot;
+@property (weak, nonatomic) IBOutlet UILabel *accountName;
+@property (weak, nonatomic) IBOutlet UILabel *postTime;
 
 @end

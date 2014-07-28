@@ -7,12 +7,12 @@
 //
 
 #import "MainViewController.h"
-#import "CustomTVC.h"
+//#import "CustomTVC.h"
 #import "Tweet.h"
 #import "TwitterAPI.h"
 #import "PostViewController.h"
 #import "AppDelegate.h"
-
+#import "OcoloTableViewCell.h"
 
 @interface MainViewController  ()
 <UIAlertViewDelegate>
@@ -36,9 +36,8 @@
 
 #pragma mark - Consts
 
-static NSString* const _cellId = @"CustomTVC";
-static NSString* const _oclCellId = @"OcoloTableViewCell";
-
+//static NSString* const _cellId = @"CustomTVC";
+static NSString* const _cellId = @"OcoloCell";
 #pragma mark - LifeCycle
 
 - (void)viewDidLoad
@@ -51,12 +50,17 @@ static NSString* const _oclCellId = @"OcoloTableViewCell";
 //    if([self.navigationController isEqual:appDelegate.navigationController])=>YESを返す
 
 //TableViewの追加と設定
-    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(CustomTVC.class) bundle:nil]
+//    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(CustomTVC.class) bundle:nil]
+//         forCellReuseIdentifier:_cellId];
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(OcoloTableViewCell.class) bundle:nil]
          forCellReuseIdentifier:_cellId];
+    
     
 //TableViewのCellの登録と設定
 //    id型のもので型が確定するものはその型にしておく
-    CustomTVC* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    //CustomTVC* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    OcoloTableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    
     self.defaultCellBodyFrame = customTVC.body.frame;
     self.defaultCellFrame = customTVC.frame;
     
@@ -160,25 +164,9 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
 #pragma mark UITableViewDataSource
 
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 100;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHearderInSection:(NSInteger)section
-{
-    DLog("FOOOTER_IN_SECTION");
-//    UIViewは必ずFrameを作って初期化すること
-    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 44) ];
-    view.backgroundColor = [UIColor grayColor];
-    
-    return view;
-}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return 25;
+    return 100;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
@@ -219,8 +207,8 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DLog("cellForRowAtIndexPath");
-    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
-    
+//    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
+    OcoloTableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
     Tweet* tweet = self.tweetData[indexPath.row];
 //  CELLにツイート(文字列)をセット
     
@@ -229,9 +217,10 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     cell.body.numberOfLines = 0;
 //  Cell中のTextLabelを設定
     
+    //Frameの左上を原点として,Bodyを配置
     cell.body.frame = CGRectMake(
                                  cell.body.frame.origin.x,
-                                 cell.body.frame.origin.y,
+                                 cell.prfImage.frame.size.height,
                                  cell.body.frame.size.width,
                                  [self _cellHFromText:cell.body.text] - 10
                                  );
@@ -248,18 +237,18 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     }
     
     
-    DLog(
-         @"%d"
-         @"\n\tcell.body.text      :%@"
-         @"\n\tcell.frame          :%@"
-         @"\n\tcell.body.frame     :%@"
-         @"\n\tdefaultCellBodyFrame:%@"
-         , indexPath.row
-         , cell.body.text
-         , NSStringFromCGRect(cell.frame)
-         , NSStringFromCGRect(cell.body.frame)
-         , NSStringFromCGRect(self.defaultCellBodyFrame)
-         );
+//    DLog(
+//         @"%d"
+//         @"\n\tcell.body.text      :%@"
+//         @"\n\tcell.frame          :%@"
+//         @"\n\tcell.body.frame     :%@"
+//         @"\n\tdefaultCellBodyFrame:%@"
+//         , indexPath.row
+//         , cell.body.text
+//         , NSStringFromCGRect(cell.frame)
+//         , NSStringFromCGRect(cell.body.frame)
+//         , NSStringFromCGRect(self.defaultCellBodyFrame)
+//         );
     
 
     return cell;
@@ -303,33 +292,38 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 -(CGFloat)_cellHFromText:(NSString*)text
 {
-    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
+    //Cell内の文字列のフォントを取得
+//    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
+    UIFont*   font = ((OcoloTableViewCell*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
     DLog(@"font:%@", font);
-    
+//  Textに応じたBodyの高さを返す
     CGFloat cellBodyH = [text boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
                                            options:NSStringDrawingUsesLineFragmentOrigin //| NSStringDrawingUsesFontLeading
                                         attributes:@{NSFontAttributeName:font}
                                            context:nil
                          ].size.height;
+    //TODO:[位置情報のTextの高さを加算]
+    
+    
     CGFloat cellH = self.defaultCellFrame.size.height + (cellBodyH - self.defaultCellBodyFrame.size.height);
     
     DLog(
          @"\n\ttext                :%@"
-         @"\n\tdefaultCellFrame    :%@"
-         @"\n\tdefaultCellBodyFrame:%@"
+//         @"\n\tdefaultCellFrame    :%@"
+//         @"\n\tdefaultCellBodyFrame:%@"
          @"\n\tcellBodyH           :%f"
-         @"\n\tcellH               :%f"
+//         @"\n\tcellH               :%f"
          , text
-         , NSStringFromCGRect(self.defaultCellFrame)
-         , NSStringFromCGRect(self.defaultCellBodyFrame)
+//         , NSStringFromCGRect(self.defaultCellFrame)
+//         , NSStringFromCGRect(self.defaultCellBodyFrame)
          , cellBodyH
-         , cellH
+//         , cellH
          );
     
     
     cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
     //三項演算子構文↑↑
-    DLog("CELLH : %f", cellH);
+//    DLog("CELLH : %f", cellH);
 
     return cellH;
 }
@@ -337,6 +331,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //セルが選択されたときに呼び出される.
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     if (self.editing)
     {
     }
@@ -358,7 +353,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     CGFloat remain = contentSize.height - contentOffset.y;
     
     if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.tweetData.count
-//ツイートを100以降,読み込まない
+//       // FIXME : for debug
 //       && self.tweetData.count < 100
        )
     {
