@@ -36,9 +36,15 @@
         {
             tweet.profileImageUrl = userDic[@"profile_image_url"];
 
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-                NSData* profileImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:tweet.profileImageUrl]];
-                tweet.profileImage = [UIImage imageWithData:profileImageData];
+            __weak Tweet* weakTweet = tweet;
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
+            {
+                if (weakTweet == nil) {
+                    return ;
+                }
+                
+                NSData* profileImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:weakTweet.profileImageUrl]];
+                weakTweet.profileImage = [UIImage imageWithData:profileImageData];
             });
         }
     }

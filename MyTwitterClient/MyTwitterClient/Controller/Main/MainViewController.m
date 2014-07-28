@@ -25,7 +25,6 @@
 @property (nonatomic, strong) UIActivityIndicatorView* ai ;
 @property (nonatomic, strong) PostViewController* postViewController;
 @property (nonatomic, strong) TwitterAPI* twitterApi;
-
 @property (nonatomic, assign) BOOL isInitialized;
 
 @end
@@ -76,9 +75,6 @@ static NSString* const _cellId = @"CustomTVC";
 // 確認事項   [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
 //    [self.tableView addSubview:self.btn];
     
-    
-    [self.view addSubview:self.ai];
-    [self.view bringSubviewToFront:self.ai];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -95,7 +91,7 @@ static NSString* const _cellId = @"CustomTVC";
 
 #pragma mark - Delegate
 
-#pragma mark  PostViewController
+#pragma mark  PostViewControllerDelegate
 
 -(void) postViewController:(PostViewController *)postViewController postedTweet:(Tweet*)tweet
 {
@@ -116,7 +112,10 @@ static NSString* const _cellId = @"CustomTVC";
 //    DLog(@"tweetData:\n%@", tweetData);
     
     self.isLoading = NO;
-    [self.ai stopAnimating];
+    
+//    [self.ai stopAnimating];
+//    self.ai.hidden = YES;
+    
     [self.refreshControl endRefreshing];
     
     [self.tweetData addObjectsFromArray:tweetData.mutableCopy];
@@ -148,11 +147,106 @@ static NSString* const _cellId = @"CustomTVC";
 clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     self.isLoading = NO;
-    [self.ai stopAnimating];
+    
+//    [self.ai stopAnimating];
+//    self.ai.hidden = YES;
+    
+    
     [self.refreshControl endRefreshing];
+    
+    [self.tableView reloadData];
 }
 
 #pragma mark UITableViewDataSource
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 100;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    DLog("FOOOTER_IN_SECTION");
+    
+    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 44) ];
+    view.backgroundColor = [UIColor clearColor];
+    
+    //    self.ai.center= CGPointMake(self.tableView.tableFooterView.frame.size.width/2,
+    //                                 self.tableView.tableFooterView.frame.size.height/2);
+    self.ai.center = view.center;
+    
+    [view addSubview:self.ai];
+    
+    if(self.isLoading == YES)
+    {
+        return view;
+    }
+    else
+    {
+        return [[UIView alloc] init];
+    }
+    
+    return view;
+}
+
+//TableViewがReloadされたときに呼び出される.Tableの要素数を返す.
+//新たにCellが表示される度に呼ばれる.
+- (NSInteger)tableView:(UITableView *)tableView
+ numberOfRowsInSection:(NSInteger)section
+{
+    return self.tweetData.count;
+}
+
+//IndexPathで指定した要素のCellを返す.
+-(UITableViewCell *)tableView:(UITableView *)tableView
+        cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    DLog("cellForRowAtIndexPath");
+    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
+    
+    Tweet* tweet = self.tweetData[indexPath.row];
+//  CELLにツイート(文字列)をセット
+    
+    cell.body.text = [NSString stringWithFormat:@"%@",tweet.body];
+    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
+    cell.body.numberOfLines = 0;
+//  Cell中のTextLabelを設定
+    
+    cell.body.frame = CGRectMake(
+                                 cell.body.frame.origin.x,
+                                 cell.body.frame.origin.y,
+                                 cell.body.frame.size.width,
+                                 [self _cellHFromText:cell.body.text] - 10
+                                 );
+    
+//  CELLにアイコン(プロフィール)画像をセット
+//    [cell.prfImage setImage:Twitter型からImageを取得];
+    if (tweet.profileImage)
+    {
+        cell.prfImage.image = tweet.profileImage;
+    }
+    else
+    {
+        cell.prfImage.image = [UIImage imageNamed:@"noImage"];
+    }
+    
+    
+    DLog(
+         @"%d"
+         @"\n\tcell.body.text      :%@"
+         @"\n\tcell.frame          :%@"
+         @"\n\tcell.body.frame     :%@"
+         @"\n\tdefaultCellBodyFrame:%@"
+         , indexPath.row
+         , cell.body.text
+         , NSStringFromCGRect(cell.frame)
+         , NSStringFromCGRect(cell.body.frame)
+         , NSStringFromCGRect(self.defaultCellBodyFrame)
+         );
+    
+
+    return cell;
+}
 
 //スワイプすると横にDeleteボタンが出るようにするメッソド
 //セルが作られると呼ばれる
@@ -176,147 +270,51 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     }
 }
 
-//TableViewがReloadされたときに呼び出される.Tableの要素数を返す.
-- (NSInteger)tableView:(UITableView *)tableView
- numberOfRowsInSection:(NSInteger)section
-{
-    return self.tweetData.count;
-}
-
-
--(UITableViewCell *)tableView:(UITableView *)tableView
-        cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
-    
-    Tweet* tweet = self.tweetData[indexPath.row];
-//  CELLにツイート(文字列)をセット
-    
-    
-    
-    //
-
-    
-    
-    cell.body.text = [NSString stringWithFormat:@"%@",tweet.body];
-//    cell.textLabel.text = [NSString stringWithFormat:@"%@", self.sampleData[indexPath.row]];
-    
-//    
-//    cell.textLabel.lineBreakMode = NSLineBreakByCharWrapping;
-//    cell.textLabel.numberOfLines = 0;
-    
-
-    
-    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
-    cell.body.numberOfLines = 0;
-    
-    
-    
-    
-    cell.body.frame = CGRectMake(
-                                 cell.body.frame.origin.x,
-                                 cell.body.frame.origin.y,
-                                 cell.body.frame.size.width,
-                                 cell.frame.size.height
-                                 );
-//    DLog("\n\t1BodyHeight:%f",cell.body.frame.size.height);
-    [cell.body sizeToFit];
-//    DLog("\n\t2BodyHeight%f",cell.body.frame.size.height);
-//  CELLにアイコン(プロフィール)画像をセット
-//    [cell.prfImage setImage:Twitter型からImageを取得];
-    if (tweet.profileImage)
-    {
-        cell.prfImage.image = tweet.profileImage;
-    }
-    else
-    {
-        cell.prfImage.image = [UIImage imageNamed:@"noImage"];
-    }
-    
-    DLog("\n\t1BodyHeight:%f",cell.frame.size.height);
-    
-  
-    cell.frame = CGRectMake(
-                                 cell.body.frame.origin.x,
-                                 cell.body.frame.origin.y,
-                                 cell.body.frame.size.width,
-                                 cell.body.frame.size.height
-                                 );
-    [cell sizeToFit];
-    DLog("\n\t2BodyHeight%f",cell.frame.size.height);
-    
-    
-    /*
-    DLog(
-         @"%d"
-         @"\n\tcell.body.text      :%@"
-         @"\n\tcell.frame          :%@"
-         @"\n\tcell.body.frame     :%@"
-         @"\n\tdefaultCellBodyFrame:%@"
-         , indexPath.row
-         , cell.body.text
-         , NSStringFromCGRect(cell.frame)
-         , NSStringFromCGRect(cell.body.frame)
-         , NSStringFromCGRect(self.defaultCellBodyFrame)
-         );
-     */
-    
-    
-//    [cell sizeToFit];
-    return cell;
-}
-
-
-
 #pragma mark UITableViewDelegate
-
-//
-//-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-//{
-//    
-//    return 50.0;
-//}
-//-(UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-//{
-//    UIView* ui= [[UIView alloc] init];
-//    ui.backgroundColor = [UIColor blackColor];
-//    [ui addSubview:self.ai];
-//    [ui center];
-//    return ui;
-//
-//}
-
 
 -(CGFloat)    tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    DLog("HeightForRow");
     
     Tweet* tweet = self.tweetData[indexPath.row];
     NSString* body = tweet.body;
-    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
+ 
+    return [self _cellHFromText:body];
     
-    CGFloat cellBodyH = [body boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
-                                           options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+}
+
+-(CGFloat)_cellHFromText:(NSString*)text
+{
+    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
+    DLog(@"font:%@", font);
+    
+    CGFloat cellBodyH = [text boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
+                                           options:NSStringDrawingUsesLineFragmentOrigin //| NSStringDrawingUsesFontLeading
                                         attributes:@{NSFontAttributeName:font}
                                            context:nil
                          ].size.height;
     CGFloat cellH = self.defaultCellFrame.size.height + (cellBodyH - self.defaultCellBodyFrame.size.height);
-    /*
+    
     DLog(
-         @"\n\tbody                :%@"
+         @"\n\ttext                :%@"
          @"\n\tdefaultCellFrame    :%@"
          @"\n\tdefaultCellBodyFrame:%@"
          @"\n\tcellBodyH           :%f"
          @"\n\tcellH               :%f"
-         , body
+         , text
          , NSStringFromCGRect(self.defaultCellFrame)
          , NSStringFromCGRect(self.defaultCellBodyFrame)
          , cellBodyH
          , cellH
          );
-     */
-    return cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
-//三項演算子構文↑↑
+    
+    
+    cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
+    //三項演算子構文↑↑
+    DLog("CELLH : %f", cellH);
+
+    return cellH;
 }
 
 //セルが選択されたときに呼び出される.
@@ -333,7 +331,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     }
 }
 
-#pragma mark ScrollViewDelegate
+#pragma mark UIScrollViewDelegate
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -343,20 +341,27 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     CGFloat remain = contentSize.height - contentOffset.y;
     
-    if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.tweetData.count)
+    if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.tweetData.count
+       // FIXME : for debug
+       && self.tweetData.count < 100
+       )
     {
         self.isLoading = YES;
-        [self.ai startAnimating];
-        Tweet* lastTweet = self.tweetData.lastObject;
         
-        //[self _requestTweets:lastTweet.id];
-//        TwitterAPI* tweetApi= [[TwitterAPI alloc] init];
+        self.ai.hidden = NO;
+        [self.ai startAnimating];
+    
+        Tweet* lastTweet = self.tweetData.lastObject;
+
         CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
         
         DLog(@"lastTweet.id:%llu", lastTweet.id);
         DLog(@"self.twieetApi:%@", self.twitterApi);
         
-        [self.twitterApi tweetsInNeighborWithCoordinate:OsakaEki radius:1 count:30 maxId:lastTweet.id];
+        [self.twitterApi tweetsInNeighborWithCoordinate:OsakaEki
+                                                 radius:1
+                                                  count:30
+                                                  maxId:lastTweet.id];
     }
 
 }
@@ -383,7 +388,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         
        
         NSMutableIndexSet* indexSet=[[NSMutableIndexSet alloc] init];
-        for (NSIndexPath* indexPath in selectedCells) {
+        for (NSIndexPath* indexPath in selectedCells)
+        {
             [indexSet addIndex:indexPath.row];
         }
         
@@ -393,7 +399,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         [self.tableView endUpdates];
 
     }
-    else{
+    else
+    {
         [self.editButtonItem setTitle:@"確定"];
     }
     //複数選択を可能にするフラグ
@@ -408,7 +415,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DLog("REFRESH");
     
-    if (self.isLoading) {
+    if (self.isLoading)
+    {
         return;
     }
     
@@ -429,7 +437,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 -(void) _refresh
 {
     [self.tableView reloadData];
-    if (self.refreshControl.refreshing == NO) {
+    if (self.refreshControl.refreshing == NO)
+    {
         [self.refreshControl endRefreshing];
     }
 //    
@@ -453,6 +462,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 #pragma mark - Accessor
+
 -(PostViewController *) postViewController
 {
     
@@ -508,19 +518,21 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     return _refreshControl;
 }
 
--(UIActivityIndicatorView*) ai
+- (UIActivityIndicatorView*) ai
 {
-//TODO:[位置の調整]
+// TODO:[位置の調整]
 //    CGFloat h = self.view.frame.size.height;
 //    CGFloat w = self.view.frame.size.width;
 //    self.ai.frame = CGRectMake(w/2,h,0,30);
 
-    if(_ai == nil){
+    if(_ai == nil)
+    {
         _ai =[[UIActivityIndicatorView alloc] init];
         _ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
-        _ai.hidesWhenStopped = YES;//ActivityIndicatorを残すとき
-        [_ai setCenter:CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height+50)];
+        _ai.hidesWhenStopped = NO; // ActivityIndicatorを残すとき
+//        [_ai setCenter:CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height + 50)];
     }
+    
     return _ai;
 }
 
