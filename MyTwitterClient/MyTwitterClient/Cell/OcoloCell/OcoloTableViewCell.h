@@ -16,5 +16,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *spot;
 @property (weak, nonatomic) IBOutlet UILabel *accountName;
 @property (weak, nonatomic) IBOutlet UILabel *postTime;
+@property (weak, nonatomic) IBOutlet UIImageView *postedImage;
+@property (weak, nonatomic) IBOutlet UIImageView *snsLogo;
 
 @end

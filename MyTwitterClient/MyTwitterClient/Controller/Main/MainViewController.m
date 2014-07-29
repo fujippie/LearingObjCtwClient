@@ -60,7 +60,7 @@ static NSString* const _cellId = @"OcoloCell";
 //    id型のもので型が確定するものはその型にしておく
     //CustomTVC* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     OcoloTableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-    
+    //TODO:[位置情報のTextの高さを加算]
     self.defaultCellBodyFrame = customTVC.body.frame;
     self.defaultCellFrame = customTVC.frame;
     
@@ -164,6 +164,21 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
 #pragma mark UITableViewDataSource
 
+//Header
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+//{
+//    return 200;
+//}
+//
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    UITableView* tView=self.tableView;
+//    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(tView.frame.origin.x, tView.frame.origin.y, tView.frame.size.width, 200)];
+//    return view;
+//}
+
+
+
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 100;
@@ -217,16 +232,28 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     cell.body.numberOfLines = 0;
 //  Cell中のTextLabelを設定
     
-    //Frameの左上を原点として,Bodyを配置
+    //Frameの左上を(origin)原点として,Bodyを配置
+    //Bodyの高さがCellの高さに設定されている
+    
+    CGFloat cellH = [self _cellHFromText:cell.body.text];
+    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height-30;
     cell.body.frame = CGRectMake(
                                  cell.body.frame.origin.x,
-                                 cell.prfImage.frame.size.height,
+                                 cell.body.frame.origin.y,
                                  cell.body.frame.size.width,
-                                 [self _cellHFromText:cell.body.text] - 10
+                                 bodyH
                                  );
+
+    //位置情報のラベルの位置を設定
+    cell.spot.frame = CGRectMake(
+                                 cell.spot.frame.origin.x,
+                                 cell.body.frame.origin.y+cell.body.frame.size.height,
+                                 cell.spot.frame.size.width,
+                                 cell.spot.frame.size.height
+                                 );
+    cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
     
 //  CELLにアイコン(プロフィール)画像をセット
-//    [cell.prfImage setImage:Twitter型からImageを取得];
     if (tweet.profileImage)
     {
         cell.prfImage.image = tweet.profileImage;
@@ -235,22 +262,33 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     {
         cell.prfImage.image = [UIImage imageNamed:@"noImage"];
     }
+    cell.prfImage.layer.cornerRadius = cell.prfImage.frame.size.width/2;
+    cell.prfImage.layer.masksToBounds = YES;
+    
+//投稿された画像をセット
+    if(nil)
+    {
+//TODO:[ツイッターから投稿画像を取得し,画像の有無を判定]
+    }
+    else
+    {
+        cell.postedImage.image = [UIImage imageNamed:@"noImage"];
+    }
+    
+    if(nil)
+    {
+        //TODO:[どのSNSか判定し,画像を選択]
+    }
+    else
+    {
+        cell.snsLogo.image = [UIImage imageNamed:@"noImage"];
+    }
     
     
-//    DLog(
-//         @"%d"
-//         @"\n\tcell.body.text      :%@"
-//         @"\n\tcell.frame          :%@"
-//         @"\n\tcell.body.frame     :%@"
-//         @"\n\tdefaultCellBodyFrame:%@"
-//         , indexPath.row
-//         , cell.body.text
-//         , NSStringFromCGRect(cell.frame)
-//         , NSStringFromCGRect(cell.body.frame)
-//         , NSStringFromCGRect(self.defaultCellBodyFrame)
-//         );
+//ボタン位置を設定
     
-
+    
+    
     return cell;
 }
 
@@ -294,38 +332,41 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //Cell内の文字列のフォントを取得
 //    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
-    UIFont*   font = ((OcoloTableViewCell*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
+    OcoloTableViewCell* ocCell= [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    UIFont*   font = ocCell.body.font;
     DLog(@"font:%@", font);
+    
 //  Textに応じたBodyの高さを返す
     CGFloat cellBodyH = [text boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
                                            options:NSStringDrawingUsesLineFragmentOrigin //| NSStringDrawingUsesFontLeading
                                         attributes:@{NSFontAttributeName:font}
                                            context:nil
                          ].size.height;
-    //TODO:[位置情報のTextの高さを加算]
-    
-    
-    CGFloat cellH = self.defaultCellFrame.size.height + (cellBodyH - self.defaultCellBodyFrame.size.height);
-    
-    DLog(
-         @"\n\ttext                :%@"
-//         @"\n\tdefaultCellFrame    :%@"
-//         @"\n\tdefaultCellBodyFrame:%@"
-         @"\n\tcellBodyH           :%f"
-//         @"\n\tcellH               :%f"
-         , text
+//    デフォルト　＋（増分）
+    CGFloat cellH = self.defaultCellFrame.size.height
+    + (cellBodyH - self.defaultCellBodyFrame.size.height  );
+//    デフォルト　−　(減少分)
+    CGFloat cellHm = self.defaultCellFrame.size.height
+    - (self.defaultCellBodyFrame.size.height - cellBodyH);
+//    DLog(
+//         @"\n\ttext                     :%@"
+//         @"\n\tdefaultCellFrame    (w,h):%@"
+//         @"\n\tdefaultCellBodyFrame(w,h):%@"
+//         @"\n\tcellBodyH                :%f"
+//         @"\n\tcellH                    :%f"
+//         , text
 //         , NSStringFromCGRect(self.defaultCellFrame)
 //         , NSStringFromCGRect(self.defaultCellBodyFrame)
-         , cellBodyH
+//         , cellBodyH
 //         , cellH
-         );
+//         );
     
-    
-    cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
+//    デフォルトよりも高さが低い場合,Cellを縮める
+    cellH = cellH < self.defaultCellFrame.size.height ? cellHm : cellH;
     //三項演算子構文↑↑
 //    DLog("CELLH : %f", cellH);
-
-    return cellH;
+    
+    return cellH+ocCell.spot.frame.size.height;//cell.spotの高さを加算
 }
 
 //セルが選択されたときに呼び出される.
@@ -366,8 +407,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
         CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
         
-        DLog(@"lastTweet.id:%llu", lastTweet.id);
-        DLog(@"self.twieetApi:%@", self.twitterApi);
+//        DLog(@"lastTweet.id:%llu", lastTweet.id);
+//        DLog(@"self.twieetApi:%@", self.twitterApi);
         
         [self.twitterApi tweetsInNeighborWithCoordinate:OsakaEki
                                                  radius:1

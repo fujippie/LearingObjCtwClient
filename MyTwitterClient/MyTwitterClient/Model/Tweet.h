@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSString* profileImageUrl; // プロフィール画像URL
 @property (nonatomic, assign) CGFloat   latitude;        // 緯度
 @property (nonatomic, assign) CGFloat   longitude;       // 経度
+@property (nonatomic, strong) NSMutableString* address;
 
 // プロフィール画像をダウンロードしたあとのキャッシュ
 @property (nonatomic, strong) UIImage* profileImage;
