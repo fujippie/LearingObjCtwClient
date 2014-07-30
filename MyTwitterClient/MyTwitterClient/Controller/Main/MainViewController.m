@@ -251,8 +251,10 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
                                  cell.spot.frame.size.width,
                                  cell.spot.frame.size.height
                                  );
-    cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
-    
+    if(tweet.address !=nil)
+    {
+        cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
+    }
 //  CELLにアイコン(プロフィール)画像をセット
     if (tweet.profileImage)
     {
@@ -283,8 +285,24 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     {
         cell.snsLogo.image = [UIImage imageNamed:@"noImage"];
     }
+    NSMutableString* head = @"@".mutableCopy;
+    DLog("acccount%@",tweet.accountName);
+//    [head appendString:tweet.accountName];
+    if([tweet.accountName length] !=0 )
+    {
+        [head appendString:tweet.accountName];
+    }
     
     
+    
+    
+    
+    
+    
+    
+    cell.accountName.text = head;
+//    tweet.accountName;
+    DLog("acccount%@",tweet.accountName);
 //ボタン位置を設定
     
     

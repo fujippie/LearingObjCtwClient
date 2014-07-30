@@ -8,12 +8,14 @@
 
 #import "Tweet.h"
 #import <CoreLocation/CoreLocation.h>
+
 @implementation Tweet
-//+(instancetype) tweetWithPost{}
+
+
 +(instancetype) tweetWithDic:(NSDictionary*)dic
 {
     Tweet* tweet = [[Tweet alloc] init];
-    
+    //allKeys Dictionary が持つ全ての値を取得
     if ([dic.allKeys containsObject:@"id"])
     {
         tweet.id = [dic[@"id"] unsignedLongLongValue];
@@ -28,6 +30,12 @@
     {
         NSDictionary* userDic = dic[@"user"];
         
+        if([userDic.allKeys containsObject:@"screen_name"])
+        {
+            tweet.accountName = userDic[@"screen_name"];
+        }
+        
+        
         if (
             [userDic.allKeys containsObject:@"profile_image_url"]
             && userDic[@"profile_image_url"]
@@ -37,7 +45,7 @@
             tweet.profileImageUrl = userDic[@"profile_image_url"];
 
             __weak Tweet* weakTweet = tweet;
-//            別スレッドで実行
+//            別スレッドで非同期実行
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
             {
                 if (weakTweet == nil) {
@@ -54,7 +62,7 @@
     if ([dic.allKeys containsObject:@"geo"])
     {
         NSDictionary* geoDic = dic[@"geo"];
-        if ([[NSNull null] isEqual:geoDic] != YES)
+        if ([[NSNull null] isEqual:geoDic] == NO)
         {
             if ([geoDic.allKeys containsObject:@"coordinates"])
             {
@@ -63,49 +71,70 @@
                 {
                     tweet.latitude = [[coorinates objectAtIndex:0] floatValue];
                     tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
-                    
-                    
-                    
-                    
-//                    TODO:[住所取得]
-                   
+//(緯度，経度)　=> 住所
                     CLLocation* location =[[CLLocation alloc] initWithLatitude:tweet.latitude longitude:tweet.longitude];
                     CLGeocoder* clg = [[CLGeocoder alloc] init];
-                    
-                    
-                    
-                    [clg reverseGeocodeLocation:(CLLocation *)location
-                                 completionHandler:^(NSArray* placemarks, NSError* error)
-                                {
-                                    for (CLPlacemark *placemark in placemarks) {
-                                        // それぞれの結果（場所）の情報
-                                        DLog(@"addressDictionary : %@", [placemark.addressDictionary description]);
-                                        
-                                        
-                                        tweet.address = [NSMutableString stringWithFormat:@""];
-//                                        [tweet.address appendString:placemark.country];
-                                        [tweet.address appendString:placemark.locality];
-                                        [tweet.address appendString:placemark.thoroughfare];
-                                        [tweet.address appendString:placemark.subThoroughfare];
-                                        
-//                                        DLog(@"country         : %@", placemark.country);
-                                        DLog(@"locality        : %@", placemark.locality);
-                                        DLog(@"thoroughfare : %@", placemark.thoroughfare);
-                                        DLog(@"subThoroughfare : %@", placemark.subThoroughfare);
-                                 
-                                        
-                                        DLog("\n\tAddress: %@",tweet.address);
 
-                                    }
-                    }];
-                    
+//緯度経度から住所の情報を取得するところが非同期でメインスレッド
+//住所をTweet型に格納するところは非同期で別スレッド　Cellに反映されるまで、時間がかかる
+//
+                    DLog("MainThread:%hhd",[NSThread isMainThread]);//Main
+                    [clg reverseGeocodeLocation:(CLLocation *)location
+                              completionHandler:^(NSArray* placemarks, NSError* error)
+                     {
+                         DLog("MainThread:%hhd",[NSThread isMainThread]);//Main
+//                         DLog(@"count:%d obj:%@", placemarks.count, placemarks[0]);
+                         for (CLPlacemark *placemark in placemarks)
+                         {
+                             // それぞれの結果（場所）の情報
+                             NSMutableString* address = [NSMutableString stringWithFormat:@""];
+                             [address appendString:@""];
+                             BOOL isStateNull = ([placemark.addressDictionary[@"State"] length] ==0)     ? YES : NO;
+                             BOOL isLocalNull = ([placemark.locality length] ==0)                        ? YES : NO;
+                             BOOL isThoroNull = ([placemark.thoroughfare length] ==0)                    ? YES : NO;
+                             BOOL isSubThoroNull = ([placemark.subThoroughfare length] ==0)              ? YES : NO;
+                            
+                             DLog(@"\n\t%@\n",tweet.body);
+                             DLog(@"locality        : %@ BOOL : %hhd", placemark.locality,isLocalNull);
+                             
+                             DLog(@"state           : %@ BOOL : %hhd", placemark.addressDictionary[@"State"],isThoroNull);
+                                [address appendString:
+                                 (isStateNull)? @"":placemark.addressDictionary[@"State"]];
+                            
+                             DLog(@"thoroughfare    : %@ BOOL : %hhd", placemark.locality,isThoroNull);
+                                [address appendString:
+                                 (isStateNull || isLocalNull)? @"":placemark.locality];
+                             
+                             DLog(@"thoroughfare    : %@ BOOL : %hhd", placemark.thoroughfare,isThoroNull);
+                                [address appendString:
+                                 (isStateNull || isLocalNull || isThoroNull)? @"":placemark.thoroughfare];
+                             
+                             DLog(@"subThoroughfare : %@ BOOL : %hhd", placemark.subThoroughfare,isSubThoroNull);
+                                [address appendString:
+                                 (isStateNull || isLocalNull || isThoroNull || isSubThoroNull)? @"":placemark.subThoroughfare];
+
+                             
+                             DLog(@"ERROR:%@",error.domain);
+                             DLog("MainThread:%hhd",[NSThread isMainThread]);
+//                             DLog("\n\tAddress      : %@", address);
+                             __weak Tweet* wt =tweet;
+                             //非同期で別スレッドで処理
+                             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^(void)
+                             {
+                                 DLog("MainThread:%hhd",[NSThread isMainThread]);
+                                 wt.address = address;
+                             });
+                             
+                             
+                         }
+                     }];
                 }
                 
             }
             
         }
     }
-    
+
     return tweet;
 }
 

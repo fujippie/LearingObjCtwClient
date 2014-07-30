@@ -17,10 +17,6 @@
                         <rect key="frame" x="20" y="20" width="44" height="44"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     </imageView>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="2Si-Kg-nYO" userLabel="Image_userPosted">
-                        <rect key="frame" x="212" y="20" width="88" height="88"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                    </imageView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="0BX-1d-lZl">
                         <rect key="frame" x="212" y="153" width="88" height="30"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
@@ -64,13 +60,17 @@
                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="dQi-6N-JwQ">
+                        <rect key="frame" x="212" y="20" width="96" height="96"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                    </imageView>
                 </subviews>
             </tableViewCellContentView>
             <connections>
                 <outlet property="accountName" destination="1ir-ql-gEx" id="eew-Fn-KX5"/>
                 <outlet property="body" destination="bkG-Mo-Fu8" id="Ko1-59-W9e"/>
                 <outlet property="postTime" destination="MX5-x2-Y5p" id="Jdb-GU-7Te"/>
-                <outlet property="postedImage" destination="2Si-Kg-nYO" id="FqP-0S-9pU"/>
+                <outlet property="postedImage" destination="dQi-6N-JwQ" id="WIy-jb-vko"/>
                 <outlet property="prfImage" destination="zJP-Xd-w7A" id="rMc-FM-pEV"/>
                 <outlet property="snsLogo" destination="RA5-IX-sSC" id="Crj-1j-lbR"/>
                 <outlet property="spot" destination="l32-WQ-4wa" id="3oF-oU-rf9"/>

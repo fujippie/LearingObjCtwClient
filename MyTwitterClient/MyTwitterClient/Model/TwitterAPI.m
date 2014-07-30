@@ -25,29 +25,8 @@
 {
     DLog("start");
 
-   // printf("RequestTweet_Called %ld ¥n",(long)maxTweetID);
-    /*
-    //TwitterAPI
-//すでにロード中であればReturn
-    if([self.delegate isLoading])
-    {
-        DLog("TW1");
-        return tweetData;
-        
-    }
-    if (self.delegate
-        && [self.delegate respondsToSelector:@selector(setIsLoading:)]
-        && [self.delegate respondsToSelector:@selector(animateAi:)])
-    {
-        [self.delegate setIsLoading:YES];
-        [self.delegate animateAi:YES];
-        DLog("TW2");
-    }
-    */
-    
-    //    Twiitter
-    //    DLog(@"NSThred isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");
-//    DLog("TW3");//passed
+
+
     ACAccountType* accountType = [self.accountStore
                                   accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
     
@@ -91,12 +70,7 @@
              
              dispatch_async(dispatch_get_main_queue(), ^
              {
-                 /*
-                 if(self.delegate
-                    &&[self.delegate respondsToSelector:@selector(endRefresh)]){
-                     [self.delegate endRefresh];
-                 }
-                  */
+       
                  if(
                     self.delegate
                     && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
@@ -110,9 +84,6 @@
              });
              return ;
          }
-         
-       
-         
          // リクエストを出すAPIを指定
          NSURL* url = [NSURL URLWithString:@"https://api.twitter.com/1.1/search/tweets.json"];
          //         [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/home_timeline.json"];

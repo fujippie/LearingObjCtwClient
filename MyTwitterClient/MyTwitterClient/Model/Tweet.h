@@ -15,7 +15,11 @@
 @property (nonatomic, strong) NSString* profileImageUrl; // プロフィール画像URL
 @property (nonatomic, assign) CGFloat   latitude;        // 緯度
 @property (nonatomic, assign) CGFloat   longitude;       // 経度
-@property (nonatomic, strong) NSMutableString* address;
+@property (nonatomic, strong) NSString* address;
+@property (nonatomic, strong) NSString* accountName;     //アカウント名
+//@property (nonatomic, strong) time // ツイートした時間(何分前)
+@property (nonatomic, strong) NSString* tweetImageURL; //ツイッターで投稿された画像を取得
+//TODO:[ リクエスト時に引数を追加"include_entities"=>true //画像などリンクを取得できる]
 
 // プロフィール画像をダウンロードしたあとのキャッシュ
 @property (nonatomic, strong) UIImage* profileImage;
