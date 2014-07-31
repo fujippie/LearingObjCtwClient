@@ -251,7 +251,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
                                  cell.spot.frame.size.width,
                                  cell.spot.frame.size.height
                                  );
-    if(tweet.address !=nil)
+    if(tweet.address != nil)
     {
         cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
     }
@@ -264,7 +264,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     {
         cell.prfImage.image = [UIImage imageNamed:@"noImage"];
     }
-    cell.prfImage.layer.cornerRadius = cell.prfImage.frame.size.width/2;
+    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width/2;
     cell.prfImage.layer.masksToBounds = YES;
     
 //投稿された画像をセット
@@ -274,8 +274,10 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     }
     else
     {
-        cell.postedImage.image = [UIImage imageNamed:@"noImage"];
+        [cell.postedImage setBackgroundImage:[UIImage imageNamed:@"noImage"] forState:0];
     }
+    
+    
     
     if(nil)
     {
@@ -285,28 +287,26 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     {
         cell.snsLogo.image = [UIImage imageNamed:@"noImage"];
     }
+    
+    
+//アカウント名をセット
     NSMutableString* head = @"@".mutableCopy;
-    DLog("acccount%@",tweet.accountName);
-//    [head appendString:tweet.accountName];
-    if([tweet.accountName length] !=0 )
+    if([tweet.accountName length] != 0 )
     {
         [head appendString:tweet.accountName];
+        cell.accountName.text = head;
     }
+//投稿時間をセット
+    if([tweet.postTime length] != 0)
+    {
+        cell.postTime.text = tweet.postTime;
+    }
+
     
-    
-    
-    
-    
-    
-    
-    
-    cell.accountName.text = head;
 //    tweet.accountName;
     DLog("acccount%@",tweet.accountName);
 //ボタン位置を設定
-    
-    
-    
+
     return cell;
 }
 
@@ -480,7 +480,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 #pragma mark - Event
-
+- (IBAction)postedImage:(id)sender{
+    DLog("");
+}
 -(void) _refreshData:(UIRefreshControl *) refreshControl
 {
     DLog("REFRESH");

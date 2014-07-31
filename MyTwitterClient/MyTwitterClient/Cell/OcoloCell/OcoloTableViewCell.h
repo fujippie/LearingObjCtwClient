@@ -18,6 +18,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *postTime;
 
 @property (weak, nonatomic) IBOutlet UIImageView *snsLogo;
-@property (weak, nonatomic) IBOutlet UIImageView *postedImage;
+
+@property (weak, nonatomic) IBOutlet UIButton *postedImage;
+
+- (IBAction)postedImage:(id)sender;
 
 @end

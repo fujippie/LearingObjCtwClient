@@ -22,4 +22,10 @@
     // Configure the view for the selected state
 }
 
+- (IBAction)postedImageTapped:(UIButton *)sender {
+//    画像を拡大した画面を写すなど
+    DLog("ImageTapped");
+}
+- (IBAction)postedImage:(id)sender {
+}
 @end

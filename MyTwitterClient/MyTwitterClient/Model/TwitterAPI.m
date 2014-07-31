@@ -90,10 +90,11 @@
          // リクエストのパラメータを設定
          NSMutableDictionary* params = @{
                                          //                                  @"screen_name" : [accounts.firstObject username],
-                                         @"count"       : @(count).description,
-                                         @"q"           : @"",
-                                         @"geocode"     : @"34.701909,135.494977,1km",
-                                         @"display_coordinates":@"true"
+                                         @"count"              : @(count).description,
+                                         @"q"                  : @"",
+                                         @"geocode"            : @"34.701909,135.494977,1km",
+                                         @"display_coordinates": @"true",
+                                         @"include_entities"   : @"true"
                                          }.mutableCopy;
          // ロードモア時に使用
          if (maxTweetID != 0) {
@@ -195,6 +196,7 @@
                       
                       // 見つかったツイート配列を格納
                       NSArray* twAr = jsonDic[@"statuses"];
+                      DLog(@"JSONDIC%@",jsonDic);
 //                      DLog("\n\tJSON.count:%d", twAr.count);
                       // ツイート配列からテキストのみを抽出
                       //ツイート内容,緯度経度,IDを取得
