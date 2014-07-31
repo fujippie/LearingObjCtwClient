@@ -601,7 +601,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     {
         _ai =[[UIActivityIndicatorView alloc] init];
         _ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
-        _ai.hidesWhenStopped = NO; // ActivityIndicatorを残すとき
+        _ai.hidesWhenStopped = YES; // ActivityIndicatorを残すときNo
 //        [_ai setCenter:CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height + 50)];
     }
     

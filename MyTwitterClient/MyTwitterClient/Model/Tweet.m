@@ -5,12 +5,13 @@
 //  Created by yuta_fujiwara on 2014/07/15.
 //  Copyright (c) 2014年 Yuta Fujiwara. All rights reserved.
 //
-//[TODO:PullRefresh時のくるくるを消す -1分前　距離　INSTAとOAｒｔｈ]
+//[TODO: 　距離　INSTAとOAｒｔｈ]
 #import "Tweet.h"
 #import <CoreLocation/CoreLocation.h>
 #import <Foundation/NSFormatter.h>
-@implementation Tweet
 
+
+@implementation Tweet
 
 +(instancetype) tweetWithDic:(NSDictionary*)dic
 {
@@ -148,9 +149,15 @@
 -(CLLocationDistance*) distanceWithLatitude:(CGFloat*) latitude
                                   Longitude:(CGFloat*) longitude
 {
-    //現在地を取得
-    CLLocationManager* clMng = [[CLLocationManager alloc] init];
-    //　距離を取得
+//現在地を取得
+    
+//    GPSは有効か？
+    if([CLLocationManager locationServicesEnabled])
+    {
+        [self.clMng startUpdatingLocation];
+    }
+    
+//　距離を取得
     //CLLocationDistance distance = [A distanceFromLocation:B];
 
     return 0;
@@ -181,9 +188,24 @@
     return (NSString *)str;
 }
 
+#pragma mark - Delegate
+
+-(void)locationManager:(CLLocationManager *)manager
+    didUpdateLocations:(NSArray *)locations
+{
+//    CLLocationDistance distance = [[locations[0] distanceFromLocation:B];
+
+}
 
 
 #pragma mark - Accessor
-
+-(CLLocationManager*)clMng
+{
+    if(_clMng ==nil){
+        _clMng = [[CLLocationManager alloc] init];
+        _clMng.delegate = self;
+    }
+    return _clMng;
+}
 
 @end

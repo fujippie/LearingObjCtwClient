@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
-@interface Tweet : NSObject
+@interface Tweet : NSObject<CLLocationManagerDelegate>
+
 
 @property (nonatomic, assign) unsigned long long id;     // ツイートID
 @property (nonatomic, strong) NSString* body;            // ツイート内容
@@ -27,6 +28,8 @@
 
 //投稿してから　何分前　か
 @property (nonatomic,strong) NSString* postTime;
+
+@property (nonatomic,strong) CLLocationManager* clMng;
 
 
 +(instancetype) tweetWithDic:(NSDictionary*)dic;
