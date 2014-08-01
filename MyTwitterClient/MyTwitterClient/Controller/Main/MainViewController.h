@@ -10,6 +10,7 @@
 #import "BaseViewController.h"
 #import "PostViewController.h"
 #import "TwitterAPI.h"
+#import "OcoloTableViewCell.h"
 @interface MainViewController : BaseViewController
 // デリゲートプロトコル参照定義
 <
@@ -17,6 +18,7 @@ UITableViewDataSource
 , UITableViewDelegate
 , PostViewControllerDelegate
 , TwitterAPIDelegate
+, OcoloTableViewCellDelegate
 >
 
 

@@ -26,13 +26,12 @@
 @property (nonatomic, strong) PostViewController* postViewController;
 @property (nonatomic, strong) TwitterAPI* twitterApi;
 @property (nonatomic, assign) BOOL isInitialized;
-
+@property (nonatomic, strong) OcoloTableViewCell * ocoloTableViewCell;
 @end
 
 @implementation MainViewController
 // TODO: synthesizeの意味を理解する。
 //@synthesize isLoading;
-
 
 #pragma mark - Consts
 
@@ -60,7 +59,9 @@ static NSString* const _cellId = @"OcoloCell";
 //    id型のもので型が確定するものはその型にしておく
     //CustomTVC* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     OcoloTableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-    //TODO:[位置情報のTextの高さを加算]
+//    customTVC.delegate = self ;//プロパティで持ってないとデリゲートできない
+    
+//TODO:[位置情報のTextの高さを加算]
     self.defaultCellBodyFrame = customTVC.body.frame;
     self.defaultCellFrame = customTVC.frame;
     
@@ -95,6 +96,17 @@ static NSString* const _cellId = @"OcoloCell";
 }
 
 #pragma mark - Delegate
+
+#pragma mark  OcoloTableViewCellDelegate
+
+-(void) ocoloTableViewCell:(OcoloTableViewCell *) ocoloCell
+               buttonImage:(UIImageView *) image
+{
+    
+//画像を他クラスへ送信するデリゲート
+    
+}
+
 
 #pragma mark  PostViewControllerDelegate
 
@@ -255,6 +267,10 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     {
         cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
     }
+    else
+    {
+        cell.spot.text = [NSString stringWithFormat:@" "];
+    }
 //  CELLにアイコン(プロフィール)画像をセット
     if (tweet.profileImage)
     {
@@ -274,7 +290,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     }
     else
     {
-        [cell.postedImage setBackgroundImage:[UIImage imageNamed:@"noImage"] forState:0];
+        [cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
     }
     
     
@@ -301,7 +317,14 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     {
         cell.postTime.text = tweet.postTime;
     }
-
+//現在地との距離
+    if(tweet.distance > 0 ){
+//       cell.spot.text=append
+        NSString* meter = [NSString stringWithFormat:@"%d",tweet.distance];
+        if([tweet.address length] == 0 ){
+            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter,tweet.address];
+        }
+    }
     
 //    tweet.accountName;
     DLog("acccount%@",tweet.accountName);
@@ -534,6 +557,13 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 #pragma mark - Accessor
+-(OcoloTableViewCell *) ocoloTableViewCell{
+    if(_ocoloTableViewCell == nil ){
+        _ocoloTableViewCell.delegate = self;
+    }
+    return _ocoloTableViewCell;
+}
+
 
 -(PostViewController *) postViewController
 {

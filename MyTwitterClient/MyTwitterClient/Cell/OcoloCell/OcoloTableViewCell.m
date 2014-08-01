@@ -22,10 +22,12 @@
     // Configure the view for the selected state
 }
 
-- (IBAction)postedImageTapped:(UIButton *)sender {
-//    画像を拡大した画面を写すなど
+- (IBAction)postedImage:(UIButton *)imageButton {
+    //引数のUIボタンの画像をデリゲートでMainViewCTRに渡す.
     DLog("ImageTapped");
+    [self.delegate ocoloTableViewCell:(OcoloTableViewCell *) self
+                      buttonImage:(UIImageView *) imageButton.imageView];
 }
-- (IBAction)postedImage:(id)sender {
-}
+
+
 @end
