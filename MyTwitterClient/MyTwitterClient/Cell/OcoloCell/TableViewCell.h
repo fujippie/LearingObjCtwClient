@@ -8,16 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-@class OcoloTableViewCell;
-@protocol OcoloTableViewCellDelegate <NSObject>
+@class TableViewCell;
+@protocol TableViewCellDelegate <NSObject>
 @optional
 
--(void) ocoloTableViewCell:(OcoloTableViewCell *) ocoloCell
+-(void) tableViewCell:(TableViewCell *) ocoloCell
                buttonImage:(UIImageView *) image;
 @end
 
 
-@interface OcoloTableViewCell : UITableViewCell
+@interface TableViewCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *body;//ツイート内容
 @property (weak, nonatomic) IBOutlet UIImageView *prfImage;
@@ -30,7 +30,7 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *postedImage;
 
-@property(nonatomic,assign) id <OcoloTableViewCellDelegate> delegate;
+@property(nonatomic,assign) id <TableViewCellDelegate> delegate;
 
 - (IBAction)postedImage:(id)sender;
 

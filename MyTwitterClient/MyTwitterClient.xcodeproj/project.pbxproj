@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		221511EF1973B34300A7E5EF /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 221511EE1973B34300A7E5EF /* Social.framework */; };
 		221511F11973B36C00A7E5EF /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 221511F01973B36C00A7E5EF /* Accounts.framework */; };
-		226470EC19736D5600A4FD4A /* CustomTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 226470EA19736D5600A4FD4A /* CustomTVC.m */; };
-		226470ED19736D5600A4FD4A /* CustomTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 226470EB19736D5600A4FD4A /* CustomTVC.xib */; };
+		227B39D7198B8CC000D5FC55 /* ElectricalCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B39D6198B8CC000D5FC55 /* ElectricalCell.xib */; };
+		227B39D9198B8D2600D5FC55 /* InstagramCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B39D8198B8D2600D5FC55 /* InstagramCell.xib */; };
 		22B6792E19764C7C006F700C /* PostViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B6792C19764C7C006F700C /* PostViewController.m */; };
 		22B6792F19764C7C006F700C /* PostViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22B6792D19764C7C006F700C /* PostViewController.xib */; };
 		22B6793219766277006F700C /* TwitterAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B6793119766277006F700C /* TwitterAPI.m */; };
@@ -20,8 +20,9 @@
 		22B75B73196D2091008A669B /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B75B71196D2091008A669B /* MainViewController.m */; };
 		22B75B74196D2091008A669B /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22B75B72196D2091008A669B /* MainViewController.xib */; };
 		22B8C1CA1980C2280012EC26 /* noImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B8C1C91980C2280012EC26 /* noImage.png */; };
-		22B9BC90198620C100676F07 /* OcoloTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9BC8E198620C100676F07 /* OcoloTableViewCell.m */; };
-		22B9BC91198620C100676F07 /* OcoloTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22B9BC8F198620C100676F07 /* OcoloTableViewCell.xib */; };
+		22B9BC90198620C100676F07 /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9BC8E198620C100676F07 /* TableViewCell.m */; };
+		22B9BC91198620C100676F07 /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22B9BC8F198620C100676F07 /* TableViewCell.xib */; };
+		22BA88A9198F29270018EBAF /* CellManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BA88A8198F29270018EBAF /* CellManager.m */; };
 		22BAC739198771F900DB6B8B /* About_logoUsage.png in Resources */ = {isa = PBXBuildFile; fileRef = 22BAC738198771F900DB6B8B /* About_logoUsage.png */; };
 		22CD2D331974D2C700CCB6B4 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 22CD2D321974D2C700CCB6B4 /* Tweet.m */; };
 		22D0A402196F9A72008A3CED /* sampleData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 22D0A401196F9A72008A3CED /* sampleData.plist */; };
@@ -53,9 +54,8 @@
 /* Begin PBXFileReference section */
 		221511EE1973B34300A7E5EF /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		221511F01973B36C00A7E5EF /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
-		226470E919736D5600A4FD4A /* CustomTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTVC.h; sourceTree = "<group>"; };
-		226470EA19736D5600A4FD4A /* CustomTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTVC.m; sourceTree = "<group>"; };
-		226470EB19736D5600A4FD4A /* CustomTVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomTVC.xib; sourceTree = "<group>"; };
+		227B39D6198B8CC000D5FC55 /* ElectricalCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ElectricalCell.xib; sourceTree = "<group>"; };
+		227B39D8198B8D2600D5FC55 /* InstagramCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InstagramCell.xib; sourceTree = "<group>"; };
 		22B6792B19764C7C006F700C /* PostViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostViewController.h; sourceTree = "<group>"; };
 		22B6792C19764C7C006F700C /* PostViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostViewController.m; sourceTree = "<group>"; };
 		22B6792D19764C7C006F700C /* PostViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PostViewController.xib; sourceTree = "<group>"; };
@@ -69,9 +69,11 @@
 		22B75B71196D2091008A669B /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		22B75B72196D2091008A669B /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
 		22B8C1C91980C2280012EC26 /* noImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noImage.png; sourceTree = "<group>"; };
-		22B9BC8D198620C100676F07 /* OcoloTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OcoloTableViewCell.h; sourceTree = "<group>"; };
-		22B9BC8E198620C100676F07 /* OcoloTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OcoloTableViewCell.m; sourceTree = "<group>"; };
-		22B9BC8F198620C100676F07 /* OcoloTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OcoloTableViewCell.xib; sourceTree = "<group>"; };
+		22B9BC8D198620C100676F07 /* TableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewCell.h; sourceTree = "<group>"; };
+		22B9BC8E198620C100676F07 /* TableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewCell.m; sourceTree = "<group>"; };
+		22B9BC8F198620C100676F07 /* TableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
+		22BA88A7198F29270018EBAF /* CellManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellManager.h; sourceTree = "<group>"; };
+		22BA88A8198F29270018EBAF /* CellManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellManager.m; sourceTree = "<group>"; };
 		22BAC738198771F900DB6B8B /* About_logoUsage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = About_logoUsage.png; sourceTree = "<group>"; };
 		22CD2D311974D2C700CCB6B4 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
 		22CD2D321974D2C700CCB6B4 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
@@ -123,16 +125,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		226470E819736D5600A4FD4A /* CustomCell */ = {
-			isa = PBXGroup;
-			children = (
-				226470E919736D5600A4FD4A /* CustomTVC.h */,
-				226470EA19736D5600A4FD4A /* CustomTVC.m */,
-				226470EB19736D5600A4FD4A /* CustomTVC.xib */,
-			);
-			path = CustomCell;
-			sourceTree = "<group>";
-		};
 		22B6792A197646A9006F700C /* Post */ = {
 			isa = PBXGroup;
 			children = (
@@ -194,9 +186,11 @@
 		22B9BC8C1986209300676F07 /* OcoloCell */ = {
 			isa = PBXGroup;
 			children = (
-				22B9BC8D198620C100676F07 /* OcoloTableViewCell.h */,
-				22B9BC8E198620C100676F07 /* OcoloTableViewCell.m */,
-				22B9BC8F198620C100676F07 /* OcoloTableViewCell.xib */,
+				22B9BC8D198620C100676F07 /* TableViewCell.h */,
+				22B9BC8E198620C100676F07 /* TableViewCell.m */,
+				22B9BC8F198620C100676F07 /* TableViewCell.xib */,
+				227B39D6198B8CC000D5FC55 /* ElectricalCell.xib */,
+				227B39D8198B8D2600D5FC55 /* InstagramCell.xib */,
 			);
 			path = OcoloCell;
 			sourceTree = "<group>";
@@ -310,7 +304,8 @@
 			isa = PBXGroup;
 			children = (
 				22B9BC8C1986209300676F07 /* OcoloCell */,
-				226470E819736D5600A4FD4A /* CustomCell */,
+				22BA88A7198F29270018EBAF /* CellManager.h */,
+				22BA88A8198F29270018EBAF /* CellManager.m */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -400,15 +395,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				22D0A402196F9A72008A3CED /* sampleData.plist in Resources */,
-				226470ED19736D5600A4FD4A /* CustomTVC.xib in Resources */,
 				22E61C2C196BEA600051AD01 /* InfoPlist.strings in Resources */,
 				22B75B74196D2091008A669B /* MainViewController.xib in Resources */,
+				227B39D9198B8D2600D5FC55 /* InstagramCell.xib in Resources */,
 				22BAC739198771F900DB6B8B /* About_logoUsage.png in Resources */,
 				22E61C34196BEA600051AD01 /* Images.xcassets in Resources */,
+				227B39D7198B8CC000D5FC55 /* ElectricalCell.xib in Resources */,
 				22B75B68196D0F62008A669B /* female.jpeg in Resources */,
 				22B8C1CA1980C2280012EC26 /* noImage.png in Resources */,
 				22B6792F19764C7C006F700C /* PostViewController.xib in Resources */,
-				22B9BC91198620C100676F07 /* OcoloTableViewCell.xib in Resources */,
+				22B9BC91198620C100676F07 /* TableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,14 +425,14 @@
 			files = (
 				22E61C32196BEA600051AD01 /* AppDelegate.m in Sources */,
 				22B6793219766277006F700C /* TwitterAPI.m in Sources */,
-				22B9BC90198620C100676F07 /* OcoloTableViewCell.m in Sources */,
+				22B9BC90198620C100676F07 /* TableViewCell.m in Sources */,
 				22B75B41196CD9B4008A669B /* BaseViewController.m in Sources */,
 				22E61C2E196BEA600051AD01 /* main.m in Sources */,
 				22CD2D331974D2C700CCB6B4 /* Tweet.m in Sources */,
 				22B6792E19764C7C006F700C /* PostViewController.m in Sources */,
+				22BA88A9198F29270018EBAF /* CellManager.m in Sources */,
 				30746E9E196E919B0005F5F0 /* UIViewController+Extensions.m in Sources */,
 				22B75B73196D2091008A669B /* MainViewController.m in Sources */,
-				226470EC19736D5600A4FD4A /* CustomTVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

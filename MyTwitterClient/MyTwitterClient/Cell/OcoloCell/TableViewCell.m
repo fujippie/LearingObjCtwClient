@@ -6,9 +6,9 @@
 //  Copyright (c) 2014年 Yuta Fujiwara. All rights reserved.
 //
 
-#import "OcoloTableViewCell.h"
+#import "TableViewCell.h"
 
-@implementation OcoloTableViewCell
+@implementation TableViewCell
 
 - (void)awakeFromNib
 {
@@ -25,9 +25,16 @@
 - (IBAction)postedImage:(UIButton *)imageButton {
     //引数のUIボタンの画像をデリゲートでMainViewCTRに渡す.
     DLog("ImageTapped");
-    [self.delegate ocoloTableViewCell:(OcoloTableViewCell *) self
+    
+    if(
+       self.delegate
+       && [self.delegate respondsToSelector:@selector(tableViewCell:buttonImage:)]
+       )
+    {
+        [self.delegate tableViewCell:(TableViewCell *) self
                       buttonImage:(UIImageView *) imageButton.imageView];
+    }
+    
+
 }
-
-
 @end

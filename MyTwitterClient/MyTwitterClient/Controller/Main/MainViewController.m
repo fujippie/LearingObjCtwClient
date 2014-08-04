@@ -12,8 +12,8 @@
 #import "TwitterAPI.h"
 #import "PostViewController.h"
 #import "AppDelegate.h"
-#import "OcoloTableViewCell.h"
-
+#import "TableViewCell.h"
+#import "CellManager.h"
 @interface MainViewController  ()
 <UIAlertViewDelegate>
 
@@ -26,7 +26,7 @@
 @property (nonatomic, strong) PostViewController* postViewController;
 @property (nonatomic, strong) TwitterAPI* twitterApi;
 @property (nonatomic, assign) BOOL isInitialized;
-@property (nonatomic, strong) OcoloTableViewCell * ocoloTableViewCell;
+
 @end
 
 @implementation MainViewController
@@ -36,7 +36,8 @@
 #pragma mark - Consts
 
 //static NSString* const _cellId = @"CustomTVC";
-static NSString* const _cellId = @"OcoloCell";
+static NSString* const _cellId = @"TableViewCell";
+static NSString* const _cellId2 = @"ElectricalCell";
 #pragma mark - LifeCycle
 
 - (void)viewDidLoad
@@ -51,36 +52,45 @@ static NSString* const _cellId = @"OcoloCell";
 //TableViewの追加と設定
 //    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(CustomTVC.class) bundle:nil]
 //         forCellReuseIdentifier:_cellId];
-    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(OcoloTableViewCell.class) bundle:nil]
+    UINib* uinib = [UINib nibWithNibName:@"TableViewCell"
+                                  bundle:nil];
+    [self.tableView registerNib:uinib
          forCellReuseIdentifier:_cellId];
     
+    UINib* uinib2 = [UINib nibWithNibName:@"TableViewCell"
+                                  bundle:nil];
     
+    [self.tableView registerNib:uinib2
+         forCellReuseIdentifier:_cellId2];
+    
+//    UINib* uinib2 = [UINib nibWithNibName:@"ElectricalCell"
+//                                   bundle:nil];
+//    [self.tableView registerNib:uinib2
+//         forCellReuseIdentifier:_cellId2];
+//    
+//
 //TableViewのCellの登録と設定
 //    id型のもので型が確定するものはその型にしておく
-    //CustomTVC* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-    OcoloTableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-//    customTVC.delegate = self ;//プロパティで持ってないとデリゲートできない
     
+    TableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+   
 //TODO:[位置情報のTextの高さを加算]
     self.defaultCellBodyFrame = customTVC.body.frame;
     self.defaultCellFrame = customTVC.frame;
     
     [self.tableView addSubview:self.refreshControl];
 
+    
+    
 //  NavigationBarの設定　（更新中に表示するアイコン）
     self.title = [NSString stringWithFormat:@"%@:%d", NSStringFromClass(self.class), [self.navigationController.viewControllers indexOfObject:self]];
     
-    //
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"投稿" style:UIBarButtonItemStylePlain  target:self action:@selector(leftBarBtnPushed:)];
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
     
 //    編集ボタンを追加する.
     [self.editButtonItem setTitle:@"削除"];
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-// 確認事項   [self.btn addTarget:self action:@selector(btnPushed) forControlEvents:UIControlEventTouchDown];
-//    [self.tableView addSubview:self.btn];
-    
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -95,15 +105,18 @@ static NSString* const _cellId = @"OcoloCell";
     [super didReceiveMemoryWarning];
 }
 
+#pragma mark - SubFunction
+
+
 #pragma mark - Delegate
 
 #pragma mark  OcoloTableViewCellDelegate
 
--(void) ocoloTableViewCell:(OcoloTableViewCell *) ocoloCell
+-(void) tableViewCell:(TableViewCell *) ocoloCell
                buttonImage:(UIImageView *) image
 {
-    
 //画像を他クラスへ送信するデリゲート
+    DLog("ocoloTableViewCELL DELEGATE");
     
 }
 
@@ -117,6 +130,7 @@ static NSString* const _cellId = @"OcoloCell";
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];//先頭に追加
     // インサート 指定したIndexPathの要素に対してだけデリゲートが呼ばれる
     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    
     // アップデート
 //    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
@@ -154,8 +168,7 @@ static NSString* const _cellId = @"OcoloCell";
                                               cancelButtonTitle:@"閉じる"
                                               otherButtonTitles:nil];
         [alert show];
-
-    
+   
 }
 
 #pragma mark UIAlertViewDelegate
@@ -175,21 +188,6 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 }
 
 #pragma mark UITableViewDataSource
-
-//Header
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-//{
-//    return 200;
-//}
-//
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    UITableView* tView=self.tableView;
-//    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(tView.frame.origin.x, tView.frame.origin.y, tView.frame.size.width, 200)];
-//    return view;
-//}
-
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
@@ -233,105 +231,140 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 -(UITableViewCell *)tableView:(UITableView *)tableView
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    DLog("cellForRowAtIndexPath");
-//    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
-    OcoloTableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
     Tweet* tweet = self.tweetData[indexPath.row];
-//  CELLにツイート(文字列)をセット
+    NSString * cellID = indexPath.row % 2 == 0 ? _cellId:_cellId2;
+    //NSString * cellID = _cellId;
     
-    cell.body.text = [NSString stringWithFormat:@"%@",tweet.body];
+//    CELLでわける
+    if([cellID isEqualToString:_cellId])
+    {
+    TableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    cell.delegate = self;
+    
+//  CELLにツイート(文字列)をセット
+//  http://d.hatena.ne.jp/KishikawaKatsumi/20130605/1370370925
+//    http://oropon.hatenablog.com/entry/20120408/p1
+// テクストにリンクをつける　＋リンクをタップしたときに検知
+    NSMutableAttributedString *attributeStr =[[NSMutableAttributedString alloc] initWithString:tweet.body];
+//属性をセット
+    [attributeStr addAttribute:NSBackgroundColorAttributeName
+                         value:[UIColor colorWithRed:1. green:1. blue:.0 alpha:1.]
+                         range:NSMakeRange(0, [attributeStr length])];
+    [cell.body setAttributedText:attributeStr];
+    //cell.body.text = [NSString stringWithFormat:@"%@",tweet.body];
     cell.body.lineBreakMode = NSLineBreakByCharWrapping;
     cell.body.numberOfLines = 0;
 //  Cell中のTextLabelを設定
-    
     //Frameの左上を(origin)原点として,Bodyを配置
     //Bodyの高さがCellの高さに設定されている
-    
     CGFloat cellH = [self _cellHFromText:cell.body.text];
     CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height-30;
-    cell.body.frame = CGRectMake(
-                                 cell.body.frame.origin.x,
-                                 cell.body.frame.origin.y,
-                                 cell.body.frame.size.width,
-                                 bodyH
-                                 );
-
-    //位置情報のラベルの位置を設定
-    cell.spot.frame = CGRectMake(
-                                 cell.spot.frame.origin.x,
-                                 cell.body.frame.origin.y+cell.body.frame.size.height,
-                                 cell.spot.frame.size.width,
-                                 cell.spot.frame.size.height
-                                 );
-    if(tweet.address != nil)
-    {
-        cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
-    }
-    else
-    {
-        cell.spot.text = [NSString stringWithFormat:@" "];
-    }
-//  CELLにアイコン(プロフィール)画像をセット
-    if (tweet.profileImage)
-    {
-        cell.prfImage.image = tweet.profileImage;
-    }
-    else
-    {
-        cell.prfImage.image = [UIImage imageNamed:@"noImage"];
-    }
-    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width/2;
-    cell.prfImage.layer.masksToBounds = YES;
     
-//投稿された画像をセット
-    if(nil)
-    {
-//TODO:[ツイッターから投稿画像を取得し,画像の有無を判定]
+    CellManager* cellMng = [[CellManager alloc]init];
+    return [cellMng setViewOcoloCellwithCell:cell
+                                   tableView:self.tableView
+                                       tweet:tweet
+                                       cellH:cellH
+                                       bodyH:bodyH];
     }
-    else
+    else if([cellID isEqualToString:_cellId2])
     {
-        [cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+        TableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+        cell.delegate = self;
+        return cell;
+    }
+    else{
+        
+        DLog("ERROR NO CELL");
+        return nil;
     }
     
-    
-    
-    if(nil)
-    {
-        //TODO:[どのSNSか判定し,画像を選択]
-    }
-    else
-    {
-        cell.snsLogo.image = [UIImage imageNamed:@"noImage"];
-    }
-    
-    
-//アカウント名をセット
-    NSMutableString* head = @"@".mutableCopy;
-    if([tweet.accountName length] != 0 )
-    {
-        [head appendString:tweet.accountName];
-        cell.accountName.text = head;
-    }
-//投稿時間をセット
-    if([tweet.postTime length] != 0)
-    {
-        cell.postTime.text = tweet.postTime;
-    }
-//現在地との距離
-    if(tweet.distance > 0 ){
-//       cell.spot.text=append
-        NSString* meter = [NSString stringWithFormat:@"%d",tweet.distance];
-        if([tweet.address length] == 0 ){
-            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter,tweet.address];
-        }
-    }
-    
-//    tweet.accountName;
-    DLog("acccount%@",tweet.accountName);
-//ボタン位置を設定
-
-    return cell;
 }
+
+
+//    
+//    
+//    
+//    cell.body.frame = CGRectMake(
+//                                 cell.body.frame.origin.x,
+//                                 cell.body.frame.origin.y,
+//                                 cell.body.frame.size.width,
+//                                 bodyH
+//                                 );
+//
+//    //位置情報のラベルの位置を設定
+//    cell.spot.frame = CGRectMake(
+//                                 cell.spot.frame.origin.x,
+//                                 cell.body.frame.origin.y+cell.body.frame.size.height,
+//                                 cell.spot.frame.size.width,
+//                                 cell.spot.frame.size.height
+//                                 );
+//    if(tweet.address != nil)
+//    {
+//        cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
+//    }
+//    else
+//    {
+//        cell.spot.text = [NSString stringWithFormat:@" "];
+//    }
+////  CELLにアイコン(プロフィール)画像をセット
+//    if (tweet.profileImage)
+//    {
+//        cell.prfImage.image = tweet.profileImage;
+//    }
+//    else
+//    {
+//        cell.prfImage.image = [UIImage imageNamed:@"noImage"];
+//    }
+//    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width/2;
+//    cell.prfImage.layer.masksToBounds = YES;
+//    
+////投稿された画像をセット
+//    if(nil)
+//    {
+////TODO:[ツイッターから投稿画像を取得し,画像の有無を判定]
+//    }
+//    else
+//    {
+//        [cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+//    }
+//    
+//    if(nil)
+//    {
+//        //TODO:[どのSNSか判定し,画像を選択]
+//    }
+//    else
+//    {
+//        cell.snsLogo.image = [UIImage imageNamed:@"noImage"];
+//    }
+//    
+////アカウント名をセット
+//    NSMutableString* head = @"@".mutableCopy;
+//    if([tweet.accountName length] != 0 )
+//    {
+//        [head appendString:tweet.accountName];
+//        cell.accountName.text = head;
+//    }
+////投稿時間をセット
+//    if([tweet.postTime length] != 0)
+//    {
+//        cell.postTime.text = tweet.postTime;
+//    }
+////現在地との距離
+//    if(tweet.distance > 0 ){
+////       cell.spot.text=append
+//        NSString* meter = [NSString stringWithFormat:@"%d",tweet.distance];
+//        if([tweet.address length] == 0 ){
+//            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter,tweet.address];
+//        }
+//    }
+//    
+////    tweet.accountName;
+//    DLog("acccount%@",tweet.accountName);
+////ボタン位置を設定
+//
+//    return cell;
+
 
 //スワイプすると横にDeleteボタンが出るようにするメッソド
 //セルが作られると呼ばれる
@@ -373,7 +406,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //Cell内の文字列のフォントを取得
 //    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
-    OcoloTableViewCell* ocCell= [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    TableViewCell* ocCell= [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     UIFont*   font = ocCell.body.font;
     DLog(@"font:%@", font);
     
@@ -389,24 +422,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //    デフォルト　−　(減少分)
     CGFloat cellHm = self.defaultCellFrame.size.height
     - (self.defaultCellBodyFrame.size.height - cellBodyH);
-//    DLog(
-//         @"\n\ttext                     :%@"
-//         @"\n\tdefaultCellFrame    (w,h):%@"
-//         @"\n\tdefaultCellBodyFrame(w,h):%@"
-//         @"\n\tcellBodyH                :%f"
-//         @"\n\tcellH                    :%f"
-//         , text
-//         , NSStringFromCGRect(self.defaultCellFrame)
-//         , NSStringFromCGRect(self.defaultCellBodyFrame)
-//         , cellBodyH
-//         , cellH
-//         );
-    
 //    デフォルトよりも高さが低い場合,Cellを縮める
     cellH = cellH < self.defaultCellFrame.size.height ? cellHm : cellH;
     //三項演算子構文↑↑
 //    DLog("CELLH : %f", cellH);
-    
     return cellH+ocCell.spot.frame.size.height;//cell.spotの高さを加算
 }
 
@@ -557,12 +576,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 #pragma mark - Accessor
--(OcoloTableViewCell *) ocoloTableViewCell{
-    if(_ocoloTableViewCell == nil ){
-        _ocoloTableViewCell.delegate = self;
-    }
-    return _ocoloTableViewCell;
-}
+
 
 
 -(PostViewController *) postViewController
