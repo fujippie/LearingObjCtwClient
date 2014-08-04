@@ -60,7 +60,7 @@
              });
              return ;
          }
-     
+         
      
          // titterアカウント取得（複数あるかも。。）
          NSArray* accounts = [self.accountStore accountsWithAccountType:accountType];

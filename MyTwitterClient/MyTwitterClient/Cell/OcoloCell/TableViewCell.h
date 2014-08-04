@@ -31,6 +31,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *postedImage;
 
 @property(nonatomic,assign) id <TableViewCellDelegate> delegate;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *postImageAi;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spotAi;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *distanceAi;
 
 - (IBAction)postedImage:(id)sender;
 

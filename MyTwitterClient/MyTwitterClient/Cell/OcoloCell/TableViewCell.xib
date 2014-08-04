@@ -47,14 +47,14 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     </imageView>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="本文(ツイート内容)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="bkG-Mo-Fu8">
-                        <rect key="frame" x="20" y="66" width="175" height="92"/>
+                        <rect key="frame" x="20" y="72" width="175" height="92"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="位置情報,住所" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="l32-WQ-4wa">
                         <rect key="frame" x="20" y="166" width="175" height="17"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                        <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -63,27 +63,42 @@
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="QPj-8z-uga">
                         <rect key="frame" x="212" y="20" width="96" height="96"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <state key="normal" title="Button" image="female.jpeg">
+                        <state key="normal" title="Button">
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
                         <connections>
                             <action selector="postedImage:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Hjg-jA-R9r"/>
                         </connections>
                     </button>
+                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" id="LGb-oD-RD9">
+                        <rect key="frame" x="242" y="49" width="37" height="37"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="color" red="1" green="0.0" blue="0.094009157199999999" alpha="1" colorSpace="calibratedRGB"/>
+                    </activityIndicatorView>
+                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" id="leR-Nm-Ypl">
+                        <rect key="frame" x="32" y="165" width="20" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <color key="color" red="1" green="0.0" blue="0.094009157199999999" alpha="1" colorSpace="calibratedRGB"/>
+                    </activityIndicatorView>
+                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" id="ZrU-nh-hgm">
+                        <rect key="frame" x="114" y="163" width="20" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                        <color key="color" red="1" green="0.0" blue="0.094009157199999999" alpha="1" colorSpace="calibratedRGB"/>
+                    </activityIndicatorView>
                 </subviews>
             </tableViewCellContentView>
             <connections>
                 <outlet property="accountName" destination="1ir-ql-gEx" id="eew-Fn-KX5"/>
                 <outlet property="body" destination="bkG-Mo-Fu8" id="Ko1-59-W9e"/>
+                <outlet property="distanceAi" destination="leR-Nm-Ypl" id="qOQ-OY-Guc"/>
+                <outlet property="postImageAi" destination="LGb-oD-RD9" id="9X7-1P-ZAD"/>
                 <outlet property="postTime" destination="MX5-x2-Y5p" id="Jdb-GU-7Te"/>
                 <outlet property="postedImage" destination="QPj-8z-uga" id="Yrv-8T-zzs"/>
                 <outlet property="prfImage" destination="zJP-Xd-w7A" id="rMc-FM-pEV"/>
                 <outlet property="snsLogo" destination="RA5-IX-sSC" id="Crj-1j-lbR"/>
                 <outlet property="spot" destination="l32-WQ-4wa" id="3oF-oU-rf9"/>
+                <outlet property="spotAi" destination="ZrU-nh-hgm" id="zFB-pc-NiC"/>
             </connections>
         </tableViewCell>
     </objects>
-    <resources>
-        <image name="female.jpeg" width="180" height="180"/>
-    </resources>
 </document>

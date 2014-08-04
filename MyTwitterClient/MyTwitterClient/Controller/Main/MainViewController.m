@@ -57,7 +57,7 @@ static NSString* const _cellId2 = @"ElectricalCell";
     [self.tableView registerNib:uinib
          forCellReuseIdentifier:_cellId];
     
-    UINib* uinib2 = [UINib nibWithNibName:@"TableViewCell"
+    UINib* uinib2 = [UINib nibWithNibName:@"ElectricalCell"
                                   bundle:nil];
     
     [self.tableView registerNib:uinib2
@@ -73,8 +73,7 @@ static NSString* const _cellId2 = @"ElectricalCell";
 //    id型のもので型が確定するものはその型にしておく
     
     TableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-   
-//TODO:[位置情報のTextの高さを加算]
+    //TODO:[位置情報のTextの高さを加算]
     self.defaultCellBodyFrame = customTVC.body.frame;
     self.defaultCellFrame = customTVC.frame;
     
@@ -231,46 +230,142 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 -(UITableViewCell *)tableView:(UITableView *)tableView
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+
+    
+    
     Tweet* tweet = self.tweetData[indexPath.row];
-    NSString * cellID = indexPath.row % 2 == 0 ? _cellId:_cellId2;
+    NSString * cellID = indexPath.row % 2 == 0 ? _cellId :_cellId2;
     //NSString * cellID = _cellId;
     
 //    CELLでわける
     if([cellID isEqualToString:_cellId])
     {
-    TableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-    cell.delegate = self;
+        TableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+        cell.delegate = self;
+        // セルが作られた時,回り始める
+        [cell.spotAi startAnimating];
+        [cell.distanceAi startAnimating];
+        [cell.postImageAi startAnimating];
+        
+        
+        //  CELLにツイート(文字列)をセット
+        //  http://d.hatena.ne.jp/KishikawaKatsumi/20130605/1370370925
+        //    http://oropon.hatenablog.com/entry/20120408/p1
+        // テクストにリンクをつける　＋リンクをタップしたときに検知
+        NSMutableAttributedString *attributeStr =[[NSMutableAttributedString alloc] initWithString:tweet.body];
+        //属性をセット
+        [attributeStr addAttribute:NSBackgroundColorAttributeName
+                             value:[UIColor colorWithRed:1. green:1. blue:.0 alpha:1.]
+                             range:NSMakeRange(0, [attributeStr length])];
+        [cell.body setAttributedText:attributeStr];
+        //cell.body.text = [NSString stringWithFormat:@"%@",tweet.body];
+        cell.body.lineBreakMode = NSLineBreakByCharWrapping;
+        cell.body.numberOfLines = 0;
+        //  Cell中のTextLabelを設定
+        //Frameの左上を(origin)原点として,Bodyを配置
+        //Bodyの高さがCellの高さに設定されている
+        CGFloat cellH = [self _cellHFromText:cell.body.text];
+        CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
+        DLog("cellForRowAtIndexPath");
+        //    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
+        //  CELLにツイート(文字列)をセット
+        //  http://d.hatena.ne.jp/KishikawaKatsumi/20130605/1370370925
+        //    http://oropon.hatenablog.com/entry/20120408/p1
+        // テクストにリンクをつける　＋リンクをタップしたときに検知
     
-//  CELLにツイート(文字列)をセット
-//  http://d.hatena.ne.jp/KishikawaKatsumi/20130605/1370370925
-//    http://oropon.hatenablog.com/entry/20120408/p1
-// テクストにリンクをつける　＋リンクをタップしたときに検知
-    NSMutableAttributedString *attributeStr =[[NSMutableAttributedString alloc] initWithString:tweet.body];
-//属性をセット
-    [attributeStr addAttribute:NSBackgroundColorAttributeName
-                         value:[UIColor colorWithRed:1. green:1. blue:.0 alpha:1.]
-                         range:NSMakeRange(0, [attributeStr length])];
-    [cell.body setAttributedText:attributeStr];
-    //cell.body.text = [NSString stringWithFormat:@"%@",tweet.body];
-    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
-    cell.body.numberOfLines = 0;
-//  Cell中のTextLabelを設定
-    //Frameの左上を(origin)原点として,Bodyを配置
-    //Bodyの高さがCellの高さに設定されている
-    CGFloat cellH = [self _cellHFromText:cell.body.text];
-    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height-30;
-    
-    CellManager* cellMng = [[CellManager alloc]init];
-    return [cellMng setViewOcoloCellwithCell:cell
-                                   tableView:self.tableView
-                                       tweet:tweet
-                                       cellH:cellH
-                                       bodyH:bodyH];
+       
+        //  Cell中のTextLabelを設定
+        //Frameの左上を(origin)原点として,Bodyを配置
+        //Bodyの高さがCellの高さに設定されている
+        
+        
+        
+        cell.body.frame = CGRectMake(
+                                     cell.body.frame.origin.x,
+                                     cell.body.frame.origin.y,
+                                     cell.body.frame.size.width,
+                                     bodyH
+                                     );
+        //位置情報のラベルの位置を設定
+        cell.spot.frame = CGRectMake(
+                                     cell.spot.frame.origin.x,
+                                     cell.body.frame.origin.y+cell.body.frame.size.height,
+                                     cell.spot.frame.size.width,
+                                     cell.spot.frame.size.height
+                                     );
+        if(tweet.address != nil)
+        {
+//            cell.addressAi
+            [cell.spotAi stopAnimating];
+            cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
+            
+        }
+        else
+        {
+            cell.spot.text = [NSString stringWithFormat:@" "];
+        }
+        //  CELLにアイコン(プロフィール)画像をセット
+        if (tweet.profileImage)
+        {
+            cell.prfImage.image = tweet.profileImage;
+        }
+        else
+        {
+            cell.prfImage.image = [UIImage imageNamed:@"noImage"];
+        }
+        cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width/2;
+        cell.prfImage.layer.masksToBounds = YES;
+        
+        //投稿された画像をセット
+        if(tweet.profileImage != nil)
+        {
+            //TODO:[ツイッターから投稿画像を取得し,画像の有無を判定]
+            //[cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+            [cell.postImageAi stopAnimating];
+        
+        }
+        else
+        {
+            [cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+        }
+        if(nil)
+        {
+            //TODO:[どのSNSか判定し,画像を選択]
+        }
+        else
+        {
+            cell.snsLogo.image = [UIImage imageNamed:@"noImage"];
+        }
+        //アカウント名をセット
+        NSMutableString* head = @"@".mutableCopy;
+        if([tweet.accountName length] != 0 )
+        {
+            [head appendString:tweet.accountName];
+            cell.accountName.text = head;
+        }
+        //投稿時間をセット
+        if([tweet.postTime length] != 0)
+        {
+            cell.postTime.text = tweet.postTime;
+        }
+        //現在地との距離
+        if(tweet.distance > 0 ){
+            //cell.spot.text=append
+            [cell.distanceAi stopAnimating];
+            NSString* meter = [NSString stringWithFormat:@"%d",tweet.distance];
+            if([tweet.address length] != 0 ){
+                cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter,tweet.address];
+            }
+        }
+        //    tweet.accountName;
+        DLog("acccount%@",tweet.accountName);
+        //ボタン位置を設定
+        return cell;
     }
     else if([cellID isEqualToString:_cellId2])
     {
         TableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-        cell.delegate = self;
+       // cell.delegate = self;
         return cell;
     }
     else{
@@ -498,7 +593,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //配列をindex.path.row順にソート
         [self.tableView beginUpdates];
         
-       
         NSMutableIndexSet* indexSet=[[NSMutableIndexSet alloc] init];
         for (NSIndexPath* indexPath in selectedCells)
         {
@@ -509,7 +603,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         [self.tableView deleteRowsAtIndexPaths:selectedCells withRowAnimation:UITableViewRowAnimationFade];
         
         [self.tableView endUpdates];
-
     }
     else
     {
@@ -587,7 +680,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         _postViewController = [[PostViewController alloc] init];
         _postViewController.delegate = self;
     }
-    
     return _postViewController;
 }
 
@@ -612,13 +704,12 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         NSString* path = [bundle pathForResource:@"sampleData" ofType:@"plist"];
         NSArray* sampleData = [NSMutableArray arrayWithContentsOfFile:path];
         
-        for (NSString* tmpSampleData in sampleData) {
+        for (NSString* tmpSampleData in sampleData){
             Tweet* tweet =[[Tweet alloc] init];
             tweet.body = tmpSampleData;
             [_tweetData addObject:tweet];
         }
     }
-    
     return _tweetData;
 }
 
@@ -636,36 +727,16 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 - (UIActivityIndicatorView*) ai
 {
-// TODO:[位置の調整]
-//    CGFloat h = self.view.frame.size.height;
-//    CGFloat w = self.view.frame.size.width;
-//    self.ai.frame = CGRectMake(w/2,h,0,30);
-
     if(_ai == nil)
     {
         _ai =[[UIActivityIndicatorView alloc] init];
         _ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
         _ai.hidesWhenStopped = YES; // ActivityIndicatorを残すときNo
-//        [_ai setCenter:CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height + 50)];
     }
     
     return _ai;
 }
 
-//-(BOOL)isLoading
-//{
-////更新中にUIActivityIndicatorViewのアニメーションをスタートさせる.
-//    if(_isLoading == YES){
-//        
-//        //DLog("StartAi");
-//        //[self.ai startAnimating];
-//    }
-//    else{
-//        DLog("StopAi");
-//        [self.ai stopAnimating];
-//    }
-//    return _isLoading;
-//}
 
 
 @end
