@@ -287,18 +287,16 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
                                      bodyH
                                      );
         //位置情報のラベルの位置を設定
-        cell.spot.frame = CGRectMake(
-                                     cell.spot.frame.origin.x,
-                                     cell.body.frame.origin.y+cell.body.frame.size.height,
-                                     cell.spot.frame.size.width,
-                                     cell.spot.frame.size.height
-                                     );
+//        cell.spot.frame = CGRectMake(
+//                                     cell.spot.frame.origin.x,
+//                                     cell.body.frame.origin.y + cell.body.frame.size.height + 10,
+//                                     cell.spot.frame.size.width,
+//                                     cell.spot.frame.size.height
+//                                     );
         if(tweet.address != nil)
         {
-//            cell.addressAi
             [cell.spotAi stopAnimating];
             cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
-            
         }
         else
         {
@@ -365,11 +363,9 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     else if([cellID isEqualToString:_cellId2])
     {
         TableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-       // cell.delegate = self;
         return cell;
     }
     else{
-        
         DLog("ERROR NO CELL");
         return nil;
     }
@@ -488,13 +484,11 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 -(CGFloat)    tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+//TableViewとそのIndexPathの高さ
     DLog("HeightForRow");
-    
-    Tweet* tweet = self.tweetData[indexPath.row];
+    Tweet* tweet   = self.tweetData[indexPath.row];
     NSString* body = tweet.body;
- 
     return [self _cellHFromText:body];
-    
 }
 
 -(CGFloat)_cellHFromText:(NSString*)text
