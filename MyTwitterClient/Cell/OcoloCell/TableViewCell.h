@@ -11,18 +11,22 @@
 
 
 @class TableViewCell;
+@class Link;
+
 @protocol TableViewCellDelegate <NSObject>
-@optional
 
 -(void) tableViewCell:(TableViewCell *) ocoloCell
-               buttonImage:(UIImageView *) image;
+          buttonImage:(UIImageView *) image;
+-(void) tableViewCell:(TableViewCell *)tableViewCell tappedLink:(Link*)link;
+
 @end
 
 @interface TableViewCell : UITableViewCell
+<SETextViewDelegate>
 
 
 
-@property (weak, nonatomic) IBOutlet UILabel *body;//ツイート内容
+//@property (weak, nonatomic) IBOutlet UILabel *body;//ツイート内容
 @property (weak, nonatomic) IBOutlet UIImageView *prfImage;
 //iconの画像
 @property (weak, nonatomic) IBOutlet UILabel *spot;
@@ -38,6 +42,7 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spotAi;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *distanceAi;
 
+@property (weak, nonatomic) IBOutlet UIButton *naviButton;
 
 @property (weak, nonatomic) IBOutlet UILabel *spotName;
 

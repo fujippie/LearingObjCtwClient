@@ -37,7 +37,7 @@
        )
     {
         [self.delegate tableViewCell:(TableViewCell *) self
-                      buttonImage:(UIImageView *) imageButton.imageView];
+                         buttonImage:(UIImageView *) imageButton.imageView];
     }
     
 

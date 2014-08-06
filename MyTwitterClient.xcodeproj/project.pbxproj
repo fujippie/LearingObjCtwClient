@@ -21,8 +21,6 @@
 		22583C051991ACC500DAB788 /* MyTwitterClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22583C041991ACC500DAB788 /* MyTwitterClientTests.m */; };
 		227B6D4F1991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */; };
 		227B6D501991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */; };
-		227B6D511991AD8C00F8B51C /* CellManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D2E1991AD8C00F8B51C /* CellManager.m */; };
-		227B6D521991AD8C00F8B51C /* CellManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D2E1991AD8C00F8B51C /* CellManager.m */; };
 		227B6D531991AD8C00F8B51C /* ElectricalCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D301991AD8C00F8B51C /* ElectricalCell.xib */; };
 		227B6D541991AD8C00F8B51C /* ElectricalCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D301991AD8C00F8B51C /* ElectricalCell.xib */; };
 		227B6D551991AD8C00F8B51C /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* TableViewCell.m */; };
@@ -99,6 +97,7 @@
 		227B6DCE1991C19100F8B51C /* facebook.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DCD1991C19100F8B51C /* facebook.png */; };
 		227B6DD01991C6A000F8B51C /* twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DCF1991C6A000F8B51C /* twitter.png */; };
 		227B6DD21991C6B200F8B51C /* ocolo.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DD11991C6B200F8B51C /* ocolo.png */; };
+		22EC226C199237B700D66297 /* Link.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EC226B199237B700D66297 /* Link.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,8 +129,6 @@
 		22583C041991ACC500DAB788 /* MyTwitterClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyTwitterClientTests.m; sourceTree = "<group>"; };
 		227B6D2A1991AD8C00F8B51C /* UIViewController+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Extensions.h"; sourceTree = "<group>"; };
 		227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Extensions.m"; sourceTree = "<group>"; };
-		227B6D2D1991AD8C00F8B51C /* CellManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellManager.h; sourceTree = "<group>"; };
-		227B6D2E1991AD8C00F8B51C /* CellManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellManager.m; sourceTree = "<group>"; };
 		227B6D301991AD8C00F8B51C /* ElectricalCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ElectricalCell.xib; sourceTree = "<group>"; };
 		227B6D311991AD8C00F8B51C /* TableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewCell.h; sourceTree = "<group>"; };
 		227B6D321991AD8C00F8B51C /* TableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewCell.m; sourceTree = "<group>"; };
@@ -198,6 +195,8 @@
 		227B6DCD1991C19100F8B51C /* facebook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = facebook.png; sourceTree = "<group>"; };
 		227B6DCF1991C6A000F8B51C /* twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter.png; sourceTree = "<group>"; };
 		227B6DD11991C6B200F8B51C /* ocolo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ocolo.png; sourceTree = "<group>"; };
+		22EC226A199237B700D66297 /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Link.h; sourceTree = "<group>"; };
+		22EC226B199237B700D66297 /* Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Link.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -318,8 +317,6 @@
 		227B6D2C1991AD8C00F8B51C /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				227B6D2D1991AD8C00F8B51C /* CellManager.h */,
-				227B6D2E1991AD8C00F8B51C /* CellManager.m */,
 				227B6D2F1991AD8C00F8B51C /* OcoloCell */,
 			);
 			path = Cell;
@@ -374,6 +371,8 @@
 				227B6D411991AD8C00F8B51C /* Tweet.m */,
 				227B6D421991AD8C00F8B51C /* TwitterAPI.h */,
 				227B6D431991AD8C00F8B51C /* TwitterAPI.m */,
+				22EC226A199237B700D66297 /* Link.h */,
+				22EC226B199237B700D66297 /* Link.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -615,6 +614,7 @@
 				227B6DB91991AF8D00F8B51C /* SETextMagnifierRanged.m in Sources */,
 				227B6DA51991AF8D00F8B51C /* SEConstants.m in Sources */,
 				227B6DB11991AF8D00F8B51C /* SETextGeometry.m in Sources */,
+				22EC226C199237B700D66297 /* Link.m in Sources */,
 				227B6DB71991AF8D00F8B51C /* SETextMagnifierCaret.m in Sources */,
 				227B6D591991AD8C00F8B51C /* BaseViewController.m in Sources */,
 				22583BF01991ACC500DAB788 /* AppDelegate.m in Sources */,
@@ -627,7 +627,6 @@
 				227B6D5F1991AD8C00F8B51C /* PostViewController.m in Sources */,
 				227B6D5B1991AD8C00F8B51C /* MainViewController.m in Sources */,
 				227B6D551991AD8C00F8B51C /* TableViewCell.m in Sources */,
-				227B6D511991AD8C00F8B51C /* CellManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -661,7 +660,6 @@
 				227B6D561991AD8C00F8B51C /* TableViewCell.m in Sources */,
 				22583C051991ACC500DAB788 /* MyTwitterClientTests.m in Sources */,
 				227B6DB41991AF8D00F8B51C /* SETextInput.m in Sources */,
-				227B6D521991AD8C00F8B51C /* CellManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

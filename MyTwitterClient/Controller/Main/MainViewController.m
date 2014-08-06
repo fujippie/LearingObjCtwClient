@@ -13,8 +13,8 @@
 #import "PostViewController.h"
 #import "AppDelegate.h"
 #import "TableViewCell.h"
+#import "Link.h"
 
-#import "SETextView.h"
 
 @interface MainViewController  ()
 <UIAlertViewDelegate,SETextViewDelegate>
@@ -45,16 +45,12 @@ static NSString* const _cellId2 = @"ElectricalCell";
 
 
 static NSString* const _instagram = @"instagram";
-
 static NSString* const _googlePlus = @"googlePlus";
-
 static NSString* const _facebook = @"facebook";
-
 static NSString* const _ocolo = @"ocolo";
-
 static NSString* const _twitter = @"twitter";
 
-
+static const CGFloat FONT_SIZE = 14.0f;
 #pragma mark - LifeCycle
 
 - (void)viewDidLoad
@@ -92,8 +88,10 @@ static NSString* const _twitter = @"twitter";
     TableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     
     //TODO:[位置情報のTextの高さを加算]
-    self.defaultCellBodyFrame = customTVC.body.frame;
+    self.defaultCellBodyFrame = customTVC.tweetText.frame;
     self.defaultCellFrame = customTVC.frame;
+    
+   
     
     [self.tableView addSubview:self.refreshControl];
 
@@ -127,13 +125,19 @@ static NSString* const _twitter = @"twitter";
 
 #pragma mark - Delegate
 
-#pragma mark  OcoloTableViewCellDelegate
+#pragma mark  TableViewCellDelegate
 
 -(void) tableViewCell:(TableViewCell *) ocoloCell
                buttonImage:(UIImageView *) image
 {
 //画像を他クラスへ送信するデリゲート
     DLog("ocoloTableViewCELL DELEGATE");
+    
+}
+
+-(void) tableViewCell:(TableViewCell *)tableViewCell
+           tappedLink:(Link*)link
+{
     
 }
 
@@ -147,9 +151,6 @@ static NSString* const _twitter = @"twitter";
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];//先頭に追加
     // インサート 指定したIndexPathの要素に対してだけデリゲートが呼ばれる
     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    
-    // アップデート
-//    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 #pragma mark TwitterAPIDelegate
@@ -251,32 +252,33 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
    
     //NSString * cellID = _cellId;
     
+    
 //    CELLでわける
-    if(indexPath.row % 6 == 0)
+    if(indexPath.row % 5 == 0)
     {
         return [self makeAnyCellwith:tweet logo:_twitter];
     }
     
-    else if(indexPath.row % 6 == 1)
+    else if(indexPath.row % 5 == 1)
     {
         return [self makeAnyCellwith:tweet logo:_ocolo];
     }
-    else if(indexPath.row % 6 == 2)
+    else if(indexPath.row % 5 == 2)
     {
         return [self makeAnyCellwith:tweet logo:_facebook];
     }
-    else if(indexPath.row % 6 == 3)
+    else if(indexPath.row % 5 == 3)
     {
         return [self makeAnyCellwith:tweet logo:_instagram];
     }
-    else if(indexPath.row % 6 == 4)
+    else if(indexPath.row % 5 == 4)
     {
         return [self makeAnyCellwith:tweet logo:_googlePlus];
     }
-    else if(indexPath.row % 6 == 5)
-    {
-        return [self makeElCellwith:tweet];
-    }
+//    else if(indexPath.row % 6 == 5)
+//    {
+//        return [self makeElCellwith:tweet];
+//    }
     
     else{
         DLog("ERROR NO CELL");
@@ -290,10 +292,10 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     
     TableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId2];
-    DLog(@"classNm: %@", NSStringFromClass(((NSObject*)cell).class));
+//    DLog(@"classNm: %@", NSStringFromClass(((NSObject*)cell).class));
     
-    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
-    cell.body.numberOfLines = 0;
+//    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
+//    cell.body.numberOfLines = 0;
     
     [cell.spotAi startAnimating];
     [cell.distanceAi startAnimating];
@@ -302,7 +304,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     //Frameの左上を(origin)原点として,Bodyを配置
     //Bodyの高さがCellの高さに設定されている
     
-    cell.body.text = @"＿＿＿店名等＿＿";
+    cell.tweetText.text = @"＿＿＿店名等＿＿";
     
 //住所
     if(tweet.address != nil)
@@ -336,8 +338,6 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
 -(TableViewCell *) makeAnyCellwith:(Tweet*) tweet logo:(NSString*)sns
 {
-    DLog();
-
     TableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     cell.delegate = self;
     // セルが作られた時,回り始める
@@ -351,31 +351,16 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     //    http://oropon.hatenablog.com/entry/20120408/p1
     // テクストにリンクをつける　＋リンクをタップしたときに検知
 //    NSMutableAttributedString *attributeStr =[[NSMutableAttributedString alloc] initWithString:tweet.body];
-//    //属性をセット
-//    [attributeStr addAttribute:NSBackgroundColorAttributeName
-//                         value:[UIColor colorWithRed:1. green:1. blue:.0 alpha:1.]
-//                         range:NSMakeRange(0, [attributeStr length])];
-//    [cell.body setAttributedText:attributeStr];
-    //cell.body.text = [NSString stringWithFormat:@"%@",tweet.body];
-    
-    
-//    [cell.body setAttributedText:tweet.body2];
-    
-    DLog("TweetText");
-    
+
+
     cell.tweetText.attributedText = tweet.body2;
     cell.tweetText.delegate = self;
-    
-    
-    
-    
-    
-    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
-    cell.body.numberOfLines = 0;
+    cell.tweetText.lineBreakMode = NSLineBreakByCharWrapping;
+//    cell.tweetText.numberOfLines = 0;
     //  Cell中のTextLabelを設定
     //Frameの左上を(origin)原点として,Bodyを配置
     //Bodyの高さがCellの高さに設定されている
-    CGFloat cellH = [self _cellHFromText:cell.body.text];
+    CGFloat cellH = [self _cellHFromText:cell.tweetText.text];
     CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
   
     //    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
@@ -389,19 +374,27 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     //Frameの左上を(origin)原点として,Bodyを配置
     //Bodyの高さがCellの高さに設定されている
     
-    cell.body.frame = CGRectMake(
-                                 cell.body.frame.origin.x,
-                                 cell.body.frame.origin.y,
-                                 cell.body.frame.size.width,
+    cell.tweetText.frame = CGRectMake(
+                                 cell.tweetText.frame.origin.x,
+                                 cell.tweetText.frame.origin.y,
+                                 cell.tweetText.frame.size.width,
                                  bodyH
                                  );
     //位置情報のラベルの位置を設定
-    //        cell.spot.frame = CGRectMake(
-    //                                     cell.spot.frame.origin.x,
-    //                                     cell.body.frame.origin.y + cell.body.frame.size.height + 10,
-    //                                     cell.spot.frame.size.width,
-    //                                     cell.spot.frame.size.height
-    //                                     );
+    cell.spot.frame = CGRectMake(
+                                 cell.spot.frame.origin.x,
+                                 cell.tweetText.frame.origin.y + cell.tweetText.frame.size.height + 10,
+                                 cell.spot.frame.size.width,
+                                 cell.spot.frame.size.height
+                                 );
+    
+    cell.naviButton.frame = CGRectMake(
+                                 cell.naviButton.frame.origin.x,
+                                 cell.tweetText.frame.origin.y + cell.tweetText.frame.size.height + 10,
+                                 cell.naviButton.frame.size.width,
+                                 cell.naviButton.frame.size.height
+                                 );
+    
     if(tweet.address != nil)
     {
         [cell.spotAi stopAnimating];
@@ -468,7 +461,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
         }
     }
     //    tweet.accountName;
-    DLog("acccount%@",tweet.accountName);
+//    DLog("acccount%@",tweet.accountName);
     //ボタン位置を設定
     return cell;
 }
@@ -505,10 +498,10 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     
 //    DLog(@"ClickEDONLinkDESCription:\n%@", link.description);
     
-//    if ([clickedText hasPrefix:@"http"])
-//    {
-//        self.nextURL = [NSURL URLWithString:clickedText];
-//    }
+    if ([clickedText hasPrefix:@"http"])
+    {
+        self.nextURL = [NSURL URLWithString:clickedText];
+    }
 ////    TODO:[@hoge クリック時にエラー]
     if ([clickedText hasPrefix:@"@"])
     {
@@ -528,8 +521,9 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     if (self.nextURL)
     {
 //        [self performSegueWithIdentifier:@"WebView" sender:self];
-        DLog("URL_TAPPED\tURL:%@",self.nextURL);
+        DLog("URL_TAPPED\tURL:%@", self.nextURL);
     }
+    
     return YES;
 }
 
@@ -541,11 +535,15 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 //TableViewとそのIndexPathの高さ
-    DLog("HeightForRow");
+
     Tweet* tweet   = self.tweetData[indexPath.row];
-    NSString* body = tweet.body;
-    return (indexPath.row % 6 == 5 )?  self.defaultCellFrame.size.height-50:[self _cellHFromText:body];
-//    return [self _cellHFromText:body];
+    NSString* body = tweet.body2.string;
+    
+
+    
+//    return (indexPath.row % 6 == 5 )?  self.defaultCellFrame.size.height:[self _cellHFromText:body];
+    
+    return [self _cellHFromText:body];
 }
 
 -(CGFloat)_cellHFromText:(NSString*)text
@@ -553,8 +551,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     //Cell内の文字列のフォントを取得
 //    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
     TableViewCell* ocCell= [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-    UIFont*   font = ocCell.body.font;
-    DLog(@"font:%@", font);
+//    UIFont*   font = ocCell.tweetText.font;
+    UIFont* font = [UIFont systemFontOfSize:FONT_SIZE];
+//    DLog(@"font:%@", font);
     
 //  Textに応じたBodyの高さを返す
     CGFloat cellBodyH = [text boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
@@ -564,21 +563,34 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                          ].size.height;
 //    デフォルト　＋（増分）
     CGFloat cellH = self.defaultCellFrame.size.height
-    + (cellBodyH - self.defaultCellBodyFrame.size.height  );
+    + (cellBodyH - self.defaultCellBodyFrame.size.height );
+    
 //    デフォルト　−　(減少分)
-    CGFloat cellHm = self.defaultCellFrame.size.height
+    CGFloat cellHm = 30+self.defaultCellFrame.size.height
     - (self.defaultCellBodyFrame.size.height - cellBodyH);
+    
+    
 //    デフォルトよりも高さが低い場合,Cellを縮める
-    cellH = cellH < self.defaultCellFrame.size.height ? cellHm : cellH;
+//    cellH = cellH < self.defaultCellFrame.size.height ? cellHm : cellH;
+    
+    
+    cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
     //三項演算子構文↑↑
 //    DLog("CELLH : %f", cellH);
+    
+//    DLog("Default\n\tBODY:%f FRAME:%f",self.defaultCellBodyFrame.size.height,self.defaultCellFrame.size.height);
+    
+    DLog("\n\tCell H         %f",cellH);
+    DLog("\n\tCell BodyH     %f",cellBodyH);
+    DLog("\n\tCell BodyDefoH %f",self.defaultCellBodyFrame.size.height);
+    DLog("\n\tCell FrameDefoH %f",self.defaultCellFrame.size.height);
+//    DLog("\n\tReturned:%f",cellH+ocCell.spot.frame.size.height);
     return cellH+ocCell.spot.frame.size.height;//cell.spotの高さを加算
 }
 
 //セルが選択されたときに呼び出される.
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     if (self.editing)
     {
     }
@@ -718,11 +730,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 #pragma mark - Accessor
 
-
-
 -(PostViewController *) postViewController
 {
-    
     if(_postViewController == nil)
     {
         _postViewController = [[PostViewController alloc] init];

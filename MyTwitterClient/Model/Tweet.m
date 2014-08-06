@@ -208,10 +208,7 @@ static CLLocation* currentLocation;//現在地
 
     CLLocationDistance distance = [[Tweet getCurrentLocation] distanceFromLocation:tweetAt];
     
-    DLog("\nDISTAAAAAAANCE:%d",(NSInteger)distance);
-
-    DLog("IS MAIN THREAD %hhd",[NSThread isMainThread]);
-
+    
 //  CLLocationDistanceは(meterで値が変える
     
     return (NSInteger)distance;
