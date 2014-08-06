@@ -384,7 +384,6 @@
 				227B6D451991AD8C00F8B51C /* mixi_training */,
 				227B6D481991AD8C00F8B51C /* noImage.png */,
 				227B6D491991AD8C00F8B51C /* plist */,
-				227B6D4B1991AD8C00F8B51C /* sns_logo */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -408,6 +407,7 @@
 		227B6D491991AD8C00F8B51C /* plist */ = {
 			isa = PBXGroup;
 			children = (
+				227B6D4B1991AD8C00F8B51C /* sns_logo */,
 				227B6D4A1991AD8C00F8B51C /* sampleData.plist */,
 			);
 			path = plist;
@@ -423,7 +423,8 @@
 				227B6D4C1991AD8C00F8B51C /* power.jpeg */,
 				227B6DCF1991C6A000F8B51C /* twitter.png */,
 			);
-			path = sns_logo;
+			name = sns_logo;
+			path = ../sns_logo;
 			sourceTree = "<group>";
 		};
 		227B6D791991AF8D00F8B51C /* SECoreTextView */ = {

@@ -501,23 +501,34 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 
 - (BOOL)textView:(SETextView *)textView clickedOnLink:(SELinkText *)link atIndex:(NSUInteger)charIndex
 {
-    NSString *text = link.object;
-    if ([text hasPrefix:@"http"]) {
-        self.nextURL = [NSURL URLWithString:text];
-    }
-//    TODO:[@hoge クリック時にエラー]
+    NSString* clickedText = link.text;
     
-    else if ([text hasPrefix:@"@"]) {
-        
-//        self.nextURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/%@", [text substringFromIndex:1]]];
+//    DLog(@"ClickEDONLinkDESCription:\n%@", link.description);
+    
+//    if ([clickedText hasPrefix:@"http"])
+//    {
+//        self.nextURL = [NSURL URLWithString:clickedText];
+//    }
+////    TODO:[@hoge クリック時にエラー]
+    if ([clickedText hasPrefix:@"@"])
+    {
+        self.nextURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/%@", [clickedText substringFromIndex:1]]];
     }
-    else if ([text hasPrefix:@"#"]) {
-//        self.nextURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/search?q=%@", [text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+    else if ([clickedText hasPrefix:@"#"])
+    {
+        self.nextURL = [NSURL URLWithString:
+                        [NSString stringWithFormat:@"https://twitter.com/search?q=%@"
+                         ,[clickedText stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+    }
+    else
+    {
+        self.nextURL = [NSURL URLWithString:clickedText];
     }
     
-    if (self.nextURL) {
-       // [self performSegueWithIdentifier:@"WebView" sender:self];
-        DLog("URL_TAPPED");
+    if (self.nextURL)
+    {
+//        [self performSegueWithIdentifier:@"WebView" sender:self];
+        DLog("URL_TAPPED\tURL:%@",self.nextURL);
     }
     return YES;
 }
@@ -739,7 +750,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         
         NSBundle* bundle = [NSBundle mainBundle];
         NSString* path = [bundle pathForResource:@"sampleData" ofType:@"plist"];
-        NSArray* sampleData = [NSMutableArray arrayWithContentsOfFile:path];
+        NSArray*  sampleData = [NSMutableArray arrayWithContentsOfFile:path];
         
         for (NSString* tmpSampleData in sampleData){
             Tweet* tweet =[[Tweet alloc] init];
