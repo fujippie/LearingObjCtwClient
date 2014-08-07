@@ -21,7 +21,7 @@ static CLLocation* currentLocation;//現在地
     Tweet* tweet = [[Tweet alloc] init];
     //allKeys Dictionary が持つ全ての値を取得
     
-    tweet.body2 = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
+    tweet.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
     
     
     if ([dic.allKeys containsObject:@"id"])
@@ -31,7 +31,7 @@ static CLLocation* currentLocation;//現在地
     
     if ([dic.allKeys containsObject:@"text"])//ツイート本文
     {
-        tweet.body = dic[@"text"];
+        tweet.simpleBody = dic[@"text"];
     }
     
     if([dic.allKeys containsObject:@"created_at"])

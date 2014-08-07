@@ -28,7 +28,6 @@
 @property (nonatomic, strong) PostViewController* postViewController;
 @property (nonatomic, strong) TwitterAPI* twitterApi;
 @property (nonatomic, assign) BOOL isInitialized;
-@property (strong, nonatomic) NSURL *nextURL;
 
 
 @end
@@ -65,6 +64,7 @@ static const CGFloat FONT_SIZE = 14.0f;
 //TableViewの追加と設定
 //    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(CustomTVC.class) bundle:nil]
 //         forCellReuseIdentifier:_cellId];
+    self.tableView.allowsSelection = NO;
     UINib* uinib = [UINib nibWithNibName:@"TableViewCell"
                                   bundle:nil];
     [self.tableView registerNib:uinib
@@ -138,7 +138,7 @@ static const CGFloat FONT_SIZE = 14.0f;
 -(void) tableViewCell:(TableViewCell *)tableViewCell
            tappedLink:(Link*)link
 {
-    
+    DLog("Called In Main %@ ",link.description);
 }
 
 
@@ -256,24 +256,24 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 //    CELLでわける
     if(indexPath.row % 5 == 0)
     {
-        return [self makeAnyCellwith:tweet logo:_twitter];
+        return [self _makeAnyCellwith:tweet logo:_twitter];
     }
     
     else if(indexPath.row % 5 == 1)
     {
-        return [self makeAnyCellwith:tweet logo:_ocolo];
+        return [self _makeAnyCellwith:tweet logo:_ocolo];
     }
     else if(indexPath.row % 5 == 2)
     {
-        return [self makeAnyCellwith:tweet logo:_facebook];
+        return [self _makeAnyCellwith:tweet logo:_facebook];
     }
     else if(indexPath.row % 5 == 3)
     {
-        return [self makeAnyCellwith:tweet logo:_instagram];
+        return [self _makeAnyCellwith:tweet logo:_instagram];
     }
     else if(indexPath.row % 5 == 4)
     {
-        return [self makeAnyCellwith:tweet logo:_googlePlus];
+        return [self _makeAnyCellwith:tweet logo:_googlePlus];
     }
 //    else if(indexPath.row % 6 == 5)
 //    {
@@ -285,188 +285,6 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
         return nil;
     }
 }
-
-#pragma mark subInCellForRow
-
--(TableViewCell *) makeElCellwith:(Tweet*) tweet
-{
-    
-    TableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId2];
-//    DLog(@"classNm: %@", NSStringFromClass(((NSObject*)cell).class));
-    
-//    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
-//    cell.body.numberOfLines = 0;
-    
-    [cell.spotAi startAnimating];
-    [cell.distanceAi startAnimating];
-    
-    //  Cell中のTextLabelを設定
-    //Frameの左上を(origin)原点として,Bodyを配置
-    //Bodyの高さがCellの高さに設定されている
-    
-    cell.tweetText.text = @"＿＿＿店名等＿＿";
-    
-//住所
-    if(tweet.address != nil)
-    {
-        
-        [cell.spotAi stopAnimating];
-        cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
-    }
-    
-    else
-    {
-        cell.spot.text = [NSString stringWithFormat:@" "];
-    }
-    
-    //現在地との距離
-    if(tweet.distance > 0 ){
-        //cell.spot.text=append
-        [cell.distanceAi stopAnimating];
-        NSString* meter = [NSString stringWithFormat:@"%d",tweet.distance];
-        if([tweet.address length] != 0 ){
-            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter,tweet.address];
-        }
-    }
-    
-//    CGFloat cellH = [self _cellHFromText:cell.body.text];
-//    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
-//    cell.spotName.text = @"AAA";
-    
-    return cell;
-}
-
--(TableViewCell *) makeAnyCellwith:(Tweet*) tweet logo:(NSString*)sns
-{
-    TableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-    cell.delegate = self;
-    // セルが作られた時,回り始める
-    [cell.spotAi startAnimating];
-    [cell.distanceAi startAnimating];
-    [cell.postImageAi startAnimating];
-    
-    
-    //  CELLにツイート(文字列)をセット
-    //  http://d.hatena.ne.jp/KishikawaKatsumi/20130605/1370370925
-    //    http://oropon.hatenablog.com/entry/20120408/p1
-    // テクストにリンクをつける　＋リンクをタップしたときに検知
-//    NSMutableAttributedString *attributeStr =[[NSMutableAttributedString alloc] initWithString:tweet.body];
-
-
-    cell.tweetText.attributedText = tweet.body2;
-    cell.tweetText.delegate = self;
-    cell.tweetText.lineBreakMode = NSLineBreakByCharWrapping;
-//    cell.tweetText.numberOfLines = 0;
-    //  Cell中のTextLabelを設定
-    //Frameの左上を(origin)原点として,Bodyを配置
-    //Bodyの高さがCellの高さに設定されている
-    CGFloat cellH = [self _cellHFromText:cell.tweetText.text];
-    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
-  
-    //    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
-    //  CELLにツイート(文字列)をセット
-    //  http://d.hatena.ne.jp/KishikawaKatsumi/20130605/1370370925
-    //    http://oropon.hatenablog.com/entry/20120408/p1
-    // テクストにリンクをつける　＋リンクをタップしたときに検知
-    
-    
-    //  Cell中のTextLabelを設定
-    //Frameの左上を(origin)原点として,Bodyを配置
-    //Bodyの高さがCellの高さに設定されている
-    
-    cell.tweetText.frame = CGRectMake(
-                                 cell.tweetText.frame.origin.x,
-                                 cell.tweetText.frame.origin.y,
-                                 cell.tweetText.frame.size.width,
-                                 bodyH
-                                 );
-    //位置情報のラベルの位置を設定
-    cell.spot.frame = CGRectMake(
-                                 cell.spot.frame.origin.x,
-                                 cell.tweetText.frame.origin.y + cell.tweetText.frame.size.height + 10,
-                                 cell.spot.frame.size.width,
-                                 cell.spot.frame.size.height
-                                 );
-    
-    cell.naviButton.frame = CGRectMake(
-                                 cell.naviButton.frame.origin.x,
-                                 cell.tweetText.frame.origin.y + cell.tweetText.frame.size.height + 10,
-                                 cell.naviButton.frame.size.width,
-                                 cell.naviButton.frame.size.height
-                                 );
-    
-    if(tweet.address != nil)
-    {
-        [cell.spotAi stopAnimating];
-        cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
-    }
-    else
-    {
-        cell.spot.text = [NSString stringWithFormat:@" "];
-    }
-    //  CELLにアイコン(プロフィール)画像をセット
-    if (tweet.profileImage)
-    {
-        cell.prfImage.image = tweet.profileImage;
-    }
-    else
-    {
-        cell.prfImage.image = [UIImage imageNamed:@"noImage"];
-    }
-    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width/2;
-    cell.prfImage.layer.masksToBounds = YES;
-    
-    //投稿された画像をセット
-    if(tweet.profileImage != nil)
-    {
-        //[ツイッターから投稿画像を取得し,画像の有無を判定]
-        //[cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
-        [cell.postImageAi stopAnimating];
-        
-    }
-    else
-    {
-        [cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
-    }
-    if(nil)
-    {
-        //[どのSNSか判定し,画像を選択]
-    }
-    else
-    {
-        cell.snsLogo.image = [UIImage imageNamed:sns];
-        //APPLEは.pngを奨励　JPEGは拡張子が必要
-        //cell.snsLogo.image = [UIImage imageNamed:@"twitter.jpeg"];
-        
-    }
-    //アカウント名をセット
-    NSMutableString* head = @"@".mutableCopy;
-    if([tweet.accountName length] != 0 )
-    {
-        [head appendString:tweet.accountName];
-        cell.name.text = head;
-    }
-    //投稿時間をセット
-    if([tweet.postTime length] != 0)
-    {
-        cell.postTime.text = tweet.postTime;
-    }
-    //現在地との距離
-    if(tweet.distance > 0 ){
-        //cell.spot.text=append
-        [cell.distanceAi stopAnimating];
-        NSString* meter = [NSString stringWithFormat:@"%d",tweet.distance];
-        if([tweet.address length] != 0 ){
-            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter,tweet.address];
-        }
-    }
-    //    tweet.accountName;
-//    DLog("acccount%@",tweet.accountName);
-    //ボタン位置を設定
-    return cell;
-}
-
-
 
 //スワイプすると横にDeleteボタンが出るようにするメッソド
 //セルが作られると呼ばれる
@@ -490,42 +308,40 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     }
 }
 
-#pragma mark SETextViewDelegate
-
-- (BOOL)textView:(SETextView *)textView clickedOnLink:(SELinkText *)link atIndex:(NSUInteger)charIndex
-{
-    NSString* clickedText = link.text;
-    
-//    DLog(@"ClickEDONLinkDESCription:\n%@", link.description);
-    
-    if ([clickedText hasPrefix:@"http"])
-    {
-        self.nextURL = [NSURL URLWithString:clickedText];
-    }
-////    TODO:[@hoge クリック時にエラー]
-    if ([clickedText hasPrefix:@"@"])
-    {
-        self.nextURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/%@", [clickedText substringFromIndex:1]]];
-    }
-    else if ([clickedText hasPrefix:@"#"])
-    {
-        self.nextURL = [NSURL URLWithString:
-                        [NSString stringWithFormat:@"https://twitter.com/search?q=%@"
-                         ,[clickedText stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
-    }
-    else
-    {
-        self.nextURL = [NSURL URLWithString:clickedText];
-    }
-    
-    if (self.nextURL)
-    {
-//        [self performSegueWithIdentifier:@"WebView" sender:self];
-        DLog("URL_TAPPED\tURL:%@", self.nextURL);
-    }
-    
-    return YES;
-}
+//- (BOOL)textView:(SETextView *)textView clickedOnLink:(SELinkText *)link atIndex:(NSUInteger)charIndex
+//{
+//    NSString* clickedText = link.text;
+//    
+////    DLog(@"ClickEDONLinkDESCription:\n%@", link.description);
+//    
+//    if ([clickedText hasPrefix:@"http"])
+//    {
+//        self.nextURL = [NSURL URLWithString:clickedText];
+//    }
+//////    TODO:[短縮URLを検出できるように]
+//    if ([clickedText hasPrefix:@"@"])
+//    {
+//        self.nextURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/%@", [clickedText substringFromIndex:1]]];
+//    }
+//    else if ([clickedText hasPrefix:@"#"])
+//    {
+//        self.nextURL = [NSURL URLWithString:
+//                        [NSString stringWithFormat:@"https://twitter.com/search?q=%@"
+//                         ,[clickedText stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+//    }
+//    else
+//    {
+//        self.nextURL = [NSURL URLWithString:clickedText];
+//    }
+//    
+//    if (self.nextURL)
+//    {
+////        [self performSegueWithIdentifier:@"WebView" sender:self];
+//        DLog("URL_TAPPED\tURL:%@", self.nextURL);
+//    }
+//    
+//    return YES;
+//}
 
 
 
@@ -537,7 +353,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //TableViewとそのIndexPathの高さ
 
     Tweet* tweet   = self.tweetData[indexPath.row];
-    NSString* body = tweet.body2.string;
+    NSString* body = tweet.attributedBody.string;
     
 
     
@@ -634,6 +450,185 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                                                   maxId:lastTweet.id];
     }
 
+}
+
+
+#pragma mark Create cell
+
+-(TableViewCell *) _makeElCellwith:(Tweet*) tweet
+{
+    
+    TableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId2];
+    //    DLog(@"classNm: %@", NSStringFromClass(((NSObject*)cell).class));
+    
+    //    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
+    //    cell.body.numberOfLines = 0;
+    
+    [cell.spotAi startAnimating];
+    [cell.distanceAi startAnimating];
+    
+    //  Cell中のTextLabelを設定
+    //Frameの左上を(origin)原点として,Bodyを配置
+    //Bodyの高さがCellの高さに設定されている
+    
+    cell.tweetText.text = @"＿＿＿店名等＿＿";
+    
+    //住所
+    if(tweet.address != nil)
+    {
+        
+        [cell.spotAi stopAnimating];
+        cell.spot.text = [NSString stringWithFormat:@"%@", tweet.address];
+    }
+    
+    else
+    {
+        cell.spot.text = [NSString stringWithFormat:@" "];
+    }
+    
+    //現在地との距離
+    if(tweet.distance > 0 )
+    {
+        //cell.spot.text=append
+        [cell.distanceAi stopAnimating];
+        NSString* meter = [NSString stringWithFormat:@"%d", tweet.distance];
+        if([tweet.address length] != 0 )
+        {
+            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter, tweet.address];
+        }
+    }
+    
+    //    CGFloat cellH = [self _cellHFromText:cell.body.text];
+    //    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
+    //    cell.spotName.text = @"AAA";
+    return cell;
+}
+
+-(TableViewCell *) _makeAnyCellwith:(Tweet*)tweet logo:(NSString*)snsLogoImageFileName
+{
+    TableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    cell.delegate = self;
+    //    cell.tweetText.delegate = cell;
+    // セルが作られた時,回り始める
+    [cell.spotAi startAnimating];
+    [cell.distanceAi startAnimating];
+    [cell.postImageAi startAnimating];
+    //  CELLにツイート(文字列)をセット
+    //  http://d.hatena.ne.jp/KishikawaKatsumi/20130605/1370370925
+    //    http://oropon.hatenablog.com/entry/20120408/p1
+    // テクストにリンクをつける　＋リンクをタップしたときに検知
+    //    NSMutableAttributedString *attributeStr =[[NSMutableAttributedString alloc] initWithString:tweet.body];
+    
+    cell.tweetText.attributedText = tweet.attributedBody;
+    cell.tweetText.lineBreakMode = NSLineBreakByCharWrapping;
+    //cell.tweetText.numberOfLines = 0;
+    //  Cell中のTextLabelを設定
+    //Frameの左上を(origin)原点として,Bodyを配置
+    //Bodyの高さがCellの高さに設定されている
+    CGFloat cellH = [self _cellHFromText:cell.tweetText.text];
+    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
+    
+    //    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
+    //  CELLにツイート(文字列)をセット
+    //  http://d.hatena.ne.jp/KishikawaKatsumi/20130605/1370370925
+    //    http://oropon.hatenablog.com/entry/20120408/p1
+    // テクストにリンクをつける　＋リンクをタップしたときに検知
+    
+    
+    //  Cell中のTextLabelを設定
+    //Frameの左上を(origin)原点として,Bodyを配置
+    //Bodyの高さがCellの高さに設定されている
+    
+    cell.tweetText.frame = CGRectMake(
+                                      cell.tweetText.frame.origin.x,
+                                      cell.tweetText.frame.origin.y,
+                                      cell.tweetText.frame.size.width,
+                                      bodyH
+                                      );
+    //位置情報のラベルの位置を設定
+    cell.spot.frame = CGRectMake(
+                                 cell.spot.frame.origin.x,
+                                 cell.tweetText.frame.origin.y + cell.tweetText.frame.size.height + 10,
+                                 cell.spot.frame.size.width,
+                                 cell.spot.frame.size.height
+                                 );
+    
+    cell.naviButton.frame = CGRectMake(
+                                       cell.naviButton.frame.origin.x,
+                                       cell.tweetText.frame.origin.y + cell.tweetText.frame.size.height + 10,
+                                       cell.naviButton.frame.size.width,
+                                       cell.naviButton.frame.size.height
+                                       );
+    
+    if(tweet.address != nil)
+    {
+        [cell.spotAi stopAnimating];
+        cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
+    }
+    else
+    {
+        cell.spot.text = [NSString stringWithFormat:@" "];
+    }
+    //  CELLにアイコン(プロフィール)画像をセット
+    if (tweet.profileImage)
+    {
+        cell.prfImage.image = tweet.profileImage;
+    }
+    else
+    {
+        cell.prfImage.image = [UIImage imageNamed:@"noImage"];
+    }
+    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width/2;
+    cell.prfImage.layer.masksToBounds = YES;
+    
+    //投稿された画像をセット
+    if(tweet.profileImage != nil)
+    {
+        //[ツイッターから投稿画像を取得し,画像の有無を判定]
+        //[cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+        [cell.postImageAi stopAnimating];
+        
+    }
+    else
+    {
+        [cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+    }
+    if(nil)
+    {
+        //[どのSNSか判定し,画像を選択]
+    }
+    else
+    {
+        cell.snsLogo.image = [UIImage imageNamed:snsLogoImageFileName];
+        //APPLEは.pngを奨励　JPEGは拡張子が必要
+        //cell.snsLogo.image = [UIImage imageNamed:@"twitter.jpeg"];
+        
+    }
+    //アカウント名をセット
+    NSMutableString* head = @"@".mutableCopy;
+    if([tweet.accountName length] != 0 )
+    {
+        [head appendString:tweet.accountName];
+        cell.name.text = head;
+    }
+    //投稿時間をセット
+    if([tweet.postTime length] != 0)
+    {
+        cell.postTime.text = tweet.postTime;
+    }
+    //現在地との距離
+    if(tweet.distance > 0 ){
+        //cell.spot.text=append
+        [cell.distanceAi stopAnimating];
+        NSString* meter = [NSString stringWithFormat:@"%d",tweet.distance];
+        if([tweet.address length] != 0 ){
+            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter,tweet.address];
+        }
+    }
+    //    tweet.accountName;
+    //DLog("acccount%@",tweet.accountName);
+    //ボタン位置を設定
+    return cell;
 }
 
 #pragma mark - Override
@@ -763,7 +758,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         
         for (NSString* tmpSampleData in sampleData){
             Tweet* tweet =[[Tweet alloc] init];
-            tweet.body = tmpSampleData;
+            tweet.simpleBody = tmpSampleData;
             [_tweetData addObject:tweet];
         }
     }

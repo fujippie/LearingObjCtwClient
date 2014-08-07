@@ -433,8 +433,8 @@
                       NSArray* cordAr = [jsonDic valueForKeyPath:@"coordinates.coordinates"];
                       tweet.longitude = [[cordAr objectAtIndex:0] floatValue];//経度 西経　東経
                       tweet.latitude  = [[cordAr objectAtIndex:1] floatValue];//緯度　北緯　南緯
-                      tweet.body      = jsonDic[@"text"];
-                      DLog("TweetBody:%@",tweet.body);
+                      tweet.simpleBody      = jsonDic[@"text"];
+                      DLog("TweetBody:%@",tweet.simpleBody);
                       
                       if(
                          self.delegate

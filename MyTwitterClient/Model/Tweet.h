@@ -13,8 +13,8 @@
 
 
 @property (nonatomic, assign) unsigned long long id;     // ツイートID
-@property (nonatomic, strong) NSString* body;            // ツイート内容
-@property (nonatomic, strong) NSAttributedString* body2;
+@property (nonatomic, strong) NSString* simpleBody;            // ツイート内容
+@property (nonatomic, strong) NSAttributedString* attributedBody;
 @property (nonatomic, strong) NSString* profileImageUrl; // プロフィール画像URL
 @property (nonatomic, assign) CGFloat   latitude;        // 緯度
 @property (nonatomic, assign) CGFloat   longitude;       // 経度

@@ -24,8 +24,6 @@
 @interface TableViewCell : UITableViewCell
 <SETextViewDelegate>
 
-
-
 //@property (weak, nonatomic) IBOutlet UILabel *body;//ツイート内容
 @property (weak, nonatomic) IBOutlet UIImageView *prfImage;
 //iconの画像
@@ -46,8 +44,8 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *spotName;
 
-
 @property (weak, nonatomic) IBOutlet SETextView *tweetText;
+@property (strong, nonatomic) NSURL *nextURL;
 
 
 - (IBAction)postedImage:(id)sender;
