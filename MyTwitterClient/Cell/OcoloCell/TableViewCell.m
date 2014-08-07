@@ -50,20 +50,31 @@
     NSString* clickedText = link.text;
     
     id linkObj = link.object;
-    NSString* classNameLinkObj = NSStringFromClass([linkObj class]);
-//    DLog("CLASSNAME,OBJECT:%@",classNameLinkObj);//    __NSCFDictionary  OR  __NSCFString
-    NSString* linkURLStr  = [[NSString alloc] init];
-    NSDictionary* linkDic = [[NSDictionary alloc] init];
+
+    NSString*     linkURLStr = @"";
+    NSDictionary* linkDic    = @{};
     
-    if([classNameLinkObj isEqualToString:@"__NSCFString"])
+    if ([linkObj isMemberOfClass:[NSString class]])
     {
         linkURLStr = (NSString*)linkObj;//http....
     }
-    else if([classNameLinkObj isEqualToString:@"__NSCFDictionary"])
+    else if ([linkObj isMemberOfClass:[NSDictionary class]])
     {
         linkDic = (NSDictionary*)linkObj;
         //@:   screen_name
         //#:   text
+    }
+    else
+    {
+        if(
+           self.delegate
+           && [self.delegate respondsToSelector:@selector(tableViewCell:tappedLink:)]
+           )
+        {
+            [self.delegate tableViewCell:self tappedLink:nil];
+        }
+        
+        return NO;
     }
     
     if ([linkURLStr hasPrefix:@"http"])
@@ -100,7 +111,7 @@
        && [self.delegate respondsToSelector:@selector(tableViewCell:tappedLink:)]
        )
     {
-        [self.delegate tableViewCell:(TableViewCell *)self tappedLink:linkInCell];
+        [self.delegate tableViewCell:self tappedLink:linkInCell];
     }
     
     return YES;

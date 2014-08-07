@@ -375,7 +375,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                                                    constraintSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
                                                       lineSpacing:0.0f
                                                              font:[UIFont systemFontOfSize:FONT_SIZE]];
-    CGFloat cellBodyH=frameRect.size.height;
+    CGFloat cellBodyH = frameRect.size.height;
     
 //    デフォルト　＋（増分）
     CGFloat cellH = self.defaultCellFrame.size.height
@@ -385,16 +385,16 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //    cellH = cellH < self.defaultCellFrame.size.height ? cellHm : cellH;
     
     
-    cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH-6;
+    cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
     //三項演算子構文↑↑
 //    DLog("CELLH : %f", cellH);
     
 //    DLog("Default\n\tBODY:%f FRAME:%f",self.defaultCellBodyFrame.size.height,self.defaultCellFrame.size.height);
     
-    DLog("\n\tCell H         %f",cellH);
-    DLog("\n\tCell BodyH     %f",cellBodyH);
-    DLog("\n\tCell BodyDefoH %f",self.defaultCellBodyFrame.size.height);
-    DLog("\n\tCell FrameDefoH %f",self.defaultCellFrame.size.height);
+    DLog("\n\tCell H         %f", cellH);
+    DLog("\n\tCell BodyH     %f", cellBodyH);
+    DLog("\n\tCell BodyDefoH %f", self.defaultCellBodyFrame.size.height);
+    DLog("\n\tCell FrameDefoH %f", self.defaultCellFrame.size.height);
 //    DLog("\n\tReturned:%f",cellH+ocCell.spot.frame.size.height);
     return cellH;//+ocCell.spot.frame.size.height;//cell.spotの高さを加算
 }
@@ -527,9 +527,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     
 //    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height ;
-    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height -50;
+    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height - 50;
     
-    DLog("\n\t CellH:%f bodyH:%f",cellH,bodyH);
+    DLog("\n\t CellH:%f bodyH:%f", cellH, bodyH);
     
     
     
@@ -551,10 +551,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                                       bodyH
                                       );
     
-    if(tweet.address != nil)
+    if (tweet.address != nil)
     {
         [cell.spotAi stopAnimating];
-        cell.spot.text = [NSString stringWithFormat:@"%@",tweet.address];
+        cell.spot.text = [NSString stringWithFormat:@"%@", tweet.address];
     }
     else
     {
@@ -569,7 +569,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     {
         cell.prfImage.image = [UIImage imageNamed:@"noImage"];
     }
-    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width/2;
+    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width / 2;
     cell.prfImage.layer.masksToBounds = YES;
     
     //投稿された画像をセット
@@ -584,7 +584,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     {
         [cell.postedImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
     }
-    if(nil)
+    if (nil)
     {
         //[どのSNSか判定し,画像を選択]
     }
@@ -696,10 +696,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     {
         [self.refreshControl endRefreshing];
     }
-//    
-//    for (Tweet* tweet in self.tweetData) {
-//        printf("_REFRESH_CALLED_%d: %llu\n", [self.tweetData indexOfObject:tweet], tweet.id);// [[tweet.body substringToIndex:5] UTF8String]);
-//    }
 }
 
 -(IBAction) rightBarBtnPushed:(id)sender
