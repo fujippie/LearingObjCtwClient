@@ -49,7 +49,7 @@ static NSString* const _facebook = @"facebook";
 static NSString* const _ocolo = @"ocolo";
 static NSString* const _twitter = @"twitter";
 
-static const CGFloat FONT_SIZE = 14.0f;
+static const CGFloat FONT_SIZE = 12.0f;
 #pragma mark - LifeCycle
 
 - (void)viewDidLoad
@@ -76,12 +76,7 @@ static const CGFloat FONT_SIZE = 14.0f;
     [self.tableView registerNib:uinib2
          forCellReuseIdentifier:_cellId2];
     
-//    UINib* uinib2 = [UINib nibWithNibName:@"ElectricalCell"
-//                                   bundle:nil];
-//    [self.tableView registerNib:uinib2
-//         forCellReuseIdentifier:_cellId2];
-//    
-//
+
 //TableViewのCellの登録と設定
 //    id型のもので型が確定するものはその型にしておく
     
@@ -90,8 +85,6 @@ static const CGFloat FONT_SIZE = 14.0f;
     //TODO:[位置情報のTextの高さを加算]
     self.defaultCellBodyFrame = customTVC.tweetText.frame;
     self.defaultCellFrame = customTVC.frame;
-    
-   
     
     [self.tableView addSubview:self.refreshControl];
 
@@ -351,46 +344,48 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 //TableViewとそのIndexPathの高さ
-
     Tweet* tweet   = self.tweetData[indexPath.row];
-    NSString* body = tweet.attributedBody.string;
-    
-
-    
+    NSAttributedString* body = tweet.attributedBody;
+ 
 //    return (indexPath.row % 6 == 5 )?  self.defaultCellFrame.size.height:[self _cellHFromText:body];
-    
+
     return [self _cellHFromText:body];
 }
 
--(CGFloat)_cellHFromText:(NSString*)text
+-(CGFloat)_cellHFromText:(NSAttributedString*)atrText
 {
     //Cell内の文字列のフォントを取得
 //    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
-    TableViewCell* ocCell= [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+//TableViewCell* ocCell= [self.tableView dequeueReusableCellWithIdentifier:_cellId];
 //    UIFont*   font = ocCell.tweetText.font;
-    UIFont* font = [UIFont systemFontOfSize:FONT_SIZE];
+//    UIFont* font = [UIFont systemFontOfSize:FONT_SIZE];
+
+//    UIFont font = ocCell.tweetText.font;
 //    DLog(@"font:%@", font);
     
 //  Textに応じたBodyの高さを返す
-    CGFloat cellBodyH = [text boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
-                                           options:NSStringDrawingUsesLineFragmentOrigin //| NSStringDrawingUsesFontLeading
-                                        attributes:@{NSFontAttributeName:font}
-                                           context:nil
-                         ].size.height;
+//    CGFloat cellBodyH = [text boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
+//                                           options:NSStringDrawingUsesLineFragmentOrigin //| NSStringDrawingUsesFontLeading
+//                                        attributes:@{NSFontAttributeName:FONT_SIZE}
+//                                           context:nil
+//                         ].size.height;
+    
+   
+    CGRect frameRect = [SETextView frameRectWithAttributtedString:atrText
+                                                   constraintSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
+                                                      lineSpacing:0.0f
+                                                             font:[UIFont systemFontOfSize:FONT_SIZE]];
+    CGFloat cellBodyH=frameRect.size.height;
+    
 //    デフォルト　＋（増分）
     CGFloat cellH = self.defaultCellFrame.size.height
     + (cellBodyH - self.defaultCellBodyFrame.size.height );
-    
-//    デフォルト　−　(減少分)
-    CGFloat cellHm = 30+self.defaultCellFrame.size.height
-    - (self.defaultCellBodyFrame.size.height - cellBodyH);
-    
     
 //    デフォルトよりも高さが低い場合,Cellを縮める
 //    cellH = cellH < self.defaultCellFrame.size.height ? cellHm : cellH;
     
     
-    cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
+    cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH-6;
     //三項演算子構文↑↑
 //    DLog("CELLH : %f", cellH);
     
@@ -401,7 +396,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     DLog("\n\tCell BodyDefoH %f",self.defaultCellBodyFrame.size.height);
     DLog("\n\tCell FrameDefoH %f",self.defaultCellFrame.size.height);
 //    DLog("\n\tReturned:%f",cellH+ocCell.spot.frame.size.height);
-    return cellH+ocCell.spot.frame.size.height;//cell.spotの高さを加算
+    return cellH;//+ocCell.spot.frame.size.height;//cell.spotの高さを加算
 }
 
 //セルが選択されたときに呼び出される.
@@ -471,7 +466,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     //Frameの左上を(origin)原点として,Bodyを配置
     //Bodyの高さがCellの高さに設定されている
     
-    cell.tweetText.text = @"＿＿＿店名等＿＿";
+    cell.tweetText.text = @"＿＿店名等＿＿";
     
     //住所
     if(tweet.address != nil)
@@ -497,7 +492,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
             cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter, tweet.address];
         }
     }
-    
     //    CGFloat cellH = [self _cellHFromText:cell.body.text];
     //    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
     //    cell.spotName.text = @"AAA";
@@ -520,13 +514,24 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     //    NSMutableAttributedString *attributeStr =[[NSMutableAttributedString alloc] initWithString:tweet.body];
     
     cell.tweetText.attributedText = tweet.attributedBody;
-    cell.tweetText.lineBreakMode = NSLineBreakByCharWrapping;
+    //cell.tweetText.lineBreakMode = NSLineBreakByCharWrapping;
     //cell.tweetText.numberOfLines = 0;
     //  Cell中のTextLabelを設定
     //Frameの左上を(origin)原点として,Bodyを配置
     //Bodyの高さがCellの高さに設定されている
-    CGFloat cellH = [self _cellHFromText:cell.tweetText.text];
-    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
+    CGFloat cellH = [self _cellHFromText:cell.tweetText.attributedText];
+    
+//    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height ;
+    
+    //CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height ;
+    
+    
+//    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height ;
+    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height -50;
+    
+    DLog("\n\t CellH:%f bodyH:%f",cellH,bodyH);
+    
+    
     
     //    CustomTVC* cell = [tableView dequeueReusableCellWithIdentifier:_cellId];
     //  CELLにツイート(文字列)をセット
@@ -545,20 +550,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                                       cell.tweetText.frame.size.width,
                                       bodyH
                                       );
-    //位置情報のラベルの位置を設定
-    cell.spot.frame = CGRectMake(
-                                 cell.spot.frame.origin.x,
-                                 cell.tweetText.frame.origin.y + cell.tweetText.frame.size.height + 10,
-                                 cell.spot.frame.size.width,
-                                 cell.spot.frame.size.height
-                                 );
-    
-    cell.naviButton.frame = CGRectMake(
-                                       cell.naviButton.frame.origin.x,
-                                       cell.tweetText.frame.origin.y + cell.tweetText.frame.size.height + 10,
-                                       cell.naviButton.frame.size.width,
-                                       cell.naviButton.frame.size.height
-                                       );
     
     if(tweet.address != nil)
     {

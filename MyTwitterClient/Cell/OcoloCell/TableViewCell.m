@@ -39,9 +39,7 @@
     }
 }
 
-
 #pragma mark - SETextViewDelegate
-
 
 - (BOOL)textView:(SETextView *)textView
    clickedOnLink:(SELinkText *)link
@@ -54,42 +52,39 @@
     id linkObj = link.object;
     NSString* classNameLinkObj = NSStringFromClass([linkObj class]);
 //    DLog("CLASSNAME,OBJECT:%@",classNameLinkObj);//    __NSCFDictionary  OR  __NSCFString
-
+    NSString* linkURLStr  = [[NSString alloc] init];
+    NSDictionary* linkDic = [[NSDictionary alloc] init];
+    
     if([classNameLinkObj isEqualToString:@"__NSCFString"])
     {
-        DLog(@"URL:%@",linkObj);
-        //http....
+        linkURLStr = (NSString*)linkObj;//http....
     }
     else if([classNameLinkObj isEqualToString:@"__NSCFDictionary"])
     {
-        DLog(@"DIC%@",linkObj);
-        //@:screen_name
+        linkDic = (NSDictionary*)linkObj;
+        //@:   screen_name
+        //#:   text
     }
     
-        
-    
-    if ([clickedText hasPrefix:@"http"])
+    if ([linkURLStr hasPrefix:@"http"])
     {
-        self.nextURL = [NSURL URLWithString:clickedText];
+        self.nextURL = [NSURL URLWithString: linkURLStr];
     }
     ////    TODO:[短縮URLを検出できるように]
     if ([clickedText hasPrefix:@"@"])
     {
-        self.nextURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/%@", [clickedText substringFromIndex:1]]];
+        self.nextURL = [NSURL URLWithString:
+                        [NSString stringWithFormat:
+                         @"https://twitter.com/%@", [linkDic[@"screen_name"] substringFromIndex:1]]];
     }
     
     else if ([clickedText hasPrefix:@"#"])
     {
         self.nextURL = [NSURL URLWithString:
                         [NSString stringWithFormat:@"https://twitter.com/search?q=%@"
-                         ,[clickedText stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+                         ,[linkDic[@"text"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
     }
-    
-    else
-    {
-        self.nextURL = [NSURL URLWithString:clickedText];
-    }
-    
+
     if (self.nextURL)
     {
         //        [self performSegueWithIdentifier:@"WebView" sender:self];
