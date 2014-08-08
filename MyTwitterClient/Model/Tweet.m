@@ -23,7 +23,6 @@ static CLLocation* currentLocation;//現在地
     
     tweet.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
     
-    
     if ([dic.allKeys containsObject:@"id"])
     {
         tweet.id = [dic[@"id"] unsignedLongLongValue];
@@ -37,9 +36,7 @@ static CLLocation* currentLocation;//現在地
     if([dic.allKeys containsObject:@"created_at"])
     {
         tweet.postTime=[tweet _formatTimeString:dic[@"created_at"]];
-        
     }
-    
     
     if ([dic.allKeys containsObject:@"user"])
     {
@@ -57,22 +54,44 @@ static CLLocation* currentLocation;//現在地
             && ![userDic[@"profile_image_url"] isEqual:[NSNull null]]
             )
         {
+//For Debug
+            
+        
             tweet.profileImageUrl = userDic[@"profile_image_url"];
 
+            
             __weak Tweet* weakTweet = tweet;
 //            別スレッドで非同期実行
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
-            {
-                if (weakTweet == nil) {
-                    return ;
-                }
-                
-                NSData* profileImageData = [NSData dataWithContentsOfURL:
-                                            [NSURL URLWithString:weakTweet.profileImageUrl]];
-                weakTweet.profileImage = [UIImage imageWithData:profileImageData];
-            });
+            {//別スレッドで処理
+//////////遅延実行/////////////
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                               if (weakTweet == nil) {
+                                   return ;
+                               }
+                               NSData* profileImageData = [NSData dataWithContentsOfURL:
+                                                           [NSURL URLWithString:weakTweet.profileImageUrl]];
+                               weakTweet.profileImage = [UIImage imageWithData:profileImageData];
+                           });
+                  });
+//////////元/////////////
+            
+            
+//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
+//            {//別スレッドで処理
+//                
+//                if (weakTweet == nil) {
+//                    return ;
+//                }
+//                
+//                NSData* profileImageData = [NSData dataWithContentsOfURL:
+//                                            [NSURL URLWithString:weakTweet.profileImageUrl]];
+//                
+//                weakTweet.profileImage = [UIImage imageWithData:profileImageData];
+//            });
+            
+//////////元/////////////
         }
-        
     }
     
     if ([dic.allKeys containsObject:@"geo"])
@@ -88,7 +107,6 @@ static CLLocation* currentLocation;//現在地
                     tweet.latitude = [[coorinates objectAtIndex:0] floatValue];
                     tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
 // 現在地との距離を代入
-                    
                 tweet.distance = [tweet _distanceWithLatitude: tweet.latitude
                                   Longitude: tweet.longitude];
                     
@@ -140,10 +158,11 @@ static CLLocation* currentLocation;//現在地
 //                             DLog("MainThread:%hhd",[NSThread isMainThread]);
 //                             DLog("\n\tAddress      : %@", address);
                              __weak Tweet* wt =tweet;
-                             //非同期で別スレッドで処理
-                             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^(void)
-                             {
-//                                 DLog("MainThread:%hhd",[NSThread isMainThread]);
+                             //非同期で別スレッドで処理  //dispach_get_main_queue()
+                           dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^(void)
+                           {
+                               //dispatch_async(dispatch_get_main_queue(),^(void){
+//                                 DLog("ISMainThread？？？:%hhd",[NSThread isMainThread]);
                                  wt.address = address;
                              });
                          }
@@ -157,6 +176,18 @@ static CLLocation* currentLocation;//現在地
     return tweet;
 }
 
+
+
+
+
+-(void) _delayImage:(UIImage*) img
+{
+    
+    return ;
+}
+
+
+//TODO:[-1]
 -(NSString *) _formatTimeString:(NSString*) postDateStr
 {
     DLog("%@",postDateStr);
@@ -165,15 +196,27 @@ static CLLocation* currentLocation;//現在地
     NSLocale* locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
     [dateFormatter setLocale:locale];
 //Mon Dec 23 0:08:27 +0000 2013 APIの日付フォーマット
+    
     [dateFormatter setDateFormat:@"EEE MMM dd HH:mm:ss Z yyyy"];
+    
     NSDate* postDate =[dateFormatter dateFromString:postDateStr];
     
-    NSDate* currentDate =[NSDate date];
+    NSDate* currentDate =[NSDate date];//現在時刻
+    
+    
     
     NSTimeInterval interval = [currentDate timeIntervalSinceDate:postDate];
     
 //分に変換後，文字列に変換
-    NSString* intervalStr = [NSString stringWithFormat:@"%d",(int)(interval/60)+1];
+
+    NSString* intervalStr = [NSString stringWithFormat:@"%d",(int)(interval/60)];
+    
+    
+    
+    DLog("CURRENTTIME:%@",currentDate);
+    DLog("POSTDATE   :%@",currentDate);
+    DLog("%@",intervalStr);
+    
     
     NSMutableString* str = [[NSMutableString alloc] initWithFormat:@"分前に投稿"];
     [str insertString:intervalStr atIndex:0];

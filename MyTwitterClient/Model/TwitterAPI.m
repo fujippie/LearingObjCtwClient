@@ -216,10 +216,10 @@
                           [tweetData addObject:tweet];
                       }
                       // メインスレッドで実行(NSThread)
-                      //                      [self performSelectorOnMainThread:@selector(_refresh)
-                      //                                             withObject:nil
-                      //                                          waitUntilDone:NO];
-                      
+//                                            [self performSelectorOnMainThread:@selector(_refresh)
+//                                                                   withObject:nil
+//                                                                waitUntilDone:NO];
+//                      
                       /*
                        Tweet
                        id
