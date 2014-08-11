@@ -12,8 +12,9 @@
 #import "TwitterAPI.h"
 #import "PostViewController.h"
 #import "AppDelegate.h"
-#import "TableViewCell.h"
+#import "BaseTableViewCell.h"
 #import "Link.h"
+
 
 
 @interface MainViewController  ()
@@ -39,9 +40,8 @@
 #pragma mark - Consts
 
 //static NSString* const _cellId = @"CustomTVC";
-static NSString* const _cellId = @"TableViewCell";
-static NSString* const _cellId2 = @"ElectricalCell";
-
+static NSString* const _cellId = @"BaseTableViewCell";
+static NSString* const _cellId2 = @"PowerCell";
 
 static NSString* const _instagram = @"instagram";
 static NSString* const _googlePlus = @"googlePlus";
@@ -65,12 +65,12 @@ static const CGFloat FONT_SIZE = 12.0f;
 //    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(CustomTVC.class) bundle:nil]
 //         forCellReuseIdentifier:_cellId];
     self.tableView.allowsSelection = NO;
-    UINib* uinib = [UINib nibWithNibName:@"TableViewCell"
+    UINib* uinib = [UINib nibWithNibName:@"BaseTableViewCell"
                                   bundle:nil];
     [self.tableView registerNib:uinib
          forCellReuseIdentifier:_cellId];
     
-    UINib* uinib2 = [UINib nibWithNibName:@"ElectricalCell"
+    UINib* uinib2 = [UINib nibWithNibName:@"PowerCell"
                                   bundle:nil];
     
     [self.tableView registerNib:uinib2
@@ -80,7 +80,7 @@ static const CGFloat FONT_SIZE = 12.0f;
 //TableViewのCellの登録と設定
 //    id型のもので型が確定するものはその型にしておく
     
-    TableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    BaseTableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     
     //TODO:[位置情報のTextの高さを加算]
     self.defaultCellBodyFrame = customTVC.tweetText.frame;
@@ -120,20 +120,36 @@ static const CGFloat FONT_SIZE = 12.0f;
 
 #pragma mark  TableViewCellDelegate
 
--(void) tableViewCell:(TableViewCell *) ocoloCell
-               buttonImage:(UIImageView *) image
+-(void) tableViewCell:(BaseTableViewCell *) ocoloCell
+               postImageButton:(UIImageView *) image
 {
 //画像を他クラスへ送信するデリゲート
-    DLog("ocoloTableViewCELL DELEGATE");
+    DLog("ocoloTableViewCELL DELEGATE%@",image.description);
+    
     
 }
 
--(void) tableViewCell:(TableViewCell *)tableViewCell
+-(void) tableViewCell:(BaseTableViewCell *)tableViewCell
            tappedLink:(Link*)link
 {
     DLog("Called In Main %@ ",link.description);
 }
 
+-(void) tableViewCell:(BaseTableViewCell *) tableViewCell
+naviButtonWithAddress:(NSString*)address
+             latitude:(CGFloat) latitude
+           longtitude:(CGFloat)longtitude
+{
+    DLog(@"CalledINMAIN%@,lati:%f,longti:%f",address,latitude,longtitude);
+
+}
+
+-(void) tableViewCell:(BaseTableViewCell *) tableViewCell
+accountImageButtonWith:(NSString*)accountName
+{
+    DLog(@"CalledinMAin%@",accountName);
+
+}
 
 #pragma mark  PostViewControllerDelegate
 
@@ -413,10 +429,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 #pragma mark Create cell
 
--(TableViewCell *) _makeElCellwith:(Tweet*) tweet
+-(BaseTableViewCell *) _makeElCellwith:(Tweet*) tweet
 {
     
-    TableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId2];
+    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId2];
     //    DLog(@"classNm: %@", NSStringFromClass(((NSObject*)cell).class));
     
     //    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
@@ -440,7 +456,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
        
         NSString* meter = [NSString stringWithFormat:@"%d", tweet.distance];
         cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter, tweet.address];
-                          
     }
     else
     {
@@ -464,9 +479,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     return cell;
 }
 
--(TableViewCell *) _makeAnyCellwith:(Tweet*)tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName
+-(BaseTableViewCell *) _makeAnyCellwith:(Tweet*)tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName
 {
-    TableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     cell.delegate = self;
     //    cell.tweetText.delegate = cell;
     // セルが作られた時,回り始める
@@ -525,17 +540,21 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //        cell.spot.text = [NSString stringWithFormat:@" "];
 //    }
     //  CELLにアイコン(プロフィール)画像をセット
+    
+    
     if (tweet.profileImage)
     {
-        cell.prfImage.image = tweet.profileImage;
+        [cell.prfImage setImage:tweet.profileImage forState:0];
+//        [cell.prfImage setImage:[UIImage imageNamed:@"female.jpeg"] forState:0];
+
         [cell.plfAi stopAnimating];
     }
     else
     {
-        cell.prfImage.image = [UIImage imageNamed:@"noImage"];
+        [cell.prfImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
     }
-    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width / 2;
-    cell.prfImage.layer.masksToBounds = YES;
+//    cell.prfImage.layer.cornerRadius  = cell.prfImage.frame.size.width / 2;
+//    cell.prfImage.layer.masksToBounds = YES;
     
 //投稿された画像をセット
     
@@ -580,9 +599,13 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     if(([tweet.address length] > 0) && (tweet.distance > 0))
     {
         [cell.spotAi stopAnimating];
-        NSString* meter = [NSString stringWithFormat:@"%d", tweet.distance];
-        cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter, tweet.address];
+//        [postloc meterToKilo:tweet.distance];
+//        NSString* meter = [NSString stringWithFormat:@"%d", tweet.distance];
+        cell.spot.text  = [NSString stringWithFormat:@"%@ %@", [self meterToKilo:tweet.distance], tweet.address];
         DLog("ISMainThread22222？？？:%hhd",[NSThread isMainThread]);
+        
+        cell.longitude = tweet.longitude;
+        cell.latitude  = tweet.latitude;
     }
     else
     {
@@ -603,6 +626,16 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     return cell;
 }
+
+-(NSString*) meterToKilo:(NSInteger) meter{
+    if(meter > 1000){
+        return [NSString stringWithFormat:@"%dKm",meter/1000];
+    }
+    else{
+        return [NSString stringWithFormat:@"%dm",meter];
+    }
+}
+
 
 #pragma mark - Override
 

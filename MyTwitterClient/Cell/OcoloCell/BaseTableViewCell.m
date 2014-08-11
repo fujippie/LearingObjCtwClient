@@ -5,11 +5,11 @@
 //  Created by yuta_fujiwara on 2014/07/28.
 //  Copyright (c) 2014年 Yuta Fujiwara. All rights reserved.
 //
-#import "TableViewCell.h"
+#import "BaseTableViewCell.h"
 #import "Link.h"
 //TODO:[クラス名は要変更,Base.....など]
 
-@implementation TableViewCell
+@implementation BaseTableViewCell
 
 #pragma mark - LifeCycle
 
@@ -28,16 +28,62 @@
 {
     //引数のUIボタンの画像をデリゲートでMainViewCTRに渡す.
     DLog("ImageTapped");
-    
     if(
        self.delegate
-       && [self.delegate respondsToSelector:@selector(tableViewCell:buttonImage:)]
+       && [self.delegate respondsToSelector:@selector(tableViewCell:postImageButton:)]
        )
     {
         [self.delegate tableViewCell:self
-                         buttonImage:imageButton.imageView];
+                         postImageButton:imageButton.imageView];
     }
 }
+
+- (IBAction)naviButton:(UIButton *) naviButton{
+    DLog("naviButton");
+//緯度、経度をCell内でデータを持っていないので取れない
+//    Mainで呼び出す
+    if(
+       self.delegate
+       && [self.delegate respondsToSelector:@selector(tableViewCell:
+                                                      naviButtonWithAddress:
+                                                      latitude:
+                                                      longtitude:)]
+       )
+    {
+        if(self.latitude != 0  && self.longitude != 0){
+            [self.delegate  tableViewCell:self
+                    naviButtonWithAddress:self.spot.text
+                                 latitude:self.latitude
+                               longtitude:self.longitude];
+        }
+    }
+}
+
+- (IBAction)plfImageButton:(id)sender {
+    DLog("PLFImageButton");
+    
+    if(
+       self.delegate
+       && [self.delegate respondsToSelector:@selector(
+                                                      tableViewCell:
+                                                      accountImageButtonWith:
+                                                      )]
+       )
+    {
+    [self.delegate tableViewCell:(BaseTableViewCell *) self
+          accountImageButtonWith:self.name.text];
+    }
+    
+}
+
+
+#pragma mark - setData
+-(void) setPostData
+{
+
+
+}
+
 
 #pragma mark - SETextViewDelegate
 
@@ -81,7 +127,7 @@
     {
         self.nextURL = [NSURL URLWithString: linkURLStr];
     }
-    ////    TODO:[短縮URLを検出できるように]
+
     if ([clickedText hasPrefix:@"@"])
     {
         self.nextURL = [NSURL URLWithString:

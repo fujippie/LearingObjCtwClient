@@ -21,12 +21,12 @@
 		22583C051991ACC500DAB788 /* MyTwitterClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22583C041991ACC500DAB788 /* MyTwitterClientTests.m */; };
 		227B6D4F1991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */; };
 		227B6D501991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */; };
-		227B6D531991AD8C00F8B51C /* ElectricalCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D301991AD8C00F8B51C /* ElectricalCell.xib */; };
-		227B6D541991AD8C00F8B51C /* ElectricalCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D301991AD8C00F8B51C /* ElectricalCell.xib */; };
-		227B6D551991AD8C00F8B51C /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* TableViewCell.m */; };
-		227B6D561991AD8C00F8B51C /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* TableViewCell.m */; };
-		227B6D571991AD8C00F8B51C /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D331991AD8C00F8B51C /* TableViewCell.xib */; };
-		227B6D581991AD8C00F8B51C /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D331991AD8C00F8B51C /* TableViewCell.xib */; };
+		227B6D531991AD8C00F8B51C /* PowerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D301991AD8C00F8B51C /* PowerCell.xib */; };
+		227B6D541991AD8C00F8B51C /* PowerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D301991AD8C00F8B51C /* PowerCell.xib */; };
+		227B6D551991AD8C00F8B51C /* BaseTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* BaseTableViewCell.m */; };
+		227B6D561991AD8C00F8B51C /* BaseTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* BaseTableViewCell.m */; };
+		227B6D571991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D331991AD8C00F8B51C /* BaseTableViewCell.xib */; };
+		227B6D581991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D331991AD8C00F8B51C /* BaseTableViewCell.xib */; };
 		227B6D591991AD8C00F8B51C /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D361991AD8C00F8B51C /* BaseViewController.m */; };
 		227B6D5A1991AD8C00F8B51C /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D361991AD8C00F8B51C /* BaseViewController.m */; };
 		227B6D5B1991AD8C00F8B51C /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D391991AD8C00F8B51C /* MainViewController.m */; };
@@ -97,6 +97,7 @@
 		227B6DCE1991C19100F8B51C /* facebook.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DCD1991C19100F8B51C /* facebook.png */; };
 		227B6DD01991C6A000F8B51C /* twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DCF1991C6A000F8B51C /* twitter.png */; };
 		227B6DD21991C6B200F8B51C /* ocolo.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DD11991C6B200F8B51C /* ocolo.png */; };
+		22C0055D199874A100A58D20 /* PostTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C0055C199874A100A58D20 /* PostTime.m */; };
 		22EC226C199237B700D66297 /* Link.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EC226B199237B700D66297 /* Link.m */; };
 /* End PBXBuildFile section */
 
@@ -129,10 +130,10 @@
 		22583C041991ACC500DAB788 /* MyTwitterClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyTwitterClientTests.m; sourceTree = "<group>"; };
 		227B6D2A1991AD8C00F8B51C /* UIViewController+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Extensions.h"; sourceTree = "<group>"; };
 		227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Extensions.m"; sourceTree = "<group>"; };
-		227B6D301991AD8C00F8B51C /* ElectricalCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ElectricalCell.xib; sourceTree = "<group>"; };
-		227B6D311991AD8C00F8B51C /* TableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewCell.h; sourceTree = "<group>"; };
-		227B6D321991AD8C00F8B51C /* TableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewCell.m; sourceTree = "<group>"; };
-		227B6D331991AD8C00F8B51C /* TableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
+		227B6D301991AD8C00F8B51C /* PowerCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PowerCell.xib; sourceTree = "<group>"; };
+		227B6D311991AD8C00F8B51C /* BaseTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTableViewCell.h; sourceTree = "<group>"; };
+		227B6D321991AD8C00F8B51C /* BaseTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTableViewCell.m; sourceTree = "<group>"; };
+		227B6D331991AD8C00F8B51C /* BaseTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BaseTableViewCell.xib; sourceTree = "<group>"; };
 		227B6D351991AD8C00F8B51C /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
 		227B6D361991AD8C00F8B51C /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
 		227B6D381991AD8C00F8B51C /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
@@ -195,6 +196,8 @@
 		227B6DCD1991C19100F8B51C /* facebook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = facebook.png; sourceTree = "<group>"; };
 		227B6DCF1991C6A000F8B51C /* twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter.png; sourceTree = "<group>"; };
 		227B6DD11991C6B200F8B51C /* ocolo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ocolo.png; sourceTree = "<group>"; };
+		22C0055B199874A100A58D20 /* PostTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostTime.h; sourceTree = "<group>"; };
+		22C0055C199874A100A58D20 /* PostTime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostTime.m; sourceTree = "<group>"; };
 		22EC226A199237B700D66297 /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Link.h; sourceTree = "<group>"; };
 		22EC226B199237B700D66297 /* Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Link.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -325,10 +328,10 @@
 		227B6D2F1991AD8C00F8B51C /* OcoloCell */ = {
 			isa = PBXGroup;
 			children = (
-				227B6D301991AD8C00F8B51C /* ElectricalCell.xib */,
-				227B6D311991AD8C00F8B51C /* TableViewCell.h */,
-				227B6D321991AD8C00F8B51C /* TableViewCell.m */,
-				227B6D331991AD8C00F8B51C /* TableViewCell.xib */,
+				227B6D301991AD8C00F8B51C /* PowerCell.xib */,
+				227B6D311991AD8C00F8B51C /* BaseTableViewCell.h */,
+				227B6D321991AD8C00F8B51C /* BaseTableViewCell.m */,
+				227B6D331991AD8C00F8B51C /* BaseTableViewCell.xib */,
 			);
 			path = OcoloCell;
 			sourceTree = "<group>";
@@ -370,6 +373,8 @@
 				227B6D401991AD8C00F8B51C /* Tweet.h */,
 				227B6D411991AD8C00F8B51C /* Tweet.m */,
 				227B6D421991AD8C00F8B51C /* TwitterAPI.h */,
+				22C0055B199874A100A58D20 /* PostTime.h */,
+				22C0055C199874A100A58D20 /* PostTime.m */,
 				227B6D431991AD8C00F8B51C /* TwitterAPI.m */,
 				22EC226A199237B700D66297 /* Link.h */,
 				22EC226B199237B700D66297 /* Link.m */,
@@ -559,14 +564,14 @@
 				227B6DCA1991C17E00F8B51C /* instagram.png in Resources */,
 				227B6DCC1991C18700F8B51C /* googlePlus.png in Resources */,
 				22583BEA1991ACC500DAB788 /* InfoPlist.strings in Resources */,
-				227B6D571991AD8C00F8B51C /* TableViewCell.xib in Resources */,
+				227B6D571991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */,
 				227B6D671991AD8C00F8B51C /* female.jpeg in Resources */,
 				227B6DC31991AF8D00F8B51C /* default_user_icon@2x.png in Resources */,
 				227B6DCE1991C19100F8B51C /* facebook.png in Resources */,
 				227B6D611991AD8C00F8B51C /* PostViewController.xib in Resources */,
 				227B6D5D1991AD8C00F8B51C /* MainViewController.xib in Resources */,
 				227B6D6B1991AD8C00F8B51C /* sampleData.plist in Resources */,
-				227B6D531991AD8C00F8B51C /* ElectricalCell.xib in Resources */,
+				227B6D531991AD8C00F8B51C /* PowerCell.xib in Resources */,
 				227B6D691991AD8C00F8B51C /* noImage.png in Resources */,
 				227B6DC11991AF8D00F8B51C /* default_user_icon.png in Resources */,
 				22583BF21991ACC500DAB788 /* Images.xcassets in Resources */,
@@ -579,8 +584,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				22583C031991ACC500DAB788 /* InfoPlist.strings in Resources */,
-				227B6D581991AD8C00F8B51C /* TableViewCell.xib in Resources */,
-				227B6D541991AD8C00F8B51C /* ElectricalCell.xib in Resources */,
+				227B6D581991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */,
+				227B6D541991AD8C00F8B51C /* PowerCell.xib in Resources */,
 				227B6D6E1991AD8C00F8B51C /* power.jpeg in Resources */,
 				227B6D5E1991AD8C00F8B51C /* MainViewController.xib in Resources */,
 				227B6DC21991AF8D00F8B51C /* default_user_icon.png in Resources */,
@@ -613,6 +618,7 @@
 				227B6D4F1991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */,
 				227B6DB91991AF8D00F8B51C /* SETextMagnifierRanged.m in Sources */,
 				227B6DA51991AF8D00F8B51C /* SEConstants.m in Sources */,
+				22C0055D199874A100A58D20 /* PostTime.m in Sources */,
 				227B6DB11991AF8D00F8B51C /* SETextGeometry.m in Sources */,
 				22EC226C199237B700D66297 /* Link.m in Sources */,
 				227B6DB71991AF8D00F8B51C /* SETextMagnifierCaret.m in Sources */,
@@ -626,7 +632,7 @@
 				227B6DC71991AF8D00F8B51C /* SETwitterHelper.m in Sources */,
 				227B6D5F1991AD8C00F8B51C /* PostViewController.m in Sources */,
 				227B6D5B1991AD8C00F8B51C /* MainViewController.m in Sources */,
-				227B6D551991AD8C00F8B51C /* TableViewCell.m in Sources */,
+				227B6D551991AD8C00F8B51C /* BaseTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,7 +663,7 @@
 				227B6DB21991AF8D00F8B51C /* SETextGeometry.m in Sources */,
 				227B6DAA1991AF8D00F8B51C /* SELinkText.m in Sources */,
 				227B6DAC1991AF8D00F8B51C /* SESelectionGrabber.m in Sources */,
-				227B6D561991AD8C00F8B51C /* TableViewCell.m in Sources */,
+				227B6D561991AD8C00F8B51C /* BaseTableViewCell.m in Sources */,
 				22583C051991ACC500DAB788 /* MyTwitterClientTests.m in Sources */,
 				227B6DB41991AF8D00F8B51C /* SETextInput.m in Sources */,
 			);

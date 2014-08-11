@@ -10,22 +10,33 @@
 #import "SETextView.h"
 
 
-@class TableViewCell;
+@class BaseTableViewCell;
 @class Link;
 
 @protocol TableViewCellDelegate <NSObject>
 
--(void) tableViewCell:(TableViewCell *) ocoloCell
-          buttonImage:(UIImageView *) image;
--(void) tableViewCell:(TableViewCell *)tableViewCell tappedLink:(Link*)link;
+-(void) tableViewCell:(BaseTableViewCell *) tableviewCell
+          postImageButton:(UIImageView *) image;
+
+-(void) tableViewCell:(BaseTableViewCell *)tableViewCell
+           tappedLink:(Link*)link;
+
+-(void) tableViewCell:(BaseTableViewCell *) tableViewCell
+              naviButtonWithAddress:(NSString*)address
+             latitude:(CGFloat) latitude
+           longtitude:(CGFloat)longtitude;
+
+-(void) tableViewCell:(BaseTableViewCell *) tableViewCell
+   accountImageButtonWith:(NSString*)accountName;
 
 @end
 
-@interface TableViewCell : UITableViewCell
+
+@interface BaseTableViewCell : UITableViewCell
 <SETextViewDelegate>
 
 //@property (weak, nonatomic) IBOutlet UILabel *body;//ツイート内容
-@property (weak, nonatomic) IBOutlet UIImageView *prfImage;
+@property (weak, nonatomic) IBOutlet UIButton *prfImage;
 //iconの画像
 @property (weak, nonatomic) IBOutlet UILabel *spot;
 @property (weak, nonatomic) IBOutlet UILabel *name;
@@ -47,7 +58,15 @@
 @property (weak, nonatomic) IBOutlet UILabel *spotName;
 
 @property (weak, nonatomic) IBOutlet SETextView *tweetText;
+
+
 @property (strong, nonatomic) NSURL *nextURL;
+@property (nonatomic, assign) CGFloat   latitude;        // 緯度
+@property (nonatomic, assign) CGFloat   longitude;       // 経度
+
+
+
+
 
 
 - (IBAction)postedImage:(id)sender;

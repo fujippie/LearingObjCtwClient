@@ -47,7 +47,6 @@ static CLLocation* currentLocation;//現在地
             tweet.accountName = userDic[@"screen_name"];
         }
         
-        
         if (//アイコン画像
             [userDic.allKeys containsObject:@"profile_image_url"]
             && userDic[@"profile_image_url"]
@@ -55,8 +54,6 @@ static CLLocation* currentLocation;//現在地
             )
         {
 //For Debug
-            
-        
             tweet.profileImageUrl = userDic[@"profile_image_url"];
 
             
@@ -107,9 +104,8 @@ static CLLocation* currentLocation;//現在地
                     tweet.latitude = [[coorinates objectAtIndex:0] floatValue];
                     tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
 // 現在地との距離を代入
-                tweet.distance = [tweet _distanceWithLatitude: tweet.latitude
-                                  Longitude: tweet.longitude];
-                    
+                tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
+//                    [tweet.locationAtTweet distanceToCurrentLocation];
                     
 //(緯度，経度)　=> 住所
                     CLLocation* location =[[CLLocation alloc] initWithLatitude:tweet.latitude longitude:tweet.longitude];
@@ -187,44 +183,79 @@ static CLLocation* currentLocation;//現在地
 }
 
 
-//TODO:[-1]
+//TODO:[現在時刻はすぐに取れるが,ツイートの時刻は取得に時間がかかる.ツイート取得できたときに現在時刻を取得する必要がある]
 -(NSString *) _formatTimeString:(NSString*) postDateStr
 {
     DLog("%@",postDateStr);
-    NSDateFormatter *dateFormatter =[[NSDateFormatter alloc] init];
+    NSDateFormatter *dateFormatter =[[NSDateFormatter alloc] init];//入力用
+    
 //MonやDecを解釈するため
     NSLocale* locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
     [dateFormatter setLocale:locale];
+    
+    
 //Mon Dec 23 0:08:27 +0000 2013 APIの日付フォーマット
     
     [dateFormatter setDateFormat:@"EEE MMM dd HH:mm:ss Z yyyy"];
     
     NSDate* postDate =[dateFormatter dateFromString:postDateStr];
     
+    
     NSDate* currentDate =[NSDate date];//現在時刻
     
-    
+//debug 現在時刻を一日後にする//currentDate = [currentDate dateByAddingTimeInterval:(60*60)*23.5];
     
     NSTimeInterval interval = [currentDate timeIntervalSinceDate:postDate];
     
 //分に変換後，文字列に変換
+    DLog("Interval:%f",interval);
+    
+    NSString* intervalStr = @"";
+    
+    
+    if (interval < 0)
+    {
+    intervalStr = [NSString stringWithFormat:@"%d秒",(int)(interval)];
+    
+    }
+    else if(interval >0 && interval < 4){
+        
+        intervalStr = @"現在";
+    }
 
-    NSString* intervalStr = [NSString stringWithFormat:@"%d",(int)(interval/60)];
+    else if(interval >= 4 && interval < 60){
+        
+        intervalStr = [NSString stringWithFormat:@"%d秒",(int)(interval)];
+    }
     
-    
+    else if(interval >= 60 && interval < 60 * 60){
+        
+        intervalStr = [NSString stringWithFormat:@"%d分",(int)(interval/60)];
+    }
+    else if(interval >= 60 * 60 && interval < 60 * 60 * 24 ){
+        
+        intervalStr = [NSString stringWithFormat:@"%d時間",(int)(interval/(60*60)) ];
+    }
+    else if(interval >= 60 * 60 * 24 ){
+        
+        NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];//出力用
+        NSLocale* locale2 = [NSLocale currentLocale];
+        [dateFormatter2 setLocale:locale2];
+        //Mon Dec 23 0:08:27 +0000 2013 APIの日付フォーマット
+        [dateFormatter2 setDateFormat:@" MM月 dd日 "];
+        intervalStr= [dateFormatter2 stringFromDate:postDate];
+    }
     
     DLog("CURRENTTIME:%@",currentDate);
-    DLog("POSTDATE   :%@",currentDate);
-    DLog("%@",intervalStr);
-    
-    
-    NSMutableString* str = [[NSMutableString alloc] initWithFormat:@"分前に投稿"];
-    [str insertString:intervalStr atIndex:0];
+    DLog("POSTDATE   :%@",postDate);
+    DLog("INTERVAL%@",intervalStr);
+//    NSMutableString* str = [[NSMutableString alloc] initWithFormat:@"分前に投稿"];
+//    [str insertString:intervalStr atIndex:0];
 //    DLog(@"%@",str);
     
 //    DLog("CURRENTTIME:%@",currentDate);
 //    DLog("POST:%@",postDate);
-    return (NSString *)str;
+    return intervalStr;
 }
 
 -(NSInteger) _distanceWithLatitude:(CGFloat) latitude
@@ -238,9 +269,6 @@ static CLLocation* currentLocation;//現在地
     }
     //デリゲートで現在地がSetされる
 //    CLLocationDegrees double型
-
-    
-
     CLLocation* tweetAt =[[CLLocation alloc]
                             initWithLatitude:((double)latitude)//latitude
                                    longitude:((double)longitude)];
@@ -295,5 +323,9 @@ static CLLocation* currentLocation;//現在地
 //    DLog("SETCURRENT%@",currentLocation);//ok
     return;
 }
+
+
+
+
 
 @end

@@ -10,7 +10,8 @@
 #import "BaseViewController.h"
 #import "PostViewController.h"
 #import "TwitterAPI.h"
-#import "TableViewCell.h"
+#import "BaseTableViewCell.h"
+
 @interface MainViewController : BaseViewController
 // デリゲートプロトコル参照定義
 <
