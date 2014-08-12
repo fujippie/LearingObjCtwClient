@@ -29,13 +29,6 @@
                             <action selector="naviButton:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="4TW-2W-5Wy"/>
                         </connections>
                     </button>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@アカウント名" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1ir-ql-gEx">
-                        <rect key="frame" x="66" y="20" width="138" height="20"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="何分前" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MX5-x2-Y5p">
                         <rect key="frame" x="87" y="44" width="96" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -94,10 +87,22 @@
                             <action selector="plfImageButton:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Kbe-J5-TBR"/>
                         </connections>
                     </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="V9V-oh-yMd">
+                        <rect key="frame" x="78" y="27" width="105" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <state key="normal" title="@アカウント名">
+                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <connections>
+                            <action selector="accountNameButton:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="e4P-ek-dx1"/>
+                        </connections>
+                    </button>
                 </subviews>
             </tableViewCellContentView>
             <connections>
-                <outlet property="name" destination="1ir-ql-gEx" id="Xat-DP-xMh"/>
+                <outlet property="name" destination="V9V-oh-yMd" id="04q-k8-Omr"/>
                 <outlet property="naviButton" destination="0BX-1d-lZl" id="XZP-86-Hw5"/>
                 <outlet property="plfAi" destination="ikb-GH-5qe" id="wSv-v8-BQy"/>
                 <outlet property="postImageAi" destination="LGb-oD-RD9" id="9X7-1P-ZAD"/>

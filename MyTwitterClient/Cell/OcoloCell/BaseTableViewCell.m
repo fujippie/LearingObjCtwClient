@@ -1,5 +1,5 @@
 //
-//  OcoloTableViewCell.m
+//  BaseTableViewCell.m
 //  MyTwitterClient
 //
 //  Created by yuta_fujiwara on 2014/07/28.
@@ -7,16 +7,22 @@
 //
 #import "BaseTableViewCell.h"
 #import "Link.h"
+#import "Tweet.h"
 //TODO:[クラス名は要変更,Base.....など]
 
 @implementation BaseTableViewCell
+
+static NSString* const _instagram = @"instagram";
+static NSString* const _googlePlus = @"googlePlus";
+static NSString* const _facebook = @"facebook";
+static NSString* const _ocolo = @"ocolo";
+static NSString* const _twitter = @"twitter";
 
 #pragma mark - LifeCycle
 
 - (void)awakeFromNib
 {
     [super awakeFromNib];
-    
     // Initialization code
     self.tweetText.delegate = self;
     DLog("TweetText:%@", self.tweetText.delegate);
@@ -61,7 +67,6 @@
 
 - (IBAction)plfImageButton:(id)sender {
     DLog("PLFImageButton");
-    
     if(
        self.delegate
        && [self.delegate respondsToSelector:@selector(
@@ -71,18 +76,160 @@
        )
     {
     [self.delegate tableViewCell:(BaseTableViewCell *) self
-          accountImageButtonWith:self.name.text];
+          accountImageButtonWith:self.name.currentTitle];
+    }
+}
+
+- (IBAction)accountNameButton:(UIButton*)sender {
+    if(
+       self.delegate
+       && [self.delegate respondsToSelector:@selector(
+                                                      tableViewCell:
+                                                      accountImageButtonWith:
+                                                      )]
+       )
+    {
+    [self.delegate tableViewCell:(BaseTableViewCell *) self
+            accountName:self.name.currentTitle];
+    }
+}
+
+
+
+
+#pragma mark - setData
+-(void) setPostDataWithTweet:(SnsBase*)tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName
+{
+    //    cell.tweetText.delegate = cell;
+    // セルが作られた時,回り始める
+    [self.spotAi startAnimating];
+    [self.postImageAi startAnimating];
+    [self.plfAi startAnimating];
+    //  CELLにツイート(文字列)をセット
+    
+    // テクストにリンクをつける　＋リンクをタップしたときに検知
+   
+    self.tweetText.attributedText = tweet.attributedBody;
+
+    
+    
+    
+    
+    
+    if (tweet.profileImage)
+    {
+        [self.prfImage setImage:tweet.profileImage forState:0];
+        //        [cell.prfImage setImage:[UIImage imageNamed:@"female.jpeg"] forState:0];
+        [self.plfAi stopAnimating];
+    }
+    else
+    {
+        [self.prfImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+    }
+        self.prfImage.layer.cornerRadius  = self.prfImage.frame.size.width / 2;
+        self.prfImage.layer.masksToBounds = YES;
+    
+    
+    
+    
+    
+    
+    //投稿された画像をセット
+    
+    if([snsLogoImageFileName isEqualToString:_instagram] )
+    {
+        //        [遅延実行で確認]
+        self.postedImage.hidden = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{//[遅延実行で確認]
+            [self.postImageAi stopAnimating];
+            
+            DLog("this is InstaCell. set Image");
+            [self.postedImage setImage:[UIImage imageNamed:@"female.jpeg"] forState:0];
+        });//[遅延実行で確認]
+    }
+    else
+    {//投稿画像ない場合
+        [self.postedImage setImage:[UIImage imageNamed:@"noImage.jpeg"] forState:0];
+        self.postedImage.hidden = YES;
+        [self.postImageAi stopAnimating];
+    }
+    
+    
+    
+    self.snsLogo.image = [UIImage imageNamed:snsLogoImageFileName];
+    
+    
+    
+    //APPLEは.pngを奨励　JPEGは拡張子が必要
+    //cell.snsLogo.image = [UIImage imageNamed:@"twitter.jpeg"];
+    
+    
+    
+    
+    //アカウント名をセット
+    NSMutableString* head = @"@".mutableCopy;
+    if([tweet.accountName length] != 0 )
+    {
+        [head appendString:tweet.accountName];
+        [self.name setTitle:head forState:0];
+    }
+    
+    
+    
+    
+    //投稿時間をセット
+    if([tweet.postTime length] != 0)
+    {
+        self.postTime.text = tweet.postTime;
+    }
+    
+    
+    
+    //現在地との距離と住所
+    
+    DLog("Address:%d Distance:%d",[tweet.address length],tweet.distance);
+    DLog("ISMainThread1111？？？:%hhd",[NSThread isMainThread]);
+    
+    if(([tweet.address length] > 0) && (tweet.distance > 0))
+    {
+        [self.spotAi stopAnimating];
+        //        [postloc meterToKilo:tweet.distance];
+        //        NSString* meter = [NSString stringWithFormat:@"%d", tweet.distance];
+        self.spot.text  = [NSString stringWithFormat:@"%@ %@", [self _meterToKilo:tweet.distance], tweet.address];
+        DLog("ISMainThread22222？？？:%hhd",[NSThread isMainThread]);
+        
+        self.longitude = tweet.longitude;
+        self.latitude  = tweet.latitude;
+    }
+    else
+    {
+        self.spot.text = [NSString stringWithFormat:@" "];
     }
     
 }
 
 
-#pragma mark - setData
--(void) setPostData
-{
 
+-(void)setProfileImage
+{
+    
 
 }
+
+
+
+
+
+
+-(NSString*) _meterToKilo:(NSInteger) meter{
+    if(meter > 1000){
+        return [NSString stringWithFormat:@"%dKm",meter/1000];
+    }
+    else{
+        return [NSString stringWithFormat:@"%dm",meter];
+    }
+}
+
 
 
 #pragma mark - SETextViewDelegate
@@ -91,7 +238,7 @@
    clickedOnLink:(SELinkText *)link
          atIndex:(NSUInteger)charIndex
 {
-    DLog("Called in CELL clickedOnLink");
+    DLog("Called in CELL clickedOnLink%@",link.text);
     
     NSString* clickedText = link.text;
     
@@ -99,7 +246,8 @@
 
     NSString*     linkURLStr = @"";
     NSDictionary* linkDic    = @{};
-    
+    DLog(@"LinkObjectCLASSNAME:%@",NSStringFromClass([linkObj class]));
+    //__NSCFString or __NSCFDictionary
     if ([linkObj isMemberOfClass:[NSString class]])
     {
         linkURLStr = (NSString*)linkObj;//http....
@@ -112,14 +260,16 @@
     }
     else
     {
+        DLog("linkObjの方がNSString,NSDictionaryではない");
         if(
            self.delegate
            && [self.delegate respondsToSelector:@selector(tableViewCell:tappedLink:)]
            )
         {
+            
             [self.delegate tableViewCell:self tappedLink:nil];
         }
-        
+       
         return NO;
     }
     
@@ -151,13 +301,14 @@
     Link* linkInCell = [[Link alloc] init];
     linkInCell.text = link.text;
     linkInCell.url  = self.nextURL;
-    
+    DLog(@"\n\tLinkIncell%@",linkInCell.url);
     if(
        self.delegate
        && [self.delegate respondsToSelector:@selector(tableViewCell:tappedLink:)]
        )
     {
-        [self.delegate tableViewCell:self tappedLink:linkInCell];
+        DLog("CELLLL");
+        [self.delegate tableViewCell:self tappedLink:linkInCell.url.description];
     }
     
     return YES;

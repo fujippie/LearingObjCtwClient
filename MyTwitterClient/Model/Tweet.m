@@ -8,21 +8,22 @@
 //[TODO:距離]
 #import "Tweet.h"
 #import <CoreLocation/CoreLocation.h>
-#import <Foundation/NSFormatter.h>
 #import "SETwitterHelper.h"
-
+#import <Foundation/NSFormatter.h>
 static CLLocation* currentLocation;//現在地
 
-
 @implementation Tweet
-
-+(instancetype) tweetWithDic:(NSDictionary*)dic
+static NSString* const _twitter = @"twitter";
++(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic
 {
     Tweet* tweet = [[Tweet alloc] init];
     //allKeys Dictionary が持つ全ての値を取得
     
+    tweet.snsLogoImageFileName = _twitter;
+    
     tweet.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
     
+    DLog(@"ATTRIBUTEEEE%@",tweet.attributedBody);
     if ([dic.allKeys containsObject:@"id"])
     {
         tweet.id = [dic[@"id"] unsignedLongLongValue];
@@ -36,6 +37,7 @@ static CLLocation* currentLocation;//現在地
     if([dic.allKeys containsObject:@"created_at"])
     {
         tweet.postTime=[tweet _formatTimeString:dic[@"created_at"]];
+        DLog("TWEET:%@",tweet.simpleBody);
     }
     
     if ([dic.allKeys containsObject:@"user"])
@@ -55,15 +57,17 @@ static CLLocation* currentLocation;//現在地
         {
 //For Debug
             tweet.profileImageUrl = userDic[@"profile_image_url"];
-
             
             __weak Tweet* weakTweet = tweet;
 //            別スレッドで非同期実行
+  
+            
+ ////////////遅延実行/////////////
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
             {//別スレッドで処理
-//////////遅延実行/////////////
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                                if (weakTweet == nil) {
+                                   DLog("WEAKTEET NIL");
                                    return ;
                                }
                                NSData* profileImageData = [NSData dataWithContentsOfURL:
@@ -72,18 +76,17 @@ static CLLocation* currentLocation;//現在地
                            });
                   });
 //////////元/////////////
-            
-            
+
 //            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
 //            {//別スレッドで処理
-//                
+//            
 //                if (weakTweet == nil) {
 //                    return ;
 //                }
-//                
+//            
 //                NSData* profileImageData = [NSData dataWithContentsOfURL:
 //                                            [NSURL URLWithString:weakTweet.profileImageUrl]];
-//                
+//            
 //                weakTweet.profileImage = [UIImage imageWithData:profileImageData];
 //            });
             
@@ -104,7 +107,7 @@ static CLLocation* currentLocation;//現在地
                     tweet.latitude = [[coorinates objectAtIndex:0] floatValue];
                     tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
 // 現在地との距離を代入
-                tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
+                    tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
 //                    [tweet.locationAtTweet distanceToCurrentLocation];
                     
 //(緯度，経度)　=> 住所
@@ -148,8 +151,6 @@ static CLLocation* currentLocation;//現在地
 //                             DLog(@"subThoroughfare : %@ BOOL : %hhd", placemark.subThoroughfare,isSubThoroNull);
                                 [address appendString:
                                  (isStateNull || isLocalNull || isThoroNull || isSubThoroNull)? @"":placemark.subThoroughfare];
-
-                             
 //                             DLog(@"ERROR:%@",error.domain);
 //                             DLog("MainThread:%hhd",[NSThread isMainThread]);
 //                             DLog("\n\tAddress      : %@", address);
@@ -173,158 +174,188 @@ static CLLocation* currentLocation;//現在地
 }
 
 
+-(UIImage*)_getPlfImageWithURL:(NSString*)url
+{
+    __weak UIImage* ui;
+    DLog("GETPLFIMAGE1");
+//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
+//                {//別スレッドで処理
+    DLog("GETPLFIMAGE2");
+                    if ([url length]) {
+                        DLog("GETPLFIMAGE3");//3が実行されるため,画像が格納されない
+                        return nil;
+
+                    }
+                    NSData* profileImageData = [NSData dataWithContentsOfURL:
+                                                [NSURL URLWithString:url]];
+    
+//                    weakTweet.profileImage = [UIImage imageWithData:profileImageData];
+                    ui=[UIImage imageWithData:profileImageData];
+    DLog("GETPLFIMAGE4");
+//                });
+    
+
+    DLog("GETPLFIMAGE5%@",ui);
+    
+    
+    return ui;
+}
 
 
 
--(void) _delayImage:(UIImage*) img
+-(NSString*)_getAddressWithLocation:(CLLocation*)location
 {
     
-    return ;
+    return nil;
 }
 
 
 //TODO:[現在時刻はすぐに取れるが,ツイートの時刻は取得に時間がかかる.ツイート取得できたときに現在時刻を取得する必要がある]
--(NSString *) _formatTimeString:(NSString*) postDateStr
-{
-    DLog("%@",postDateStr);
-    NSDateFormatter *dateFormatter =[[NSDateFormatter alloc] init];//入力用
-    
-//MonやDecを解釈するため
-    NSLocale* locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
-    [dateFormatter setLocale:locale];
-    
-    
-//Mon Dec 23 0:08:27 +0000 2013 APIの日付フォーマット
-    
-    [dateFormatter setDateFormat:@"EEE MMM dd HH:mm:ss Z yyyy"];
-    
-    NSDate* postDate =[dateFormatter dateFromString:postDateStr];
-    
-    
-    NSDate* currentDate =[NSDate date];//現在時刻
-    
-//debug 現在時刻を一日後にする//currentDate = [currentDate dateByAddingTimeInterval:(60*60)*23.5];
-    
-    NSTimeInterval interval = [currentDate timeIntervalSinceDate:postDate];
-    
-//分に変換後，文字列に変換
-    DLog("Interval:%f",interval);
-    
-    NSString* intervalStr = @"";
-    
-    
-    if (interval < 0)
-    {
-    intervalStr = [NSString stringWithFormat:@"%d秒",(int)(interval)];
-    
-    }
-    else if(interval >0 && interval < 4){
-        
-        intervalStr = @"現在";
-    }
-
-    else if(interval >= 4 && interval < 60){
-        
-        intervalStr = [NSString stringWithFormat:@"%d秒",(int)(interval)];
-    }
-    
-    else if(interval >= 60 && interval < 60 * 60){
-        
-        intervalStr = [NSString stringWithFormat:@"%d分",(int)(interval/60)];
-    }
-    else if(interval >= 60 * 60 && interval < 60 * 60 * 24 ){
-        
-        intervalStr = [NSString stringWithFormat:@"%d時間",(int)(interval/(60*60)) ];
-    }
-    else if(interval >= 60 * 60 * 24 ){
-        
-        NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];//出力用
-        NSLocale* locale2 = [NSLocale currentLocale];
-        [dateFormatter2 setLocale:locale2];
-        //Mon Dec 23 0:08:27 +0000 2013 APIの日付フォーマット
-        [dateFormatter2 setDateFormat:@" MM月 dd日 "];
-        intervalStr= [dateFormatter2 stringFromDate:postDate];
-    }
-    
-    DLog("CURRENTTIME:%@",currentDate);
-    DLog("POSTDATE   :%@",postDate);
-    DLog("INTERVAL%@",intervalStr);
-//    NSMutableString* str = [[NSMutableString alloc] initWithFormat:@"分前に投稿"];
-//    [str insertString:intervalStr atIndex:0];
-//    DLog(@"%@",str);
-    
+//-(NSString *) _formatTimeString:(NSString*) postDateStr
+//{
+//    DLog("%@",postDateStr);
+//    NSDateFormatter *dateFormatter =[[NSDateFormatter alloc] init];//入力用
+//    
+////MonやDecを解釈するため
+//    NSLocale* locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+//    [dateFormatter setLocale:locale];
+//    
+//    
+////Mon Dec 23 0:08:27 +0000 2013 APIの日付フォーマット
+//    
+//    [dateFormatter setDateFormat:@"EEE MMM dd HH:mm:ss Z yyyy"];
+//    
+//    NSDate* postDate =[dateFormatter dateFromString:postDateStr];
+//    
+//    
+//    NSDate* currentDate =[NSDate date];//現在時刻
+//    
+////debug 現在時刻を一日後にする//currentDate = [currentDate dateByAddingTimeInterval:(60*60)*23.5];
+//    
+//    NSTimeInterval interval = [currentDate timeIntervalSinceDate:postDate];
+//    
+////分に変換後，文字列に変換
+//    DLog("Interval:%f",interval);
+//    
+//    NSString* intervalStr = @"";
+//    
+//    
+//    if (interval < 0)
+//    {
+//        interval = 0;
+//        intervalStr = @"現在";
+//    
+//    }
+//    else if(interval >0 && interval < 4){
+//        
+//        intervalStr = @"現在";
+//    }
+//
+//    else if(interval >= 4 && interval < 60){
+//        
+//        intervalStr = [NSString stringWithFormat:@"%d秒",(int)(interval)];
+//    }
+//    
+//    else if(interval >= 60 && interval < 60 * 60){
+//        
+//        intervalStr = [NSString stringWithFormat:@"%d分",(int)(interval/60)];
+//    }
+//    else if(interval >= 60 * 60 && interval < 60 * 60 * 24 ){
+//        
+//        intervalStr = [NSString stringWithFormat:@"%d時間",(int)(interval/(60*60)) ];
+//    }
+//    else if(interval >= 60 * 60 * 24 ){
+//        
+//        NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];//出力用
+//        NSLocale* locale2 = [NSLocale currentLocale];
+//        [dateFormatter2 setLocale:locale2];
+//        //Mon Dec 23 0:08:27 +0000 2013 APIの日付フォーマット
+//        [dateFormatter2 setDateFormat:@" MM月 dd日 "];
+//        intervalStr= [dateFormatter2 stringFromDate:postDate];
+//    }
+//    
 //    DLog("CURRENTTIME:%@",currentDate);
-//    DLog("POST:%@",postDate);
-    return intervalStr;
-}
+//    DLog("POSTDATE   :%@",postDate);
+//    DLog("INTERVAL%@",intervalStr);
+////    NSMutableString* str = [[NSMutableString alloc] initWithFormat:@"分前に投稿"];
+////    [str insertString:intervalStr atIndex:0];
+////    DLog(@"%@",str);
+//    
+////    DLog("CURRENTTIME:%@",currentDate);
+////    DLog("POST:%@",postDate);
+//    return intervalStr;
+//}
+//
+//-(NSInteger) _distanceWithLatitude:(CGFloat) latitude
+//                                  Longitude:(CGFloat) longitude
+//{
+//    DLog("IS MAIN THREAD %hhd",[NSThread isMainThread]);
+//    //    GPSは有効か？
+//    if([CLLocationManager locationServicesEnabled])
+//    {//現在地を取得開始
+//        [self.clMng startUpdatingLocation];
+//    }
+//    //デリゲートで現在地がSetされる
+////    CLLocationDegrees double型
+//    CLLocation* tweetAt =[[CLLocation alloc]
+//                            initWithLatitude:((double)latitude)//latitude
+//                                   longitude:((double)longitude)];
+////　距離を取得
+////    TODO:[現在地は取得待ちする必要あり]
+//    
+//    //////FOR TEST CLLocation* oosaka = [[ CLLocation alloc] initWithLatitude:34.701909 longitude:135.494977];
+//
+//    CLLocationDistance distance = [[Tweet getCurrentLocation] distanceFromLocation:tweetAt];
+//    
+//    
+////  CLLocationDistanceは(meterで値が変える
+//    
+//    return (NSInteger)distance;
+//}
 
--(NSInteger) _distanceWithLatitude:(CGFloat) latitude
-                                  Longitude:(CGFloat) longitude
-{
-    DLog("IS MAIN THREAD %hhd",[NSThread isMainThread]);
-    //    GPSは有効か？
-    if([CLLocationManager locationServicesEnabled])
-    {//現在地を取得開始
-        [self.clMng startUpdatingLocation];
-    }
-    //デリゲートで現在地がSetされる
-//    CLLocationDegrees double型
-    CLLocation* tweetAt =[[CLLocation alloc]
-                            initWithLatitude:((double)latitude)//latitude
-                                   longitude:((double)longitude)];
-//　距離を取得
-//    TODO:[現在地は取得待ちする必要あり]
-    
-    //////FOR TEST CLLocation* oosaka = [[ CLLocation alloc] initWithLatitude:34.701909 longitude:135.494977];
 
-    CLLocationDistance distance = [[Tweet getCurrentLocation] distanceFromLocation:tweetAt];
-    
-    
-//  CLLocationDistanceは(meterで値が変える
-    
-    return (NSInteger)distance;
-}
+
 
 #pragma mark - Delegate
 #pragma  mark CLLocationManager
--(void)locationManager:(CLLocationManager *)manager
-    didUpdateLocations:(NSArray *)locations//    GPSで取得した最新の現在地(locations[0])
-{
-//ツイートごとに現在地を取得することになる　現在地をクラス変数にする
-//現在地取得をやめる
-    [self.clMng stopUpdatingLocation];
-    if([Tweet getCurrentLocation]== nil){
-        [Tweet setCurrentLocation:locations[0]];
-    }
-//Tweetの緯度経度　Tweetとの距離をセット
-//    CLLocationDistance distance = [locations[0] distanceFromLocation:locationB];
-   
-}
+//-(void)locationManager:(CLLocationManager *)manager
+//    didUpdateLocations:(NSArray *)locations//    GPSで取得した最新の現在地(locations[0])
+//{
+////ツイートごとに現在地を取得することになる　現在地をクラス変数にする
+////現在地取得をやめる
+//    [self.clMng stopUpdatingLocation];
+//    if([Tweet getCurrentLocation]== nil){
+//        [Tweet setCurrentLocation:locations[0]];
+//    }
+////Tweetの緯度経度　Tweetとの距離をセット
+////    CLLocationDistance distance = [locations[0] distanceFromLocation:locationB];
+//   
+//}
 
 #pragma mark - Accessor
--(CLLocationManager*)clMng
-{
-    if(_clMng ==nil){
-        _clMng = [[CLLocationManager alloc] init];
-        _clMng.delegate = self;
-    }
-    return _clMng;
-}
-
-+(CLLocation *) getCurrentLocation
-{
-    return currentLocation;
-}
-
-+(void) setCurrentLocation:(CLLocation*) cl
-{
-    
-    currentLocation = cl;
-//    DLog("SETCURRENT%@",currentLocation);//ok
-    return;
-}
-
-
+//-(CLLocationManager*)clMng
+//{
+//    if(_clMng ==nil){
+//        _clMng = [[CLLocationManager alloc] init];
+//        _clMng.delegate = self;
+//    }
+//    return _clMng;
+//}
+//
+//+(CLLocation *) getCurrentLocation
+//{
+//    return currentLocation;
+//}
+//
+//+(void) setCurrentLocation:(CLLocation*) cl
+//{
+//    
+//    currentLocation = cl;
+////    DLog("SETCURRENT%@",currentLocation);//ok
+//    return;
+//}
+//
+//
 
 
 

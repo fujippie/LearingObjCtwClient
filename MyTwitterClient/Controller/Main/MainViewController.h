@@ -19,7 +19,7 @@ UITableViewDataSource
 , UITableViewDelegate
 , PostViewControllerDelegate
 , TwitterAPIDelegate
-, TableViewCellDelegate
+, BaseTableViewCellDelegate
 >
 
 

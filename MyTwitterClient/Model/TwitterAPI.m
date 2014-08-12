@@ -206,7 +206,7 @@
 //                          DLog("TW6 index:%d", index);
                           
                           NSDictionary* status = [twAr objectAtIndex:index];
-                          Tweet* tweet = [Tweet tweetWithDic:status];
+                          Tweet* tweet = [Tweet getSnsDataWithDictionary:status];
                           
                           //  tweet.latitude
                           //                          DLog(@"body:%@",tweet.body);

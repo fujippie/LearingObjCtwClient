@@ -97,7 +97,11 @@
 		227B6DCE1991C19100F8B51C /* facebook.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DCD1991C19100F8B51C /* facebook.png */; };
 		227B6DD01991C6A000F8B51C /* twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DCF1991C6A000F8B51C /* twitter.png */; };
 		227B6DD21991C6B200F8B51C /* ocolo.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DD11991C6B200F8B51C /* ocolo.png */; };
-		22C0055D199874A100A58D20 /* PostTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C0055C199874A100A58D20 /* PostTime.m */; };
+		22B9A3A51999931500C11D33 /* Osaka.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 22B9A3A41999931500C11D33 /* Osaka.gpx */; };
+		22B9A3A81999DE0D00C11D33 /* SnsBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9A3A71999DE0D00C11D33 /* SnsBase.m */; };
+		22B9A3AB199A1F8D00C11D33 /* Instagram.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9A3AA199A1F8D00C11D33 /* Instagram.m */; };
+		22B9A3AE199A240300C11D33 /* Ocolo.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9A3AD199A240300C11D33 /* Ocolo.m */; };
+		22B9A3B1199A26F000C11D33 /* Power.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9A3B0199A26F000C11D33 /* Power.m */; };
 		22EC226C199237B700D66297 /* Link.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EC226B199237B700D66297 /* Link.m */; };
 /* End PBXBuildFile section */
 
@@ -196,8 +200,15 @@
 		227B6DCD1991C19100F8B51C /* facebook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = facebook.png; sourceTree = "<group>"; };
 		227B6DCF1991C6A000F8B51C /* twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter.png; sourceTree = "<group>"; };
 		227B6DD11991C6B200F8B51C /* ocolo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ocolo.png; sourceTree = "<group>"; };
-		22C0055B199874A100A58D20 /* PostTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostTime.h; sourceTree = "<group>"; };
-		22C0055C199874A100A58D20 /* PostTime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostTime.m; sourceTree = "<group>"; };
+		22B9A3A41999931500C11D33 /* Osaka.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Osaka.gpx; path = MyTwitterClient/Resources/Osaka.gpx; sourceTree = "<group>"; };
+		22B9A3A61999DE0D00C11D33 /* SnsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnsBase.h; sourceTree = "<group>"; };
+		22B9A3A71999DE0D00C11D33 /* SnsBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnsBase.m; sourceTree = "<group>"; };
+		22B9A3A9199A1F8D00C11D33 /* Instagram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instagram.h; sourceTree = "<group>"; };
+		22B9A3AA199A1F8D00C11D33 /* Instagram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Instagram.m; sourceTree = "<group>"; };
+		22B9A3AC199A240300C11D33 /* Ocolo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ocolo.h; sourceTree = "<group>"; };
+		22B9A3AD199A240300C11D33 /* Ocolo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Ocolo.m; sourceTree = "<group>"; };
+		22B9A3AF199A26F000C11D33 /* Power.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Power.h; sourceTree = "<group>"; };
+		22B9A3B0199A26F000C11D33 /* Power.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Power.m; sourceTree = "<group>"; };
 		22EC226A199237B700D66297 /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Link.h; sourceTree = "<group>"; };
 		22EC226B199237B700D66297 /* Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Link.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -232,6 +243,7 @@
 		22583BD31991ACC500DAB788 = {
 			isa = PBXGroup;
 			children = (
+				22B9A3A41999931500C11D33 /* Osaka.gpx */,
 				22583BE51991ACC500DAB788 /* MyTwitterClient */,
 				22583BFE1991ACC500DAB788 /* MyTwitterClientTests */,
 				22583BDE1991ACC500DAB788 /* Frameworks */,
@@ -370,11 +382,17 @@
 		227B6D3F1991AD8C00F8B51C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				22B9A3A61999DE0D00C11D33 /* SnsBase.h */,
+				22B9A3A71999DE0D00C11D33 /* SnsBase.m */,
 				227B6D401991AD8C00F8B51C /* Tweet.h */,
 				227B6D411991AD8C00F8B51C /* Tweet.m */,
+				22B9A3AF199A26F000C11D33 /* Power.h */,
+				22B9A3B0199A26F000C11D33 /* Power.m */,
+				22B9A3A9199A1F8D00C11D33 /* Instagram.h */,
+				22B9A3AA199A1F8D00C11D33 /* Instagram.m */,
+				22B9A3AC199A240300C11D33 /* Ocolo.h */,
+				22B9A3AD199A240300C11D33 /* Ocolo.m */,
 				227B6D421991AD8C00F8B51C /* TwitterAPI.h */,
-				22C0055B199874A100A58D20 /* PostTime.h */,
-				22C0055C199874A100A58D20 /* PostTime.m */,
 				227B6D431991AD8C00F8B51C /* TwitterAPI.m */,
 				22EC226A199237B700D66297 /* Link.h */,
 				22EC226B199237B700D66297 /* Link.m */,
@@ -564,6 +582,7 @@
 				227B6DCA1991C17E00F8B51C /* instagram.png in Resources */,
 				227B6DCC1991C18700F8B51C /* googlePlus.png in Resources */,
 				22583BEA1991ACC500DAB788 /* InfoPlist.strings in Resources */,
+				22B9A3A51999931500C11D33 /* Osaka.gpx in Resources */,
 				227B6D571991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */,
 				227B6D671991AD8C00F8B51C /* female.jpeg in Resources */,
 				227B6DC31991AF8D00F8B51C /* default_user_icon@2x.png in Resources */,
@@ -609,6 +628,7 @@
 				227B6DB31991AF8D00F8B51C /* SETextInput.m in Sources */,
 				227B6D651991AD8C00F8B51C /* TwitterAPI.m in Sources */,
 				227B6DAB1991AF8D00F8B51C /* SESelectionGrabber.m in Sources */,
+				22B9A3A81999DE0D00C11D33 /* SnsBase.m in Sources */,
 				227B6DA91991AF8D00F8B51C /* SELinkText.m in Sources */,
 				227B6DAD1991AF8D00F8B51C /* SETextAttachment.m in Sources */,
 				227B6DB51991AF8D00F8B51C /* SETextLayout.m in Sources */,
@@ -617,13 +637,15 @@
 				227B6D631991AD8C00F8B51C /* Tweet.m in Sources */,
 				227B6D4F1991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */,
 				227B6DB91991AF8D00F8B51C /* SETextMagnifierRanged.m in Sources */,
+				22B9A3AE199A240300C11D33 /* Ocolo.m in Sources */,
+				22B9A3B1199A26F000C11D33 /* Power.m in Sources */,
 				227B6DA51991AF8D00F8B51C /* SEConstants.m in Sources */,
-				22C0055D199874A100A58D20 /* PostTime.m in Sources */,
 				227B6DB11991AF8D00F8B51C /* SETextGeometry.m in Sources */,
 				22EC226C199237B700D66297 /* Link.m in Sources */,
 				227B6DB71991AF8D00F8B51C /* SETextMagnifierCaret.m in Sources */,
 				227B6D591991AD8C00F8B51C /* BaseViewController.m in Sources */,
 				22583BF01991ACC500DAB788 /* AppDelegate.m in Sources */,
+				22B9A3AB199A1F8D00C11D33 /* Instagram.m in Sources */,
 				227B6DA31991AF8D00F8B51C /* SECompatibility.m in Sources */,
 				22583BEC1991ACC500DAB788 /* main.m in Sources */,
 				227B6DBD1991AF8D00F8B51C /* SETextSelectionView.m in Sources */,

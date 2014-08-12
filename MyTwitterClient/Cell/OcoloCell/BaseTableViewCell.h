@@ -1,5 +1,5 @@
 //
-//  OcoloTableViewCell.h
+//  BaseTableViewCell.h
 //  MyTwitterClient
 //
 //  Created by yuta_fujiwara on 2014/07/28.
@@ -8,18 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import "SETextView.h"
-
+#import "Tweet.h"
 
 @class BaseTableViewCell;
 @class Link;
 
-@protocol TableViewCellDelegate <NSObject>
+@protocol BaseTableViewCellDelegate <NSObject>
 
 -(void) tableViewCell:(BaseTableViewCell *) tableviewCell
           postImageButton:(UIImageView *) image;
 
 -(void) tableViewCell:(BaseTableViewCell *)tableViewCell
-           tappedLink:(Link*)link;
+           tappedLink:(NSString*)url;
 
 -(void) tableViewCell:(BaseTableViewCell *) tableViewCell
               naviButtonWithAddress:(NSString*)address
@@ -28,6 +28,9 @@
 
 -(void) tableViewCell:(BaseTableViewCell *) tableViewCell
    accountImageButtonWith:(NSString*)accountName;
+
+-(void) tableViewCell:(BaseTableViewCell *) tableViewCell
+          accountName:(NSString *)accountName;
 
 @end
 
@@ -39,14 +42,14 @@
 @property (weak, nonatomic) IBOutlet UIButton *prfImage;
 //iconの画像
 @property (weak, nonatomic) IBOutlet UILabel *spot;
-@property (weak, nonatomic) IBOutlet UILabel *name;
+@property (weak, nonatomic) IBOutlet UIButton *name;
 @property (weak, nonatomic) IBOutlet UILabel *postTime;
 
 @property (weak, nonatomic) IBOutlet UIImageView *snsLogo;
 
 @property (weak, nonatomic) IBOutlet UIButton *postedImage;
 
-@property(nonatomic,assign) id <TableViewCellDelegate> delegate;
+@property(nonatomic,assign) id <BaseTableViewCellDelegate> delegate;
 //ActivityIndicator
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *postImageAi;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spotAi;
@@ -64,11 +67,9 @@
 @property (nonatomic, assign) CGFloat   latitude;        // 緯度
 @property (nonatomic, assign) CGFloat   longitude;       // 経度
 
-
-
-
-
-
 - (IBAction)postedImage:(id)sender;
+
+
+-(void) setPostDataWithTweet:(Tweet*)tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName;
 
 @end
