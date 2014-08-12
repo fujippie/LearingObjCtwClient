@@ -70,6 +70,6 @@
 - (IBAction)postedImage:(id)sender;
 
 
--(void) setPostDataWithTweet:(Tweet*)tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName;
+-(void) setPostDataWithTweet:(Tweet*)snsBase snsLogoImageFileName:(NSString*)snsLogoImageFileName;
 
 @end
