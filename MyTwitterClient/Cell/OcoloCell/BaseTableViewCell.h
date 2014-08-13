@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SETextView.h"
 #import "Tweet.h"
+#import "Instagram.h"
 
 @class BaseTableViewCell;
 @class Link;
@@ -16,24 +17,22 @@
 @protocol BaseTableViewCellDelegate <NSObject>
 
 -(void) tableViewCell:(BaseTableViewCell *) tableviewCell
-          postImageButton:(UIImageView *) image;
+          postImageButtonTapped:(UIImageView *) image;
 
 -(void) tableViewCell:(BaseTableViewCell *)tableViewCell
            tappedLink:(NSString*)url;
 
 -(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-              naviButtonWithAddress:(NSString*)address
+              naviButtonTappedWithAddress:(NSString*)address
              latitude:(CGFloat) latitude
            longtitude:(CGFloat)longtitude;
 
 -(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-   accountImageButtonWith:(NSString*)accountName;
+   accountImageButtonTappedWith:(NSString*)accountName;
 
 -(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-          accountName:(NSString *)accountName;
-
+          accountNameTapped:(NSString *)accountName;
 @end
-
 
 @interface BaseTableViewCell : UITableViewCell
 <SETextViewDelegate>
@@ -70,6 +69,6 @@
 - (IBAction)postedImage:(id)sender;
 
 
--(void) setPostDataWithTweet:(Tweet*)snsBase snsLogoImageFileName:(NSString*)snsLogoImageFileName;
-
+-(void) setTweetData:(Tweet*)tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName;
+-(void) setInstagramData:(Instagram*)instagram snsLogoImageFileName:(NSString*)snsLogoImageFileName;
 @end

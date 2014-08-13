@@ -430,6 +430,7 @@
 //                      DLog("json\n\n%@",jsonDic);
 //                      見つかったツイート配列を格納
                       Tweet* tweet    = [[Tweet alloc] init];
+                      
                       NSArray* cordAr = [jsonDic valueForKeyPath:@"coordinates.coordinates"];
                       tweet.longitude = [[cordAr objectAtIndex:0] floatValue];//経度 西経　東経
                       tweet.latitude  = [[cordAr objectAtIndex:1] floatValue];//緯度　北緯　南緯

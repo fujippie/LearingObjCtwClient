@@ -16,6 +16,7 @@ static CLLocation* currentLocation;//現在地
 static NSString* const _twitter = @"twitter";
 +(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic
 {
+    DLog("GETSNSDATA TWEET");
     Tweet* tweet = [[Tweet alloc] init];
     //allKeys Dictionary が持つ全ての値を取得
     
@@ -60,7 +61,6 @@ static NSString* const _twitter = @"twitter";
             
             __weak Tweet* weakTweet = tweet;
 //            別スレッドで非同期実行
-  
             
  ////////////遅延実行/////////////
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^

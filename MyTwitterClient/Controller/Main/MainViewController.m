@@ -9,6 +9,8 @@
 #import "MainViewController.h"
 //#import "CustomTVC.h"
 #import "Tweet.h"
+#import "Instagram.h"
+
 #import "TwitterAPI.h"
 #import "PostViewController.h"
 #import "AppDelegate.h"
@@ -30,6 +32,7 @@
 @property (nonatomic, strong) TwitterAPI* twitterApi;
 @property (nonatomic, assign) BOOL isInitialized;
 
+@property (nonatomic, assign) CGFloat cellBodyChangedHeight;
 
 @end
 
@@ -49,7 +52,8 @@ static NSString* const _facebook = @"facebook";
 static NSString* const _ocolo = @"ocolo";
 static NSString* const _twitter = @"twitter";
 
-static const CGFloat FONT_SIZE = 12.0f;
+static const CGFloat FONT_SIZE = 13.0f;
+
 #pragma mark - LifeCycle
 
 - (void)viewDidLoad
@@ -87,11 +91,9 @@ static const CGFloat FONT_SIZE = 12.0f;
     self.defaultCellFrame = customTVC.frame;
     
     [self.tableView addSubview:self.refreshControl];
-
-    
-    
+  
 //  NavigationBarの設定　（更新中に表示するアイコン）
-    self.title = [NSString stringWithFormat:@"%@:%d", NSStringFromClass(self.class), [self.navigationController.viewControllers indexOfObject:self]];
+    self.title = [NSString stringWithFormat:@"%@:%lu", NSStringFromClass(self.class), (unsigned long)[self.navigationController.viewControllers indexOfObject:self]];
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"投稿" style:UIBarButtonItemStylePlain  target:self action:@selector(leftBarBtnPushed:)];
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
@@ -121,7 +123,7 @@ static const CGFloat FONT_SIZE = 12.0f;
 #pragma mark  BaseTableViewCellDelegate
 
 -(void) tableViewCell:(BaseTableViewCell *) ocoloCell
-               postImageButton:(UIImageView *) image
+               postImageButtonTapped:(UIImageView *) image
 {
 //画像を他クラスへ送信するデリゲート
     DLog("BaseTableViewCELL DELEGATE%@",image.description);
@@ -136,7 +138,7 @@ static const CGFloat FONT_SIZE = 12.0f;
 }
 
 -(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-naviButtonWithAddress:(NSString*)address
+naviButtonTappedWithAddress:(NSString*)address
              latitude:(CGFloat) latitude
            longtitude:(CGFloat)longtitude
 {
@@ -145,14 +147,14 @@ naviButtonWithAddress:(NSString*)address
 }
 
 -(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-accountImageButtonWith:(NSString*)accountName
+accountImageButtonTappedWith:(NSString*)accountName
 {
     DLog(@"CalledinMAin%@",accountName);
 
 }
 
 -(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-          accountName:(NSString *)accountName
+          accountNameTapped:(NSString *)accountName
 {
     DLog(@"CalledinMAin%@",accountName);
 
@@ -178,8 +180,8 @@ accountImageButtonWith:(NSString*)accountName
     
     self.isLoading = NO;
     
-//    [self.ai stopAnimating];
-//    self.ai.hidden = YES;
+    [self.ai stopAnimating];
+    self.ai.hidden = YES;
     
     [self.refreshControl endRefreshing];
     
@@ -213,8 +215,6 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     
 //    [self.ai stopAnimating];
 //    self.ai.hidden = YES;
-    
-    
     [self.refreshControl endRefreshing];
     
     [self.tableView reloadData];
@@ -224,7 +224,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return 100;
+    return 10;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
@@ -265,32 +265,22 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     Tweet* tweet = self.tweetData[indexPath.row];
-   
+    Instagram* instagram =self.tweetData[indexPath.row];
+
     //NSString * cellID = _cellId;
     
     
 //    CELLでわける
-    if(indexPath.row % 5 == 0)
+    if(indexPath.row % 2 == 0)
     {
-        return [self _makeAnyCellwith:tweet snsLogoImageFileName:_twitter];
+        return [self _makeTweetCellwith:tweet snsLogoImageFileName:_twitter];
     }
-    
-    else if(indexPath.row % 5 == 1)
+
+    else if(indexPath.row % 2 == 1)
     {
-        return [self _makeAnyCellwith:tweet snsLogoImageFileName:_ocolo];
+        return [self _makeInstagramCellwith:instagram snsLogoImageFileName:_instagram];
     }
-    else if(indexPath.row % 5 == 2)
-    {
-        return [self _makeAnyCellwith:tweet snsLogoImageFileName:_facebook];
-    }
-    else if(indexPath.row % 5 == 3)
-    {
-        return [self _makeAnyCellwith:tweet snsLogoImageFileName:_instagram];
-    }
-    else if(indexPath.row % 5 == 4)
-    {
-        return [self _makeAnyCellwith:tweet snsLogoImageFileName:_googlePlus];
-    }
+  
 //    else if(indexPath.row % 6 == 5)
 //    {
 //        return [self makeElCellwith:tweet];
@@ -335,10 +325,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
  
 //    return (indexPath.row % 6 == 5 )?  self.defaultCellFrame.size.height:[self _cellHFromText:body];
 
-    return [self _cellHFromText:body];
+    return [self _cellHFromText:body fontSize:FONT_SIZE];
 }
 
--(CGFloat)_cellHFromText:(NSAttributedString*)atrText
+-(CGFloat)_cellHFromText:(NSAttributedString*)atrText fontSize:(CGFloat)fontSize
 {
     //Cell内の文字列のフォントを取得
 //    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
@@ -349,41 +339,44 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //    UIFont font = ocCell.tweetText.font;
 //    DLog(@"font:%@", font);
     
-    
-//  Textに応じたBodyの高さを返す
-//    CGFloat cellBodyH = [text boundingRectWithSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
-//                                           options:NSStringDrawingUsesLineFragmentOrigin //| NSStringDrawingUsesFontLeading
-//                                        attributes:@{NSFontAttributeName:FONT_SIZE}
-//                                           context:nil
-//                         ].size.height;
-    
-   
     CGRect frameRect = [SETextView frameRectWithAttributtedString:atrText
                                                    constraintSize:CGSizeMake(self.defaultCellBodyFrame.size.width, CGFLOAT_MAX)
                                                       lineSpacing:0.0f
-//                                                             font:[UIFont ]
-                                                             font:[UIFont systemFontOfSize:FONT_SIZE]];
+                                                             font:[UIFont systemFontOfSize:fontSize]];
     CGFloat cellBodyH = frameRect.size.height;
+    self.cellBodyChangedHeight = cellBodyH;
+    DLog(@"\n\n\nATTTRIBUTETEXT%@", atrText.string);
+
+    DLog(@"CELLBODYH>>>>>:%f", cellBodyH);
+    
+    DLog(@"CELLdefoBODYH>>>>>:%f", self.defaultCellBodyFrame.size.height);
+
+    
     
 //    デフォルト　＋（増分）
-    CGFloat cellH = self.defaultCellFrame.size.height
+    CGFloat cellH
+    = self.defaultCellFrame.size.height
     + (cellBodyH - self.defaultCellBodyFrame.size.height);
+//    デフォルト　-（減分）
+//    CGFloat cellHm  = self.defaultCellFrame.size.height
+//    - (self.defaultCellBodyFrame.size.height - cellBodyH );
     
 //    デフォルトよりも高さが低い場合,Cellを縮める
 //    cellH = cellH < self.defaultCellFrame.size.height ? cellHm : cellH;
     
-    
+ 
     cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
+    
     //三項演算子構文↑↑
 //    DLog("CELLH : %f", cellH);
     
 //    DLog("Default\n\tBODY:%f FRAME:%f",self.defaultCellBodyFrame.size.height,self.defaultCellFrame.size.height);
     
-    DLog("\n\tCell H         %f", cellH);
-    DLog("\n\tCell BodyH     %f", cellBodyH);
-    DLog("\n\tCell BodyDefoH %f", self.defaultCellBodyFrame.size.height);
-    DLog("\n\tCell FrameDefoH %f", self.defaultCellFrame.size.height);
-//    DLog("\n\tReturned:%f",cellH+ocCell.spot.frame.size.height);
+//    DLog("\n\tCell H         %f", cellH);
+//    DLog("\n\tCell BodyH     %f", cellBodyH);
+//    DLog("\n\tCell BodyDefoH %f", self.defaultCellBodyFrame.size.height);
+//    DLog("\n\tCell FrameDefoH %f", self.defaultCellFrame.size.height);
+////    DLog("\n\tReturned:%f",cellH+ocCell.spot.frame.size.height);
     return cellH;//+ocCell.spot.frame.size.height;//cell.spotの高さを加算
 }
 
@@ -449,7 +442,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     [cell.spotAi startAnimating];
     
-    
     //  Cell中のTextLabelを設定
     //Frameの左上を(origin)原点として,Bodyを配置
     //Bodyの高さがCellの高さに設定されている
@@ -457,7 +449,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     cell.tweetText.text = @"＿＿店名等＿＿";
     
     DLog("Address:%d Distance:%d",[tweet.address length],tweet.distance);
-    
     
     if(([tweet.address length] > 0) && (tweet.distance > 0))
     {
@@ -470,67 +461,66 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     {
         cell.spot.text = [NSString stringWithFormat:@" "];
     }
-    
-    //現在地との距離をセット
-//    if(tweet.distance > 0 )
-//    {
-//        //cell.spot.text=append
-//        [cell.distanceAi stopAnimating];
-//        NSString* meter = [NSString stringWithFormat:@"%d", tweet.distance];
-//        if([tweet.address length] != 0 )
-//        {
-//            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter, tweet.address];
-//        }
-//    }
-    //    CGFloat cellH = [self _cellHFromText:cell.body.text];
-    //    CGFloat bodyH = cellH - self.defaultCellBodyFrame.origin.y - cell.spot.frame.size.height - 30;
-    //    cell.spotName.text = @"AAA";
+
     return cell;
 }
 
--(BaseTableViewCell *) _makeAnyCellwith:(Tweet*)tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName
+-(BaseTableViewCell *) _makeTweetCellwith:(Tweet*)tweet
+                     snsLogoImageFileName:(NSString*)snsLogoImageFileName
 {
     BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    
     cell.delegate = self;
     
 //   cellクラス内のメソッドでデータをセット
-    [cell setPostDataWithTweet:tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName];
-    
+    [cell setTweetData:tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName];
 //ツイート内容を表示するテキストラベルの大きさを設定
     CGFloat cellH = [self _cellHFromText:cell.tweetText.attributedText];
-    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height -50;
+//    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height -50;
+    
+    DLog("\n\t CellH:%f bodyH:%f", cellH, self.cellBodyChangedHeight);
+    cell.tweetText.frame = CGRectMake(
+                                      cell.tweetText.frame.origin.x,
+                                      cell.tweetText.frame.origin.y,
+                                      cell.tweetText.frame.size.width,
+                                      self.cellBodyChangedHeight//bodyH
+                                      );
+    return cell;
+}
+
+-(BaseTableViewCell *) _makeInstagramCellwith:(Instagram*)instagram
+                         snsLogoImageFileName:(NSString*)snsLogoImageFileName
+{
+    
+//    DLog("MAKE INSTAGRAMECELLLL");//celled
+    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    cell.delegate = self;
+    
+    //   cellクラス内のメソッドでデータをセット
+    
+    [cell setInstagramData:instagram snsLogoImageFileName:snsLogoImageFileName];
+    //ツイート内容を表示するテキストラベルの大きさを設定
+    CGFloat cellH = [self _cellHFromText:cell.tweetText.attributedText];
+    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height - 50;
     
     DLog("\n\t CellH:%f bodyH:%f", cellH, bodyH);
     cell.tweetText.frame = CGRectMake(
                                       cell.tweetText.frame.origin.x,
                                       cell.tweetText.frame.origin.y,
                                       cell.tweetText.frame.size.width,
-                                      bodyH
+                                      self.cellBodyChangedHeight
                                       );
     return cell;
 }
 
-//    if(tweet.distance > 0 ){
-//        //cell.spot.text=append
-//        [cell.distanceAi stopAnimating];
-//        NSString* meter = [NSString stringWithFormat:@"%d",tweet.distance];
-//        if([tweet.address length] != 0 ){
-//            cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter,tweet.address];
-//        }
-//    }
-    //    tweet.accountName;
-    //DLog("acccount%@",tweet.accountName);
-    //ボタン位置を設定
-
 -(NSString*) meterToKilo:(NSInteger) meter{
     if(meter > 1000){
-        return [NSString stringWithFormat:@"%dKm",meter/1000];
+        return [NSString stringWithFormat:@"%dKm", meter / 1000];
     }
     else{
         return [NSString stringWithFormat:@"%dm",meter];
     }
 }
-
 
 #pragma mark - Override
 
@@ -546,8 +536,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         DLog("DONE Pushed");
         DLog("ここで一括削除処理を記述");
         NSArray* selectedCells = [self.tableView indexPathsForSelectedRows];
-        DLog("%@",selectedCells);
-        DLog("SelectedCount%d",selectedCells.count);
+        DLog("%@", selectedCells);
+        DLog("SelectedCount%d", selectedCells.count);
         
 //配列をindex.path.row順にソート
         [self.tableView beginUpdates];
@@ -684,6 +674,13 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     }
     
     return _ai;
+}
+-(CGFloat) cellBodyChangedHeight
+{
+    if(_cellBodyChangedHeight == 0){
+        _cellBodyChangedHeight = 10;
+    }
+    return _cellBodyChangedHeight;
 }
 
 

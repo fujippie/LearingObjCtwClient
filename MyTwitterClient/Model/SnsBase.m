@@ -13,6 +13,7 @@ static CLLocation* currentLocation;
 @implementation SnsBase
 +(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic
     {
+        DLog("SNSBASE_GetSNSDATA");
         return nil;
     }
 
@@ -25,7 +26,6 @@ static CLLocation* currentLocation;
     //MonやDecを解釈するため
     NSLocale* locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
     [dateFormatter setLocale:locale];
-    
     
     //Mon Dec 23 0:08:27 +0000 2013 APIの日付フォーマット
     
@@ -44,7 +44,6 @@ static CLLocation* currentLocation;
     DLog("Interval:%f",interval);
     
     NSString* intervalStr = @"";
-    
     
     if (interval < 0)
     {
@@ -80,9 +79,9 @@ static CLLocation* currentLocation;
         intervalStr= [dateFormatter2 stringFromDate:postDate];
     }
     
-    DLog("CURRENTTIME:%@",currentDate);
-    DLog("POSTDATE   :%@",postDate);
-    DLog("INTERVAL%@",intervalStr);
+//    DLog("CURRENTTIME:%@",currentDate);
+//    DLog("POSTDATE   :%@",postDate);
+//    DLog("INTERVAL%@",intervalStr);
     //    NSMutableString* str = [[NSMutableString alloc] initWithFormat:@"分前に投稿"];
     //    [str insertString:intervalStr atIndex:0];
     //    DLog(@"%@",str);
@@ -123,10 +122,12 @@ static CLLocation* currentLocation;
  {
  //ツイートごとに現在地を取得することになる　現在地をクラス変数にする
  //現在地取得をやめる
- [self.clMng stopUpdatingLocation];
- if([SnsBase  getCurrentLocation]== nil){
- [SnsBase  setCurrentLocation:locations[0]];
- }
+     DLog("CurrentLOcationUPDATED");
+    
+     if([SnsBase  getCurrentLocation]== nil){
+         [SnsBase  setCurrentLocation:locations[0]];
+     }
+     [self.clMng stopUpdatingLocation];
  //Tweetの緯度経度　Tweetとの距離をセット
  //    CLLocationDistance distance = [locations[0] distanceFromLocation:locationB];
  

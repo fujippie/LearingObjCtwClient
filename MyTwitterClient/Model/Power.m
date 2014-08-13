@@ -11,28 +11,28 @@
 @implementation Power
 +(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic
 {
-    Tweet* tweet = [[Tweet alloc] init];
+    Tweet* power = [[Tweet alloc] init];
     //allKeys Dictionary が持つ全ての値を取得
     
-    tweet.snsLogoImageFileName = @"power.jpeg";
+    power.snsLogoImageFileName = @"power.jpeg";
     
-    tweet.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
+    power.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
     
-    DLog(@"ATTRIBUTEEEE%@",tweet.attributedBody);
+    DLog(@"ATTRIBUTEEEE%@",power.attributedBody);
     if ([dic.allKeys containsObject:@"id"])
     {
-        tweet.id = [dic[@"id"] unsignedLongLongValue];
+        power.id = [dic[@"id"] unsignedLongLongValue];
     }
     
     if ([dic.allKeys containsObject:@"text"])//ツイート本文
     {
-        tweet.simpleBody = dic[@"text"];
+        power.simpleBody = dic[@"text"];
     }
     
     if([dic.allKeys containsObject:@"created_at"])
     {
-        tweet.postTime=[tweet _formatTimeString:dic[@"created_at"]];
-        DLog("TWEET:%@",tweet.simpleBody);
+        power.postTime=[power _formatTimeString:dic[@"created_at"]];
+        DLog("TWEET:%@",power.simpleBody);
     }
     
     if ([dic.allKeys containsObject:@"user"])
@@ -41,7 +41,7 @@
         
         if([userDic.allKeys containsObject:@"screen_name"])//アカウント名 @hoge
         {
-            tweet.accountName = userDic[@"screen_name"];
+            power.accountName = userDic[@"screen_name"];
         }
         
         if (//アイコン画像
@@ -51,9 +51,9 @@
             )
         {
             //For Debug
-            tweet.profileImageUrl = userDic[@"profile_image_url"];
+            power.profileImageUrl = userDic[@"profile_image_url"];
             
-            __weak Tweet* weakTweet = tweet;
+            __weak Tweet* weakTweet = power;
             //            別スレッドで非同期実行
             
             
@@ -99,14 +99,14 @@
                 NSArray* coorinates = geoDic[@"coordinates"];
                 if (coorinates.count == 2)
                 {
-                    tweet.latitude = [[coorinates objectAtIndex:0] floatValue];
-                    tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
+                    power.latitude = [[coorinates objectAtIndex:0] floatValue];
+                    power.longitude = [[coorinates objectAtIndex:1] floatValue];
                     // 現在地との距離を代入
-                    tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
+                    power.distance = [power _distanceWithLatitude: power.latitude Longitude: power.longitude];
                     //                    [tweet.locationAtTweet distanceToCurrentLocation];
                     
                     //(緯度，経度)　=> 住所
-                    CLLocation* location =[[CLLocation alloc] initWithLatitude:tweet.latitude longitude:tweet.longitude];
+                    CLLocation* location =[[CLLocation alloc] initWithLatitude:power.latitude longitude:power.longitude];
                     CLGeocoder* clg = [[CLGeocoder alloc] init];
                     
                     //緯度経度から住所の情報を取得するところが非同期でメインスレッド
@@ -149,7 +149,7 @@
                              //                             DLog(@"ERROR:%@",error.domain);
                              //                             DLog("MainThread:%hhd",[NSThread isMainThread]);
                              //                             DLog("\n\tAddress      : %@", address);
-                             __weak Tweet* wt =tweet;
+                             __weak Tweet* wt =power;
                              //非同期で別スレッドで処理  //dispach_get_main_queue()
                              dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^(void)
                                             {
@@ -165,7 +165,7 @@
             
         }
     }
-    return tweet;
+    return power;
 
 }
 @end

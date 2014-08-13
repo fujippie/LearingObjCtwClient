@@ -10,31 +10,43 @@
 
 @implementation Instagram
 
-
 +(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic
 {
-    Tweet* tweet = [[Tweet alloc] init];
+    DLog("GETSNSDATA______INSTA");
+    Instagram* instagram = [[Instagram alloc] init];
     //allKeys Dictionary が持つ全ての値を取得
+    ////////////遅延実行/////////////
+    DLog("WEAKTEET0");
+                       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{//[遅延実行で確認]
+                           if (instagram.postImage) {
+                               DLog("WEAKTEET1");
+                           
+                           }
+                              instagram.postImage = [UIImage imageNamed:@"female.jpeg"];
+                           DLog("WEAKTEET2");
+                       });
     
-    tweet.snsLogoImageFileName = @"instagram";
+    instagram.postImage = [UIImage imageNamed:@"female.jpeg"];
+
+    instagram.snsLogoImageFileName = @"instagram";
     
-    tweet.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
+    instagram.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
     
-    DLog(@"ATTRIBUTEEEE%@",tweet.attributedBody);
+    DLog(@"ATTRIBUTEEEE%@",instagram.attributedBody);
     if ([dic.allKeys containsObject:@"id"])
     {
-        tweet.id = [dic[@"id"] unsignedLongLongValue];
+        instagram.id = [dic[@"id"] unsignedLongLongValue];
     }
     
     if ([dic.allKeys containsObject:@"text"])//ツイート本文
     {
-        tweet.simpleBody = dic[@"text"];
+        instagram.simpleBody = dic[@"text"];
     }
     
     if([dic.allKeys containsObject:@"created_at"])
     {
-        tweet.postTime=[tweet _formatTimeString:dic[@"created_at"]];
-        DLog("TWEET:%@",tweet.simpleBody);
+        instagram.postTime=[instagram _formatTimeString:dic[@"created_at"]];
+        DLog("TWEET:%@",instagram.simpleBody);
     }
     
     if ([dic.allKeys containsObject:@"user"])
@@ -43,7 +55,7 @@
         
         if([userDic.allKeys containsObject:@"screen_name"])//アカウント名 @hoge
         {
-            tweet.accountName = userDic[@"screen_name"];
+            instagram.accountName = userDic[@"screen_name"];
         }
         
         if (//アイコン画像
@@ -53,23 +65,22 @@
             )
         {
             //For Debug
-            tweet.profileImageUrl = userDic[@"profile_image_url"];
+            instagram.profileImageUrl = userDic[@"profile_image_url"];
             
-            __weak Tweet* weakTweet = tweet;
+            __weak Instagram* weakInstagram = instagram;
             //            別スレッドで非同期実行
-            
-            
+
             ////////////遅延実行/////////////
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
                            {//別スレッドで処理
                                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                   if (weakTweet == nil) {
+                                   if (weakInstagram == nil) {
                                        DLog("WEAKTEET NIL");
                                        return ;
                                    }
                                    NSData* profileImageData = [NSData dataWithContentsOfURL:
-                                                               [NSURL URLWithString:weakTweet.profileImageUrl]];
-                                   weakTweet.profileImage = [UIImage imageWithData:profileImageData];
+                                                               [NSURL URLWithString:weakInstagram.profileImageUrl]];
+                                   weakInstagram.profileImage = [UIImage imageWithData:profileImageData];
                                });
                            });
             //////////元/////////////
@@ -101,14 +112,14 @@
                 NSArray* coorinates = geoDic[@"coordinates"];
                 if (coorinates.count == 2)
                 {
-                    tweet.latitude = [[coorinates objectAtIndex:0] floatValue];
-                    tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
+                    instagram.latitude = [[coorinates objectAtIndex:0] floatValue];
+                    instagram.longitude = [[coorinates objectAtIndex:1] floatValue];
                     // 現在地との距離を代入
-                    tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
+                    instagram.distance = [instagram _distanceWithLatitude: instagram.latitude Longitude: instagram.longitude];
                     //                    [tweet.locationAtTweet distanceToCurrentLocation];
                     
                     //(緯度，経度)　=> 住所
-                    CLLocation* location =[[CLLocation alloc] initWithLatitude:tweet.latitude longitude:tweet.longitude];
+                    CLLocation* location =[[CLLocation alloc] initWithLatitude:instagram.latitude longitude:instagram.longitude];
                     CLGeocoder* clg = [[CLGeocoder alloc] init];
                     
                     //緯度経度から住所の情報を取得するところが非同期でメインスレッド
@@ -151,13 +162,13 @@
                              //                             DLog(@"ERROR:%@",error.domain);
                              //                             DLog("MainThread:%hhd",[NSThread isMainThread]);
                              //                             DLog("\n\tAddress      : %@", address);
-                             __weak Tweet* wt =tweet;
+                             __weak Instagram* wInsta =instagram;
                              //非同期で別スレッドで処理  //dispach_get_main_queue()
                              dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^(void)
                                             {
                                                 //dispatch_async(dispatch_get_main_queue(),^(void){
                                                 //                                 DLog("ISMainThread？？？:%hhd",[NSThread isMainThread]);
-                                                wt.address = address;
+                                                wInsta.address = address;
                                             });
                          }
                      }];
@@ -167,7 +178,7 @@
             
         }
     }
-    return tweet;
+    return instagram;
 
 
 }

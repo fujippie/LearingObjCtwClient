@@ -16,28 +16,28 @@
 @implementation Ocolo
 +(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic
 {
-    Tweet* tweet = [[Tweet alloc] init];
+    Ocolo* ocolo = [[Tweet alloc] init];
     //allKeys Dictionary が持つ全ての値を取得
     
-    tweet.snsLogoImageFileName = @"ocolo";
+    ocolo.snsLogoImageFileName = @"ocolo";
     
-    tweet.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
+    ocolo.attributedBody = [[SETwitterHelper sharedInstance] attributedStringWithTweet:dic];
     
-    DLog(@"ATTRIBUTEEEE%@",tweet.attributedBody);
+    DLog(@"ATTRIBUTEEEE%@",ocolo.attributedBody);
     if ([dic.allKeys containsObject:@"id"])
     {
-        tweet.id = [dic[@"id"] unsignedLongLongValue];
+        ocolo.id = [dic[@"id"] unsignedLongLongValue];
     }
     
     if ([dic.allKeys containsObject:@"text"])//ツイート本文
     {
-        tweet.simpleBody = dic[@"text"];
+        ocolo.simpleBody = dic[@"text"];
     }
     
     if([dic.allKeys containsObject:@"created_at"])
     {
-        tweet.postTime=[tweet _formatTimeString:dic[@"created_at"]];
-        DLog("TWEET:%@",tweet.simpleBody);
+        ocolo.postTime=[ocolo _formatTimeString:dic[@"created_at"]];
+        DLog("TWEET:%@",ocolo.simpleBody);
     }
     
     if ([dic.allKeys containsObject:@"user"])
@@ -46,7 +46,7 @@
         
         if([userDic.allKeys containsObject:@"screen_name"])//アカウント名 @hoge
         {
-            tweet.accountName = userDic[@"screen_name"];
+            ocolo.accountName = userDic[@"screen_name"];
         }
         
         if (//アイコン画像
@@ -56,9 +56,9 @@
             )
         {
             //For Debug
-            tweet.profileImageUrl = userDic[@"profile_image_url"];
+            ocolo.profileImageUrl = userDic[@"profile_image_url"];
             
-            __weak Tweet* weakTweet = tweet;
+            __weak Tweet* weakTweet = ocolo;
             //            別スレッドで非同期実行
             
             
@@ -104,14 +104,14 @@
                 NSArray* coorinates = geoDic[@"coordinates"];
                 if (coorinates.count == 2)
                 {
-                    tweet.latitude = [[coorinates objectAtIndex:0] floatValue];
-                    tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
+                    ocolo.latitude = [[coorinates objectAtIndex:0] floatValue];
+                    ocolo.longitude = [[coorinates objectAtIndex:1] floatValue];
                     // 現在地との距離を代入
-                    tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
+                    ocolo.distance = [ocolo _distanceWithLatitude: ocolo.latitude Longitude: ocolo.longitude];
                     //                    [tweet.locationAtTweet distanceToCurrentLocation];
                     
                     //(緯度，経度)　=> 住所
-                    CLLocation* location =[[CLLocation alloc] initWithLatitude:tweet.latitude longitude:tweet.longitude];
+                    CLLocation* location =[[CLLocation alloc] initWithLatitude:ocolo.latitude longitude:ocolo.longitude];
                     CLGeocoder* clg = [[CLGeocoder alloc] init];
                     
                     //緯度経度から住所の情報を取得するところが非同期でメインスレッド
@@ -154,7 +154,7 @@
                              //                             DLog(@"ERROR:%@",error.domain);
                              //                             DLog("MainThread:%hhd",[NSThread isMainThread]);
                              //                             DLog("\n\tAddress      : %@", address);
-                             __weak Tweet* wt =tweet;
+                             __weak Tweet* wt =ocolo;
                              //非同期で別スレッドで処理  //dispach_get_main_queue()
                              dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^(void)
                                             {
@@ -170,7 +170,7 @@
             
         }
     }
-    return tweet;
+    return ocolo;
 
 }
 @end

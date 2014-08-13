@@ -37,11 +37,11 @@ static NSString* const _twitter = @"twitter";
     DLog("ImageTapped");
     if(
        self.delegate
-       && [self.delegate respondsToSelector:@selector(tableViewCell:postImageButton:)]
+       && [self.delegate respondsToSelector:@selector(tableViewCell:postImageButtonTapped:)]
        )
     {
         [self.delegate tableViewCell:self
-                         postImageButton:imageButton.imageView];
+                         postImageButtonTapped:imageButton.imageView];
     }
 }
 
@@ -52,14 +52,14 @@ static NSString* const _twitter = @"twitter";
     if(
        self.delegate
        && [self.delegate respondsToSelector:@selector(tableViewCell:
-                                                      naviButtonWithAddress:
+                                                      naviButtonTappedWithAddress:
                                                       latitude:
                                                       longtitude:)]
        )
     {
         if(self.latitude != 0  && self.longitude != 0){
             [self.delegate  tableViewCell:self
-                    naviButtonWithAddress:self.spot.text
+                    naviButtonTappedWithAddress:self.spot.text
                                  latitude:self.latitude
                                longtitude:self.longitude];
         }
@@ -72,12 +72,12 @@ static NSString* const _twitter = @"twitter";
        self.delegate
        && [self.delegate respondsToSelector:@selector(
                                                       tableViewCell:
-                                                      accountImageButtonWith:
+                                                      accountImageButtonTappedWith:
                                                       )]
        )
     {
     [self.delegate tableViewCell:(BaseTableViewCell *) self
-          accountImageButtonWith:self.name.currentTitle];
+          accountImageButtonTappedWith:self.name.currentTitle];
     }
 }
 
@@ -86,20 +86,17 @@ static NSString* const _twitter = @"twitter";
        self.delegate
        && [self.delegate respondsToSelector:@selector(
                                                       tableViewCell:
-                                                      accountImageButtonWith:
+                                                      accountImageButtonTappedWith:
                                                       )]
        )
     {
     [self.delegate tableViewCell:(BaseTableViewCell *) self
-            accountName:self.name.currentTitle];
+            accountNameTapped:self.name.currentTitle];
     }
 }
 
-
-
-
 #pragma mark - setData
--(void) setPostDataWithTweet:(SnsBase*)snsBase snsLogoImageFileName:(NSString*)snsLogoImageFileName
+-(void) setTweetData:(Tweet*)tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName
 {
     //    cell.tweetText.delegate = cell;
     // セルが作られた時,回り始める
@@ -107,17 +104,37 @@ static NSString* const _twitter = @"twitter";
     [self.postImageAi startAnimating];
     [self.plfAi startAnimating];
     
-    [self _setAttributeBodyWithSnsBase:snsBase];
-    [self _setProfileImageWithSnsBase:snsBase];
-    [self _setAddressAndDistanceWithSnsBase:snsBase];
-    [self _setAccountNameWithSnsBase:snsBase];
-    [self _setPostTime:snsBase];
+    [self _setAttributeBodyWithSnsBase:tweet];
+    [self _setProfileImageWithSnsBase:tweet];
+    [self _setAddressAndDistanceWithSnsBase:tweet];
+    [self _setAccountNameWithSnsBase:tweet];
+    [self _setPostTime:tweet];
     
     [self _setNoPostImage];
     //[self _setPostImageWithSnsBase:(Instagram*)snsBase];
     
     self.snsLogo.image = [UIImage imageNamed:snsLogoImageFileName];
+    //  CELLにツイート(文字列)をセット
+    // テクストにリンクをつける　＋リンクをタップしたときに検知
+}
 
+-(void) setInstagramData:(Instagram*)instagram snsLogoImageFileName:(NSString*)snsLogoImageFileName
+{
+    //    cell.tweetText.delegate = cell;
+    // セルが作られた時,回り始める
+    [self.spotAi startAnimating];
+    [self.postImageAi startAnimating];
+    [self.plfAi startAnimating];
+    
+    [self _setAttributeBodyWithSnsBase:instagram];
+    [self _setProfileImageWithSnsBase:instagram];
+    [self _setAddressAndDistanceWithSnsBase:instagram];
+    [self _setAccountNameWithSnsBase:instagram];
+    [self _setPostTime:instagram];
+    [self _setPostImage:instagram];
+    //[self _setPostImageWithSnsBase:(Instagram*)snsBase];
+    
+    self.snsLogo.image = [UIImage imageNamed:snsLogoImageFileName];
     //  CELLにツイート(文字列)をセット
     // テクストにリンクをつける　＋リンクをタップしたときに検知
 }
@@ -139,35 +156,41 @@ static NSString* const _twitter = @"twitter";
 
 -(void)_setProfileImageWithSnsBase:(SnsBase*)snsBase
 {
-    if (snsBase.profileImage)
-    {
-        [self.prfImage setImage:snsBase.profileImage forState:0];
-        //        [cell.prfImage setImage:[UIImage imageNamed:@"female.jpeg"] forState:0];
-        [self.plfAi stopAnimating];
-    }
-    else
-    {
-        [self.prfImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
-    }
-    self.prfImage.layer.cornerRadius  = self.prfImage.frame.size.width / 2;
-    self.prfImage.layer.masksToBounds = YES;
+//    dispatch_async(dispatch_get_main_queue(), ^{
     
+    __block UIImage* img=[[UIImage alloc] init];
+//     dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^                         {
+            img= snsBase.profileImage;
+            DLog("PRFEELIMG%@",img);
+         
+//         dispatch_async(dispatch_get_main_queue(), ^{
+             if (snsBase.profileImage)
+             {
+                 [self.prfImage setImage:snsBase.profileImage forState:0];
+                 [self.plfAi stopAnimating];
+             }
+             else
+             {
+                 [self.prfImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+             }
+             self.prfImage.layer.cornerRadius  = self.prfImage.frame.size.width / 2;
+             self.prfImage.layer.masksToBounds = YES;
+    
+//    DLog("PRFEELIMG%@",img);//null
+        self.prfImage.layer.cornerRadius  = self.prfImage.frame.size.width / 2;
+        self.prfImage.layer.masksToBounds = YES;
 }
 
 -(void)_setAddressAndDistanceWithSnsBase:(SnsBase*)snsBase
 {
-    
     DLog("Address:%d Distance:%d",[snsBase.address length],snsBase.distance);
     DLog("ISMainThread1111？？？:%hhd",[NSThread isMainThread]);
     
     if(([snsBase.address length] > 0) && (snsBase.distance > 0))
     {
         [self.spotAi stopAnimating];
-        //        [postloc meterToKilo:tweet.distance];
-        //        NSString* meter = [NSString stringWithFormat:@"%d", tweet.distance];
         self.spot.text  = [NSString stringWithFormat:@"%@ %@", [self _meterToKilo:snsBase.distance], snsBase.address];
         DLog("ISMainThread22222？？？:%hhd",[NSThread isMainThread]);
-        
         self.longitude = snsBase.longitude;
         self.latitude  = snsBase.latitude;
     }
@@ -185,19 +208,25 @@ static NSString* const _twitter = @"twitter";
     }
 }
 
--(void)_setPostImageWithSnsBase:(Instagram*)instagram
+-(void)_setPostImage:(Instagram*)instagram
 {
  //APPLEは.pngを奨励　JPEGは拡張子が必要//cell.snsLogo.image = [UIImage imageNamed:@"twitter.jpeg"];
-//    if([snsLogoImageFileName isEqualToString:_instagram] )
-//    {
-//        //        [遅延実行で確認]
-        self.postedImage.hidden = NO;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{//[遅延実行で確認]
+    self.postedImage.hidden = NO;
+    dispatch_async(dispatch_get_main_queue(), ^{
+//       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{//[遅延実行で確認]
             [self.postImageAi stopAnimating];
-            DLog("this is InstaCell. set Image");
-            [self.postedImage setImage:[UIImage imageNamed:@"female.jpeg"] forState:0];
-        });//[遅延実行で確認]
+//          [self.postedImage setImage:[UIImage imageNamed:@"female.jpeg"] forState:0];
+            if(self.postedImage != nil)
+            {
+                [self.postedImage setImage:[UIImage imageNamed:@"female.jpeg"]
+                                  forState:0];
+                self.postImageAi.hidden = YES;
+//                [self.postImageAi removeFromSuperview];
+            }
+//        });
+    });
 }
+
 -(void)_setNoPostImage
 {
     [self.postedImage setImage:[UIImage imageNamed:@"noImage.jpeg"] forState:0];
@@ -221,20 +250,22 @@ static NSString* const _twitter = @"twitter";
          atIndex:(NSUInteger)charIndex
 {
     DLog("Called in CELL clickedOnLink%@",link.text);
-    
     NSString* clickedText = link.text;
-    
     id linkObj = link.object;
 
     NSString*     linkURLStr = @"";
     NSDictionary* linkDic    = @{};
-    DLog(@"LinkObjectCLASSNAME:%@",NSStringFromClass([linkObj class]));
-    //__NSCFString or __NSCFDictionary
-    if ([linkObj isMemberOfClass:[NSString class]])
+    DLog(@"LinkObjectCLASSNAME:%@",NSStringFromClass([link.object class]));
+    
+    
+
+//    継承関係が同じか？isKindOfClass そのクラスかisMemberOfClass
+    if ([linkObj isKindOfClass:[NSString class]])
     {
+         DLog("linkObjIs....:NSString");
         linkURLStr = (NSString*)linkObj;//http....
     }
-    else if ([linkObj isMemberOfClass:[NSDictionary class]])
+    else if ([linkObj isKindOfClass:[NSDictionary class]])
     {
         linkDic = (NSDictionary*)linkObj;
         //@:   screen_name
@@ -242,7 +273,7 @@ static NSString* const _twitter = @"twitter";
     }
     else
     {
-        DLog("linkObjの方がNSString,NSDictionaryではない");
+        DLog("linkObjがNSString,NSDictionaryではない%@",linkObj);
         if(
            self.delegate
            && [self.delegate respondsToSelector:@selector(tableViewCell:tappedLink:)]

@@ -15,6 +15,10 @@
 #import "SnsBase.h"
 @interface Ocolo : SnsBase
 //投稿時間テキスト,位置,投稿時間,投稿画像,
+
+@property (nonatomic, strong) NSString* postImageURL; //投稿された画像URL
+
+//@property (nonatomic,strong) NSString* postTime;
 +(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic;
 
 @end
