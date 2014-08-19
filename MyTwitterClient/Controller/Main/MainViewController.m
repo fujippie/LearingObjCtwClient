@@ -82,7 +82,7 @@ static const CGFloat FONT_SIZE = 13.0f;
     
 
 //TableViewのCellの登録と設定
-//    id型のもので型が確定するものはその型にしておく
+//id型のもので型が確定するものはその型にしておく
     
     BaseTableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     
@@ -127,8 +127,7 @@ static const CGFloat FONT_SIZE = 13.0f;
 {
 //画像を他クラスへ送信するデリゲート
     DLog("BaseTableViewCELL DELEGATE%@",image.description);
-    
-    
+
 }
 
 -(void) tableViewCell:(BaseTableViewCell *)tableViewCell
@@ -176,7 +175,9 @@ accountImageButtonTappedWith:(NSString*)accountName
 //TwitterAPI.mから,取得時に呼び出される.ツイート配列を引数とするデリゲートメソッド,
 -(void)twitterAPI:(TwitterAPI *)twitterAPI tweetData:(NSArray *)tweetData
 {
-//    DLog(@"tweetData:\n%@", tweetData);
+    DLog("TWETTERAPIDELEGATE:::%d",[tweetData count]);
+    Tweet* tw=tweetData.firstObject;
+    DLog(@"tw%@ %@",tw.attributedBody,tw.address);
     
     self.isLoading = NO;
     
@@ -203,7 +204,7 @@ accountImageButtonTappedWith:(NSString*)accountName
                                                        delegate:self
                                               cancelButtonTitle:@"閉じる"
                                               otherButtonTitles:nil];
-        [alert show];
+    [alert show];
 }
 
 #pragma mark UIAlertViewDelegate
@@ -260,7 +261,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
     return self.tweetData.count;
 }
 
-//IndexPathで指定した要素のCellを返す.
+//IndexPathで指定した要素のCellを返す.//テーブルの行を表示する必要が生じるたびに呼び出される
 -(UITableViewCell *)tableView:(UITableView *)tableView
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -269,11 +270,14 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
     //NSString * cellID = _cellId;
     
+    DLog("cellForRow%@",[self.tweetData[indexPath.row] simpleBody]);
     
 //    CELLでわける
+    DLog("TWEET TEXT%@",tweet.attributedBody);
     if(indexPath.row % 2 == 0)
     {
         return [self _makeTweetCellwith:tweet snsLogoImageFileName:_twitter];
+        
     }
 
     else if(indexPath.row % 2 == 1)
@@ -345,13 +349,12 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
                                                              font:[UIFont systemFontOfSize:fontSize]];
     CGFloat cellBodyH = frameRect.size.height;
     self.cellBodyChangedHeight = cellBodyH;
-    DLog(@"\n\n\nATTTRIBUTETEXT%@", atrText.string);
-
-    DLog(@"CELLBODYH>>>>>:%f", cellBodyH);
-    
-    DLog(@"CELLdefoBODYH>>>>>:%f", self.defaultCellBodyFrame.size.height);
-
-    
+//    DLog(@"\n\n\nATTTRIBUTETEXT%@", atrText.string);
+//
+//    DLog(@"CELLBODYH>>>>>:%f", cellBodyH);
+//    
+//    DLog(@"CELLdefoBODYH>>>>>:%f", self.defaultCellBodyFrame.size.height);
+//
     
 //    デフォルト　＋（増分）
     CGFloat cellH
@@ -475,10 +478,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //   cellクラス内のメソッドでデータをセット
     [cell setTweetData:tweet snsLogoImageFileName:(NSString*)snsLogoImageFileName];
 //ツイート内容を表示するテキストラベルの大きさを設定
-    CGFloat cellH = [self _cellHFromText:cell.tweetText.attributedText];
+    CGFloat cellH = [self _cellHFromText:cell.tweetText.attributedText fontSize:FONT_SIZE];
 //    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height -50;
     
-    DLog("\n\t CellH:%f bodyH:%f", cellH, self.cellBodyChangedHeight);
+//    DLog("\n\t CellH:%f bodyH:%f", cellH, self.cellBodyChangedHeight);
     cell.tweetText.frame = CGRectMake(
                                       cell.tweetText.frame.origin.x,
                                       cell.tweetText.frame.origin.y,
@@ -500,10 +503,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     [cell setInstagramData:instagram snsLogoImageFileName:snsLogoImageFileName];
     //ツイート内容を表示するテキストラベルの大きさを設定
-    CGFloat cellH = [self _cellHFromText:cell.tweetText.attributedText];
+    CGFloat cellH = [self _cellHFromText:cell.tweetText.attributedText fontSize:FONT_SIZE];
     CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height - 50;
     
-    DLog("\n\t CellH:%f bodyH:%f", cellH, bodyH);
+//    DLog("\n\t CellH:%f bodyH:%f", cellH, bodyH);
     cell.tweetText.frame = CGRectMake(
                                       cell.tweetText.frame.origin.x,
                                       cell.tweetText.frame.origin.y,
@@ -635,19 +638,48 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 - (NSMutableArray *) tweetData
 {
+    
+    //初期では,
     if(_tweetData == nil)
     {
         _tweetData = @[].mutableCopy;
         
-        NSBundle* bundle = [NSBundle mainBundle];
-        NSString* path = [bundle pathForResource:@"sampleData" ofType:@"plist"];
-        NSArray*  sampleData = [NSMutableArray arrayWithContentsOfFile:path];
         
-        for (NSString* tmpSampleData in sampleData){
-            Tweet* tweet =[[Tweet alloc] init];
-            tweet.simpleBody = tmpSampleData;
-            [_tweetData addObject:tweet];
-        }
+        
+//        DLog("Apper");//読み込みを追加
+//        if(self.isLoading == NO && self.isInitialized && self.tweetData.count
+//           //       // FIXME : for debug
+//           //       && self.tweetData.count < 100
+//           )
+//        {
+            self.isLoading = YES;
+            self.ai.hidden = NO;
+            [self.ai startAnimating];
+            
+            Tweet* lastTweet = _tweetData.lastObject;
+            
+            CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
+            
+            //        DLog(@"lastTweet.id:%llu", lastTweet.id);
+            //        DLog(@"self.twieetApi:%@", self.twitterApi);
+            DLog("VIEWDIDApper");
+            [self.twitterApi tweetsInNeighborWithCoordinate:OsakaEki
+                                                     radius:1
+                                                      count:30
+                                                      maxId:lastTweet.id];//self.tweetDataを含むためtwitterApiの変更が必要
+            
+            
+//        }
+
+//        NSBundle* bundle = [NSBundle mainBundle];
+//        NSString* path = [bundle pathForResource:@"sampleData" ofType:@"plist"];
+//        NSArray*  sampleData = [NSMutableArray arrayWithContentsOfFile:path];
+//        
+//        for (NSString* tmpSampleData in sampleData){
+//            Tweet* tweet =[[Tweet alloc] init];
+//            tweet.simpleBody = tmpSampleData;
+//            [_tweetData addObject:tweet];
+//        }
     }
     return _tweetData;
 }

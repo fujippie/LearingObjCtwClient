@@ -166,8 +166,10 @@ static NSString* const _twitter = @"twitter";
 //         dispatch_async(dispatch_get_main_queue(), ^{
              if (snsBase.profileImage)
              {
-                 [self.prfImage setImage:snsBase.profileImage forState:0];
-                 [self.plfAi stopAnimating];
+//                 dispatch_async(dispatch_get_main_queue(), ^{//効果なし
+                     [self.prfImage setImage:snsBase.profileImage forState:0];
+                     [self.plfAi stopAnimating];
+//                 });
              }
              else
              {

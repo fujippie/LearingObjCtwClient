@@ -64,17 +64,17 @@ static NSString* const _twitter = @"twitter";
             
  ////////////遅延実行/////////////
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
-            {//別スレッドで処理
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                               if (weakTweet == nil) {
-                                   DLog("WEAKTEET NIL");
-                                   return ;
-                               }
-                               NSData* profileImageData = [NSData dataWithContentsOfURL:
-                                                           [NSURL URLWithString:weakTweet.profileImageUrl]];
-                               weakTweet.profileImage = [UIImage imageWithData:profileImageData];
+                           {//別スレッドで処理
+                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                   
+                                   if (weakTweet == nil) {
+                                       return ;
+                                   }
+                                   NSData* profileImageData = [NSData dataWithContentsOfURL:
+                                                               [NSURL URLWithString:weakTweet.profileImageUrl]];
+                                   weakTweet.profileImage = [UIImage imageWithData:profileImageData];
+                               });
                            });
-                  });
 //////////元/////////////
 
 //            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
@@ -106,8 +106,10 @@ static NSString* const _twitter = @"twitter";
                 {
                     tweet.latitude = [[coorinates objectAtIndex:0] floatValue];
                     tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
+                    DLog("location tweet:::%f %f",tweet.latitude,tweet.longitude);
 // 現在地との距離を代入
                     tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
+                    
 //                    [tweet.locationAtTweet distanceToCurrentLocation];
                     
 //(緯度，経度)　=> 住所
@@ -161,6 +163,7 @@ static NSString* const _twitter = @"twitter";
                                //dispatch_async(dispatch_get_main_queue(),^(void){
 //                                 DLog("ISMainThread？？？:%hhd",[NSThread isMainThread]);
                                  wt.address = address;
+//                               DLog("ADDRESS::%@",wt.address);
                              });
                          }
                      }];

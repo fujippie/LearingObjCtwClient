@@ -23,10 +23,6 @@
                                       count:(NSInteger)count
                                       maxId:(unsigned long long)maxTweetID
 {
-    DLog("start");
-
-
-
     ACAccountType* accountType = [self.accountStore
                                   accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
     
@@ -196,8 +192,8 @@
                       
                       // 見つかったツイート配列を格納
                       NSArray* twAr = jsonDic[@"statuses"];
-                      DLog(@"JSONDIC%@",jsonDic);
-//                      DLog("\n\tJSON.count:%d", twAr.count);
+//                      DLog(@"JSONDIC%@",jsonDic);
+                      DLog("\n\tJSON.count:%d", twAr.count);
                       // ツイート配列からテキストのみを抽出
                       //ツイート内容,緯度経度,IDを取得
                       
