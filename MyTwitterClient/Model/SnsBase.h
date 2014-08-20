@@ -43,6 +43,10 @@
 @property (nonatomic, strong) NSString* simpleBody;   // ツイート内容
 @property (nonatomic, strong) NSAttributedString* attributedBody;
 
+@property (nonatomic, strong) NSString* postImageURL; //投稿された画像URL
+@property (nonatomic, strong) UIImage* postImage;
+
+
 +(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic;
 
 //@property (nonatomic, strong) NSString* simpleBody;            // ツイート内容

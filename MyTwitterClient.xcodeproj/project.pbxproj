@@ -100,6 +100,12 @@
 		22B9A3A51999931500C11D33 /* Osaka.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 22B9A3A41999931500C11D33 /* Osaka.gpx */; };
 		22B9A3A81999DE0D00C11D33 /* SnsBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9A3A71999DE0D00C11D33 /* SnsBase.m */; };
 		22B9A3AB199A1F8D00C11D33 /* Instagram.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9A3AA199A1F8D00C11D33 /* Instagram.m */; };
+		22C161F719A4603C00EEF26B /* NSDate+String.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161E619A4603C00EEF26B /* NSDate+String.m */; };
+		22C161F819A4603C00EEF26B /* NSObject+PropertyList.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161E919A4603C00EEF26B /* NSObject+PropertyList.m */; };
+		22C161F919A4603C00EEF26B /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161EC19A4603C00EEF26B /* NSString+Extension.m */; };
+		22C161FA19A4603C00EEF26B /* UIAlertView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161EF19A4603C00EEF26B /* UIAlertView+Extension.m */; };
+		22C161FB19A4603C00EEF26B /* UIBarButtonItem+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161F219A4603C00EEF26B /* UIBarButtonItem+Extension.m */; };
+		22C161FC19A4603C00EEF26B /* UIView+Frame.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161F519A4603C00EEF26B /* UIView+Frame.m */; };
 		22EC226C199237B700D66297 /* Link.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EC226B199237B700D66297 /* Link.m */; };
 /* End PBXBuildFile section */
 
@@ -203,6 +209,19 @@
 		22B9A3A71999DE0D00C11D33 /* SnsBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnsBase.m; sourceTree = "<group>"; };
 		22B9A3A9199A1F8D00C11D33 /* Instagram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instagram.h; sourceTree = "<group>"; };
 		22B9A3AA199A1F8D00C11D33 /* Instagram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Instagram.m; sourceTree = "<group>"; };
+		22C161E519A4603C00EEF26B /* NSDate+String.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+String.h"; sourceTree = "<group>"; };
+		22C161E619A4603C00EEF26B /* NSDate+String.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+String.m"; sourceTree = "<group>"; };
+		22C161E819A4603C00EEF26B /* NSObject+PropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+PropertyList.h"; sourceTree = "<group>"; };
+		22C161E919A4603C00EEF26B /* NSObject+PropertyList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PropertyList.m"; sourceTree = "<group>"; };
+		22C161EB19A4603C00EEF26B /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
+		22C161EC19A4603C00EEF26B /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
+		22C161EE19A4603C00EEF26B /* UIAlertView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Extension.h"; sourceTree = "<group>"; };
+		22C161EF19A4603C00EEF26B /* UIAlertView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Extension.m"; sourceTree = "<group>"; };
+		22C161F119A4603C00EEF26B /* UIBarButtonItem+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+Extension.h"; sourceTree = "<group>"; };
+		22C161F219A4603C00EEF26B /* UIBarButtonItem+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+Extension.m"; sourceTree = "<group>"; };
+		22C161F419A4603C00EEF26B /* UIView+Frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Frame.h"; sourceTree = "<group>"; };
+		22C161F519A4603C00EEF26B /* UIView+Frame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Frame.m"; sourceTree = "<group>"; };
+		22C161F619A4603C00EEF26B /* Categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Categories.h; sourceTree = "<group>"; };
 		22EC226A199237B700D66297 /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Link.h; sourceTree = "<group>"; };
 		22EC226B199237B700D66297 /* Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Link.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -317,6 +336,13 @@
 		227B6D291991AD8C00F8B51C /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				22C161E419A4603C00EEF26B /* NSDate */,
+				22C161E719A4603C00EEF26B /* NSObject */,
+				22C161EA19A4603C00EEF26B /* NSString */,
+				22C161ED19A4603C00EEF26B /* UIAlertView */,
+				22C161F019A4603C00EEF26B /* UIBarButtonItem */,
+				22C161F319A4603C00EEF26B /* UIView */,
+				22C161F619A4603C00EEF26B /* Categories.h */,
 				227B6D2A1991AD8C00F8B51C /* UIViewController+Extensions.h */,
 				227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */,
 			);
@@ -492,6 +518,60 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		22C161E419A4603C00EEF26B /* NSDate */ = {
+			isa = PBXGroup;
+			children = (
+				22C161E519A4603C00EEF26B /* NSDate+String.h */,
+				22C161E619A4603C00EEF26B /* NSDate+String.m */,
+			);
+			path = NSDate;
+			sourceTree = "<group>";
+		};
+		22C161E719A4603C00EEF26B /* NSObject */ = {
+			isa = PBXGroup;
+			children = (
+				22C161E819A4603C00EEF26B /* NSObject+PropertyList.h */,
+				22C161E919A4603C00EEF26B /* NSObject+PropertyList.m */,
+			);
+			path = NSObject;
+			sourceTree = "<group>";
+		};
+		22C161EA19A4603C00EEF26B /* NSString */ = {
+			isa = PBXGroup;
+			children = (
+				22C161EB19A4603C00EEF26B /* NSString+Extension.h */,
+				22C161EC19A4603C00EEF26B /* NSString+Extension.m */,
+			);
+			path = NSString;
+			sourceTree = "<group>";
+		};
+		22C161ED19A4603C00EEF26B /* UIAlertView */ = {
+			isa = PBXGroup;
+			children = (
+				22C161EE19A4603C00EEF26B /* UIAlertView+Extension.h */,
+				22C161EF19A4603C00EEF26B /* UIAlertView+Extension.m */,
+			);
+			path = UIAlertView;
+			sourceTree = "<group>";
+		};
+		22C161F019A4603C00EEF26B /* UIBarButtonItem */ = {
+			isa = PBXGroup;
+			children = (
+				22C161F119A4603C00EEF26B /* UIBarButtonItem+Extension.h */,
+				22C161F219A4603C00EEF26B /* UIBarButtonItem+Extension.m */,
+			);
+			path = UIBarButtonItem;
+			sourceTree = "<group>";
+		};
+		22C161F319A4603C00EEF26B /* UIView */ = {
+			isa = PBXGroup;
+			children = (
+				22C161F419A4603C00EEF26B /* UIView+Frame.h */,
+				22C161F519A4603C00EEF26B /* UIView+Frame.m */,
+			);
+			path = UIView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -623,14 +703,20 @@
 				227B6DAD1991AF8D00F8B51C /* SETextAttachment.m in Sources */,
 				227B6DB51991AF8D00F8B51C /* SETextLayout.m in Sources */,
 				227B6DC51991AF8D00F8B51C /* SEImageCache.m in Sources */,
+				22C161FC19A4603C00EEF26B /* UIView+Frame.m in Sources */,
+				22C161F819A4603C00EEF26B /* NSObject+PropertyList.m in Sources */,
 				227B6DBB1991AF8D00F8B51C /* SETextSelection.m in Sources */,
 				227B6D631991AD8C00F8B51C /* Tweet.m in Sources */,
 				227B6D4F1991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */,
 				227B6DB91991AF8D00F8B51C /* SETextMagnifierRanged.m in Sources */,
+				22C161FB19A4603C00EEF26B /* UIBarButtonItem+Extension.m in Sources */,
 				227B6DA51991AF8D00F8B51C /* SEConstants.m in Sources */,
 				227B6DB11991AF8D00F8B51C /* SETextGeometry.m in Sources */,
 				22EC226C199237B700D66297 /* Link.m in Sources */,
 				227B6DB71991AF8D00F8B51C /* SETextMagnifierCaret.m in Sources */,
+				22C161FA19A4603C00EEF26B /* UIAlertView+Extension.m in Sources */,
+				22C161F719A4603C00EEF26B /* NSDate+String.m in Sources */,
+				22C161F919A4603C00EEF26B /* NSString+Extension.m in Sources */,
 				227B6D591991AD8C00F8B51C /* BaseViewController.m in Sources */,
 				22583BF01991ACC500DAB788 /* AppDelegate.m in Sources */,
 				22B9A3AB199A1F8D00C11D33 /* Instagram.m in Sources */,

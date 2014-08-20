@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "SnsBase.h"
+
 @interface Tweet : SnsBase
+
 @property (nonatomic, strong) UIImage* profileImage;
 @property (nonatomic, strong) NSString* profileImageUrl; // プロフィール画像URL
 @property (nonatomic, strong) NSString* accountName;     //アカウント名

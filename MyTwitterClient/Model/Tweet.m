@@ -13,7 +13,9 @@
 static CLLocation* currentLocation;//現在地
 
 @implementation Tweet
+
 static NSString* const _twitter = @"twitter";
+
 +(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic
 {
     DLog("GETSNSDATA TWEET");
@@ -63,16 +65,21 @@ static NSString* const _twitter = @"twitter";
 //            別スレッドで非同期実行
             
  ////////////遅延実行/////////////
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
                            {//別スレッドで処理
-                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+                               {
                                    
-                                   if (weakTweet == nil) {
+                                   if (weakTweet == nil)
+                                   {
                                        return ;
                                    }
+                                   
                                    NSData* profileImageData = [NSData dataWithContentsOfURL:
                                                                [NSURL URLWithString:weakTweet.profileImageUrl]];
-                                   weakTweet.profileImage = [UIImage imageWithData:profileImageData];
+                                   dispatch_sync(dispatch_get_main_queue(), ^{
+                                       weakTweet.profileImage = [UIImage imageWithData:profileImageData];
+                                   });
                                });
                            });
 //////////元/////////////

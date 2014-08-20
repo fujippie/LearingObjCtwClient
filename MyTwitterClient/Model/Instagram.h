@@ -15,9 +15,6 @@
 
 @interface Instagram : SnsBase
 //アカウント名,テキスト,投稿時間,位置,プロフィール画像,投稿画像,動画
-@property (nonatomic, strong) NSString* postImageURL; //投稿された画像URL
-@property (nonatomic, strong) UIImage* postImage;
-
 
 @property (nonatomic, strong) UIImage* profileImage;
 @property (nonatomic, strong) NSString* profileImageUrl; // プロフィール画像URL
