@@ -220,12 +220,12 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
 #pragma mark UITableViewDataSource
 
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+- (CGFloat) tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 10;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+- (UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     DLog("FOOOTER_IN_SECTION");
     
@@ -252,8 +252,8 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 
 //TableViewがReloadされたときに呼び出される.Tableの要素数を返す.
 //新たにCellが表示される度に呼ばれる.
-- (NSInteger)tableView:(UITableView *)tableView
- numberOfRowsInSection:(NSInteger)section
+- (NSInteger) tableView:(UITableView *)tableView
+  numberOfRowsInSection:(NSInteger)section
 {
     return self.tweetData.count;
 }
@@ -262,19 +262,19 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 -(UITableViewCell *)tableView:(UITableView *)tableView
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    Tweet* tweet         = self.tweetData[indexPath.row];
+    Tweet*     tweet     = self.tweetData[indexPath.row];
     Instagram* instagram = self.tweetData[indexPath.row];
 
     //NSString * cellID = _cellId;
     
-    DLog("cellForRow%@",[self.tweetData[indexPath.row] simpleBody]);
+    DLog("cellForRow%@", [self.tweetData[indexPath.row] simpleBody]);
     
 //    CELLでわける
-    DLog("TWEET TEXT%@",tweet.attributedBody);
+    DLog("TWEET TEXT%@", tweet.attributedBody);
+    
     if(indexPath.row % 2 == 0)
     {
         return [self _makeTweetCellwith:tweet];
-        
     }
 
     else if(indexPath.row % 2 == 1)
@@ -320,16 +320,16 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 //TableViewとそのIndexPathの高さ
-    Tweet* tweet   = self.tweetData[indexPath.row];
+    Tweet* tweet = self.tweetData[indexPath.row];
     NSAttributedString* body = tweet.attributedBody;
     BOOL isImageExist = ((int)indexPath.row % 2 == 0) ? NO : YES;
     
 //    return (indexPath.row % 6 == 5 )?  self.defaultCellFrame.size.height:[self _cellHFromText:body];
-    DLog("idpath:%d  imgEX%hhd",indexPath.row,isImageExist);
+    DLog("idpath:%d  imgEX%hhd", indexPath.row, isImageExist);
     return [self _cellHFromSnsBase:tweet];
 }
 
--(CGFloat)_cellHFromSnsBase:(SnsBase*)snsBase
+-(CGFloat) _cellHFromSnsBase:(SnsBase*)snsBase
 {
     //Cell内の文字列のフォントを取得
 //    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
@@ -644,9 +644,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     return _postViewController;
 }
 
--(TwitterAPI *)twitterApi
+-(TwitterAPI *) twitterApi
 {
-    if(_twitterApi == nil)
+    if (_twitterApi == nil)
     {
         _twitterApi = [[TwitterAPI alloc] init];
         //デリゲートを使う場合は必ず必要

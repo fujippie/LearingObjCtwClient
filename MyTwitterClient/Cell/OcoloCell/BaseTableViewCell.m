@@ -116,7 +116,6 @@ static CGFloat   const _nonPostImageCellH = 114.0f;
            && [self.delegate respondsToSelector:@selector(tableViewCell:tappedLink:)]
            )
         {
-            
            [self.delegate tableViewCell:self tappedLink:nil];
         }
        
@@ -128,14 +127,12 @@ static CGFloat   const _nonPostImageCellH = 114.0f;
     {
         url = [NSURL URLWithString: linkURLStr];
     }
-
-    if ([clickedText hasPrefix:@"@"])
+    else if ([clickedText hasPrefix:@"@"])
     {
         url = [NSURL URLWithString:
                         [NSString stringWithFormat:
                          @"https://twitter.com/%@", [linkDic[@"screen_name"] substringFromIndex:1]]];
     }
-    
     else if ([clickedText hasPrefix:@"#"])
     {
         url = [NSURL URLWithString:

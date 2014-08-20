@@ -26,3 +26,8 @@
 #import <Accounts/Accounts.h>
 
 #import "UIViewController+Extensions.h"
+
+#import "InstagramKit.h"
+
+#import "NSString+FontAwesome.h"
+#import "UIFont+FontAwesome.h"

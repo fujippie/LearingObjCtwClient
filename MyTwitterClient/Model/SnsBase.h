@@ -62,8 +62,6 @@
 -(NSInteger) _distanceWithLatitude:(CGFloat) latitude
                          Longitude:(CGFloat) longitude;
 
-+(instancetype) getSnsDataWithDictionary:(NSDictionary*)dic;
-
 +(CLLocation *) getCurrentLocation;
 
 +(void) setCurrentLocation:(CLLocation*)cl;
