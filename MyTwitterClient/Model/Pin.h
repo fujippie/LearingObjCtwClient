@@ -43,7 +43,7 @@
 @property (nonatomic) enum FAIcon categoryIconId;
 
 // convert
-//+(instancetype) pinFromPostData:(PostData*)postData;
++(instancetype) pinFromPostData:(PostData*)postData;
 
 // init
 +(instancetype) pinFromCoordinate:(CLLocationCoordinate2D)coordinate;

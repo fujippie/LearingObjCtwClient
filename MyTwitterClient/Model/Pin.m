@@ -21,7 +21,7 @@
     
     return pin;
 }
-/*
+
 +(instancetype) pinFromPostData:(PostData *)postData
 {
     Pin* pin = [[Pin alloc] init];
@@ -48,7 +48,7 @@
     
     return pin;
 }
-*/
+
 
 #pragma mark - Util
 
