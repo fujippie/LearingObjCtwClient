@@ -21,7 +21,7 @@
     
     return pin;
 }
-
+/*
 +(instancetype) pinFromPostData:(PostData *)postData
 {
     Pin* pin = [[Pin alloc] init];
@@ -48,7 +48,7 @@
     
     return pin;
 }
-
+*/
 
 #pragma mark - Util
 
@@ -120,11 +120,121 @@
     return image;
 }
 
+-(NSInteger) distanceFromCurrentCoord:(CLLocationCoordinate2D)currentCoord
+{
+    if (CLLocationCoordinate2DIsValid(self.coordinate))
+    {
+        CLLocation* sLoc = [[CLLocation alloc] initWithLatitude:currentCoord.latitude
+                                                      longitude:currentCoord.longitude];
+        CLLocation* dLoc = [[CLLocation alloc] initWithLatitude:self.coordinate.latitude
+                                                      longitude:self.coordinate.longitude];
+        // 距離を取得
+        // TODO:[現在地は取得待ちする必要あり]
+//        CLLocation* oosaka = [[ CLLocation alloc] initWithLatitude:34.701909 longitude:135.494977];
+        
+        CLLocationDistance distance = [sLoc distanceFromLocation:dLoc];
+
+        return (NSInteger)distance;
+    }
+    
+    return NSNotFound;
+}
+
+-(void)asyncAddress:(void (^)(NSString *))addressBlock
+{
+    if (self.address && self.address.length)
+    {
+        addressBlock(self.address);
+        
+        return ;
+    }
+    
+    if (!CLLocationCoordinate2DIsValid(self.coordinate))
+    {
+        addressBlock(nil);
+        return;
+    }
+    
+    //(緯度，経度)　=> 住所
+    CLLocation* location = [[CLLocation alloc] initWithLatitude:self.coordinate.latitude longitude:self.coordinate.longitude];
+    
+    //緯度経度から住所の情報を取得するところが非同期でメインスレッド
+    //住所をTweet型に格納するところは非同期で別スレッド　Cellに反映されるまで、時間がかかる
+    //
+    //                    DLog("MainThread:%hhd",[NSThread isMainThread]);//Main
+    CLGeocoder* clg = [[CLGeocoder alloc] init];
+    [clg reverseGeocodeLocation:(CLLocation *)location
+              completionHandler:^(NSArray* placemarks, NSError* error)
+     {
+         if (error)
+         {
+             DLOG(@"error:\n%@", error);
+             
+             self.address = nil;
+             addressBlock(nil);
+             
+             return ;
+         }
+         
+//         DLog("MainThread:%hhd",[NSThread isMainThread]);//Main
+//         DLog(@"count:%d obj:%@", placemarks.count, placemarks[0]);
+         
+         NSMutableString* address = [NSMutableString stringWithString:@""];
+         for (CLPlacemark *placemark in placemarks)
+         {
+             // それぞれの結果（場所）の情報
+             BOOL isStateNull    = ([placemark.addressDictionary[@"State"] length] == 0) ? YES : NO;
+             BOOL isLocalNull    = ([placemark.locality length] == 0)                    ? YES : NO;
+             BOOL isThoroNull    = ([placemark.thoroughfare length] == 0)                ? YES : NO;
+             BOOL isSubThoroNull = ([placemark.subThoroughfare length] == 0)             ? YES : NO;
+             
+//             DLog(@"\n\t%@\n",tweet.body);
+//             DLog(@"locality        : %@ BOOL : %hhd", placemark.locality,isLocalNull);
+//             DLog(@"state           : %@ BOOL : %hhd", placemark.addressDictionary[@"State"],isThoroNull);
+
+             [address appendString:
+              (isStateNull) ? @"" : placemark.addressDictionary[@"State"]];
+             
+//             DLog(@"thoroughfare    : %@ BOOL : %hhd", placemark.locality,isThoroNull);
+             
+             [address appendString:
+              (isStateNull || isLocalNull) ? @"" : placemark.locality];
+             
+//             DLog(@"thoroughfare    : %@ BOOL : %hhd", placemark.thoroughfare,isThoroNull);
+             
+             [address appendString:
+              (isStateNull || isLocalNull || isThoroNull) ? @"" : placemark.thoroughfare];
+             
+//             DLog(@"subThoroughfare : %@ BOOL : %hhd", placemark.subThoroughfare,isSubThoroNull);
+             
+             [address appendString:
+              (isStateNull || isLocalNull || isThoroNull || isSubThoroNull) ? @"" : placemark.subThoroughfare];
+         }
+
+         /*
+         DLog(
+              "\n\tMainThread : %hhd"
+              "\n\tAddress    : %@"
+              , [NSThread isMainThread]
+              , address
+              );
+          */
+
+         if (address.length == 0)
+         {
+             address = nil;
+         }
+
+         self.address = address;
+         addressBlock(address);
+     }];
+}
+
 #pragma mark - Accessor
 
 #pragma mark Public
 
--(NSAttributedString *)attributeBody
+-(NSAttributedString *) attributeBody
 {
     if (_attributeBody == nil && self.body)
     {
@@ -132,6 +242,34 @@
     }
     
     return _attributeBody;
+}
+
+-(NSURL *)imageUrl
+{
+    if (_imageUrl == nil && self.imageUrlStr != nil && self.imageUrlStr.length)
+    {
+        _imageUrl = [NSURL URLWithString:self.imageUrlStr];
+    }
+    else
+    {
+        _imageUrl = nil;
+    }
+    
+    return _imageUrl;
+}
+
+-(NSURL *) postImageUrl
+{
+    if (_postImageUrl == nil && self.postImageUrlStr != nil && self.postImageUrlStr.length)
+    {
+        _postImageUrl = [NSURL URLWithString:self.postImageUrlStr];
+    }
+    else
+    {
+        _postImageUrl = nil;
+    }
+    
+    return _postImageUrl;
 }
 
 @end

@@ -22,4 +22,8 @@
  */
 -(NSString *) stringByReplacingHTMLAtString:(NSString*)string;
 
+/**
+ */
++(NSString*) stringIsSummarizedFromMeter:(NSInteger)meter;
+
 @end

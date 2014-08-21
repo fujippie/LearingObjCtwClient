@@ -11,9 +11,8 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 
-#import "Tweet.h"
-
 @class TwitterAPI;
+@class TWStatus;
 
 @protocol TwitterAPIDelegate <NSObject>
 
@@ -22,7 +21,7 @@
 
 @optional
 - (void) twitterAPI:(TwitterAPI*)twitterAPI tweetData:(NSArray*)tweetData;
-- (void) twitterAPI:(TwitterAPI*)twitterAPI postedTweet:(Tweet*)tweet;
+- (void) twitterAPI:(TwitterAPI*)twitterAPI postedTweet:(TWStatus*)twStatus;
 
 @end
 

@@ -19,6 +19,9 @@
     //
     TWStatus* twStatus = [[TWStatus alloc] init];
     
+    NSNumber* num = [twStatus assignValueFromDic:dic key:@"id"];
+    twStatus.id = num.description;
+    
     twStatus.text = dic[@"text"];
 
     if (![dic[@"geo"] isEqual:[NSNull null]])

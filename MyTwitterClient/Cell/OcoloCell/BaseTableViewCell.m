@@ -6,21 +6,20 @@
 //  Copyright (c) 2014年 Yuta Fujiwara. All rights reserved.
 //
 #import "BaseTableViewCell.h"
+
 #import "Link.h"
-#import "Tweet.h"
-#import "Instagram.h"
-#import "SnsBase.h"
+#import "Pin.h"
+#import "TWStatus.h"
+#import "IGMedia.h"
 
 @implementation BaseTableViewCell
 
+static NSString* const _oclLogoNm = @"ocolo";
+static NSString* const _twLogoNm  = @"twitter";
 static NSString* const _igLogoNm  = @"instagram";
 static NSString* const _gpLogoNm  = @"googlePlus";
 static NSString* const _fbLogoNm  = @"facebook";
-static NSString* const _oclLogoNm = @"ocolo";
-static NSString* const _twLogoNm  = @"twitter";
 static NSString* const _pwLogoNm  = @"power";
-
-static CGFloat   const _nonPostImageCellH = 114.0f;
 
 #pragma mark - LifeCycle
 
@@ -28,9 +27,7 @@ static CGFloat   const _nonPostImageCellH = 114.0f;
 {
     [super awakeFromNib];
     
-    self.body.delegate = self;
-
-    DLog("TweetText:%@", self.body.delegate);
+    self.bodyTv.delegate = self;
 }
 
 #pragma mark - Action
@@ -164,196 +161,265 @@ static CGFloat   const _nonPostImageCellH = 114.0f;
 
 #pragma mark - Caluculating
 
-+(CGFloat) defaultHeightIsPostImage:(BOOL)isPostImage
++(CGFloat) defaultBodyHeight
 {
-    static BaseTableViewCell* cell = nil;
+    static CGFloat defaultBodyHeight;
     
-    if (cell == nil)
+    if (defaultBodyHeight <= 0.0f)
     {
-        cell = [[[NSBundle mainBundle] loadNibNamed:NSStringFromClass([self class]) owner:nil options:nil] objectAtIndex:0];
+        BaseTableViewCell* cell = [[[NSBundle mainBundle] loadNibNamed:NSStringFromClass([self class])
+                                                                 owner:nil
+                                                               options:nil]
+                                   objectAtIndex:0];
+        defaultBodyHeight = cell.bodyTv.height;
     }
     
-    if (cell == nil) return 0.0f;
-
-    CGFloat height;
+    if (defaultBodyHeight <= 0.0f) return 0.0f;
     
-    if (isPostImage)
-    {
-        height = cell.bounds.size.height;
-    }
-    else
-    {
-        height = _nonPostImageCellH;
-    }
-    
-    return height;
+    return defaultBodyHeight;
 }
 
 #pragma mark - Accessor
 
--(void)setPin:(SnsBase *)pin
+-(void) setPin:(Pin *)pin
 {
-    if (![pin isKindOfClass:[SnsBase class]])
+    [self setPin:pin currentCoord:kCLLocationCoordinate2DInvalid];
+}
+
+-(void) setPin:(Pin *)pin
+  currentCoord:(CLLocationCoordinate2D)currentCoord;
+{
+    if (![pin isKindOfClass:[Pin class]])
     {
+        DLOG(@"\n\n******* error ********\n%@\n", NSStringFromClass([pin class]));
         _pin = nil;
+        
+        return;
+    }
+
+    _pin = pin;
+    
+    if (CLLocationCoordinate2DIsValid(currentCoord))
+    {
+        [self _setupCellWith:pin currentCoord:currentCoord];
     }
     else
     {
-        _pin = pin;
-    }
-    
-    if ([pin isMemberOfClass:[Tweet class]])
-    {
-        [self _setupTweetData:(Tweet*)pin];
-    }
-    else if ([pin isMemberOfClass:[Instagram class]])
-    {
-        [self _setupInstagramData:(Instagram *)pin];
+        [self _setupCellWith:pin currentCoord:kCLLocationCoordinate2DInvalid];
     }
 }
 
-#pragma mark - Set data
+#pragma mark - Setup cell
 
--(void) _setupTweetData:(Tweet*)tweet
+-(void) _setupCellWith:(Pin*)pin currentCoord:(CLLocationCoordinate2D)currentCoord
 {
     //    cell.tweetText.delegate = cell;
     // セルが作られた時,回り始める
-    [self.spotAi startAnimating];
-    [self.postImageAi startAnimating];
-    [self.prfAi startAnimating];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.spotAi startAnimating];
+        [self.postImageAi startAnimating];
+        [self.prfAi startAnimating];
+    });
     
-    [self _setAttributeBodyWithSnsBase:tweet];
-    [self _setProfileImageWithSnsBase:tweet];
-    [self _setAddressAndDistanceWithSnsBase:tweet];
-    [self _setPostTime:tweet];
+    [self _setProfileImageWithPin:pin];
+    [self _setAddressAndDistanceWithPin:pin currentCoord:currentCoord];
+    [self _setAttributeBodyWithPin:pin];
+    [self _setPostImageWithPin:pin];
+    [self _setPostTimeWithPin:pin];
     
-    [self _setNoPostImage];
     //[self _setPostImageWithSnsBase:(Instagram*)snsBase];
     
-    self.snsLogo.image = [UIImage imageNamed:_twLogoNm];
+    self.iconLbl.font = [UIFont fontAwesomeFontOfSize:self.iconLbl.font.pointSize];
+    self.iconLbl.text = [NSString fontAwesomeIconStringForEnum:pin.categoryIconId];
     //  CELLにツイート(文字列)をセット
     // テクストにリンクをつける　＋リンクをタップしたときに検知
 }
 
--(void) _setupInstagramData:(Instagram*)instagram
-{
-    //    cell.tweetText.delegate = cell;
-    // セルが作られた時,回り始める
-    [self.spotAi startAnimating];
-    [self.postImageAi startAnimating];
-    [self.prfAi startAnimating];
-    
-    [self _setAttributeBodyWithSnsBase:instagram];
-    [self _setProfileImageWithSnsBase:instagram];
-    [self _setAddressAndDistanceWithSnsBase:instagram];
-    [self _setPostTime:instagram];
-    [self _setPostImage:instagram];
-    //[self _setPostImageWithSnsBase:(Instagram*)snsBase];
-    
-    self.snsLogo.image = [UIImage imageNamed:_igLogoNm];
-    //  CELLにツイート(文字列)をセット
-    // テクストにリンクをつける　＋リンクをタップしたときに検知
-}
-
--(void) _setAttributeBodyWithSnsBase:(SnsBase*)snsBase
-{
-    self.body.attributedText = snsBase.attributedBody;
-}
-
--(void) _setProfileImageWithSnsBase:(SnsBase*)snsBase
+-(void) _setProfileImageWithPin:(Pin*)pin
 {
     //    dispatch_async(dispatch_get_main_queue(), ^{
     
-    __block UIImage* img=[[UIImage alloc] init];
-    //     dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^                         {
-    img= snsBase.profileImage;
-    DLog("PRFEELIMG%@",img);
-    
-    //         dispatch_async(dispatch_get_main_queue(), ^{
-    if (snsBase.profileImage)
+    [self.prfImageBtn setImage:[UIImage imageNamed:@"noImage"] forState:UIControlStateNormal];
+
+    self.prfImageBtn.layer.cornerRadius  = self.prfImageBtn.frame.size.width / 2;
+    self.prfImageBtn.layer.masksToBounds = YES;
+
+    /*
+    if (pin.image)
     {
-        //                 dispatch_async(dispatch_get_main_queue(), ^{//効果なし
-        [self.prfImage setImage:snsBase.profileImage forState:0];
+        [self.prfImageBtn setImage:pin.image forState:UIControlStateNormal];
+        
         [self.prfAi stopAnimating];
-        //                 });
+        self.prfAi.hidden = YES;
+    }
+    else if (pin.imageUrl)
+    {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+        {
+            NSData* imageData = [NSData dataWithContentsOfURL:pin.imageUrl];
+            UIImage* image = [UIImage imageWithData:imageData];
+            dispatch_async(dispatch_get_main_queue(), ^
+            {
+                pin.image = image;
+                
+                [self.prfImageBtn setImage:image forState:UIControlStateNormal];
+                
+                [self.prfAi stopAnimating];
+                self.prfAi.hidden = YES;
+                
+                [self setNeedsDisplay];
+            });
+        });
     }
     else
     {
-        [self.prfImage setImage:[UIImage imageNamed:@"noImage"] forState:0];
+        [self.prfAi stopAnimating];
+        self.prfAi.hidden = YES;
     }
-    self.prfImage.layer.cornerRadius  = self.prfImage.frame.size.width / 2;
-    self.prfImage.layer.masksToBounds = YES;
-    
-    //    DLog("PRFEELIMG%@",img);//null
-    self.prfImage.layer.cornerRadius  = self.prfImage.frame.size.width / 2;
-    self.prfImage.layer.masksToBounds = YES;
+     */
+
 }
 
--(void) _setAddressAndDistanceWithSnsBase:(SnsBase*)snsBase
+-(void) _setAddressAndDistanceWithPin:(Pin*)pin
+                         currentCoord:(CLLocationCoordinate2D)currentCoord
 {
-    DLog("Address:%d Distance:%d",[snsBase.address length],snsBase.distance);
-    DLog("ISMainThread1111？？？:%hhd",[NSThread isMainThread]);
+    DLOG(
+         @"\n\tlat:%f"
+         @"\n\tlng:%f"
+         , currentCoord.latitude
+         , currentCoord.longitude
+         );
     
-    if(([snsBase.address length] > 0) && (snsBase.distance > 0))
+    if (CLLocationCoordinate2DIsValid(currentCoord))
+    {
+        DLOG(@"\n\n*****************\n\n");
+        
+        //        self.distanceLbl.font = [UIFont fontAwesomeFontOfSize:self.distanceLbl.font.pointSize];
+        //        NSString* distanceStr = [NSString fontAwesomeIconStringForEnum:FAFlagCheckered];
+        NSInteger meter = [pin distanceFromCurrentCoord:currentCoord];
+        //        distanceStr = [distanceStr stringByAppendingFormat:@" %@", [NSString stringIsSummarizedFromMeter:meter]];
+        //        self.distanceLbl.text = distanceStr;
+        self.distanceLbl.text = [NSString stringIsSummarizedFromMeter:meter];
+    }
+    
+    if (pin.address)
     {
         [self.spotAi stopAnimating];
-        self.spot.text  = [NSString stringWithFormat:@"%@ %@", [self _kilometerFromMeter:snsBase.distance], snsBase.address];
-        DLog("ISMainThread22222？？？:%hhd",[NSThread isMainThread]);
-        //        self.longitude = snsBase.longitude;
-        //        self.latitude  = snsBase.latitude;
+        self.spotLbl.text  = [NSString stringWithFormat:@"%@", pin.address];
     }
     else
     {
-        self.spot.text = [NSString stringWithFormat:@" "];
+        [pin asyncAddress:^(NSString *address)
+         {
+             [self.spotAi stopAnimating];
+             self.spotLbl.text  = [NSString stringWithFormat:@"%@", address];
+         }];
     }
 }
 
--(void) _setPostTime:(SnsBase*)snsBase
+-(void) _setAttributeBodyWithPin:(Pin*)pin
 {
-    if([snsBase.postTime length] != 0)
+    self.bodyTv.attributedText = pin.attributeBody;
+}
+
+-(void) _setPostImageWithPin:(Pin*)pin
+{
+    [self.prfImageBtn setImage:[UIImage imageNamed:@"noImage"] forState:UIControlStateNormal];
+    
+    /*
+    if (pin.postImage)
     {
-        self.postTime.text = snsBase.postTime;
-    }
-}
-
--(void) _setPostImage:(Instagram*)instagram
-{
-    //APPLEは.pngを奨励　JPEGは拡張子が必要//cell.snsLogo.image = [UIImage imageNamed:@"twitter.jpeg"];
-    self.postedImageButton.hidden = NO;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{//[遅延実行で確認]
+        self.postImageAi.hidden = YES;
         [self.postImageAi stopAnimating];
-        [self.postedImageButton setImage:[UIImage imageNamed:@"female.jpeg"] forState:0];
-        if(self.postedImageButton != nil)
-        {
-            [self.postedImageButton setImage:[UIImage imageNamed:@"female.jpeg"]
-                                    forState:0];
-            self.postImageAi.hidden = YES;
-            [self.postImageAi removeFromSuperview];
-        }
-        //        });
-    });
-}
-
--(void) _setNoPostImage
-{
-    [self.postedImageButton setImage:[UIImage imageNamed:@"noImage.jpeg"] forState:0];
-    self.postedImageButton.hidden = YES;
-    [self.postImageAi stopAnimating];
-}
-
--(NSString*) _kilometerFromMeter:(NSInteger)meter
-{
-    if(meter > 1000)
+        [self.postedImageBtn setImage:pin.postImage forState:UIControlStateNormal];
+    }
+    else if (pin.postImageUrl)
     {
-        return [NSString stringWithFormat:@"%dKm",meter/1000];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData* imageData = [NSData dataWithContentsOfURL:pin.postImageUrl];
+            UIImage* image = [UIImage imageWithData:imageData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                pin.image = image;
+                self.postImageAi.hidden = YES;
+                [self.postImageAi stopAnimating];
+                [self.postedImageBtn setImage:image forState:UIControlStateNormal];
+            });
+        });
     }
     else
     {
-        return [NSString stringWithFormat:@"%dm",meter];
+        self.postImageAi.hidden = YES;
+        [self.postImageAi stopAnimating];
+    }
+     */
+}
+
+-(void) _setAddressAndDistanceWithPin:(Pin*)pin
+{
+    [self _setAddressAndDistanceWithPin:pin currentCoord:kCLLocationCoordinate2DInvalid];
+}
+
+-(void) _setPostTimeWithPin:(Pin*)pin
+{
+    if (pin.created)
+    {
+        DLOG(@"\n\tself.postTimeLbl.font.pointSize:%f", self.postTimeLbl.font.pointSize);
+
+//        NSString* distanceStr = [NSString fontAwesomeIconStringForEnum:FAClockO];
+//        self.postTimeLbl.text = [distanceStr stringByAppendingFormat:@" %@", [pin.created timeLineFormat]];
+//        self.postTimeLbl.font = [UIFont fontAwesomeFontOfSize:self.postTimeLbl.font.pointSize];
+        self.postTimeLbl.text = [pin.created timeLineFormat];
+        
     }
 }
 
+#pragma mark - Accessor
+
+-(UIImage *) prfImage
+{
+    if (self.pin == nil)
+        return nil;
+    else
+        return self.pin.image;
+}
+
+-(void) setPrfImage:(UIImage *)prfImage
+{
+    if (prfImage)
+    {
+        self.prfImageBtn.imageView.contentMode = UIViewContentModeScaleAspectFill;
+        [self.prfImageBtn setImage:prfImage forState:UIControlStateNormal];
+    }
+    else
+    {
+        [self.prfImageBtn setImage:[UIImage imageNamed:@"noImage"] forState:UIControlStateNormal];
+    }
+
+    self.prfAi.hidden = YES;
+}
+
+-(UIImage *) postedImage
+{
+    if (self.pin == nil)
+        return nil;
+    else
+        return self.pin.postImage;
+}
+
+-(void) setPostedImage:(UIImage *)postedImage
+{
+    if (postedImage)
+    {
+        self.postedImageBtn.imageView.contentMode = UIViewContentModeScaleAspectFill;
+        [self.postedImageBtn setImage:postedImage forState:UIControlStateNormal];
+    }
+    else
+    {
+        [self.postedImageBtn setImage:[UIImage imageNamed:@"noImage"] forState:UIControlStateNormal];
+    }
+
+    self.postImageAi.hidden = YES;
+}
 
 @end
 

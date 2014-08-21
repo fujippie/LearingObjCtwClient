@@ -14,7 +14,7 @@
 // @protected
 /**
  */
--(id)assignValueFromDic:(NSDictionary*)dic
-                    key:(NSString*)key;
+-(id) assignValueFromDic:(NSDictionary*)dic
+                     key:(NSString*)key;
 
 @end

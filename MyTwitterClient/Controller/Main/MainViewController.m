@@ -7,29 +7,34 @@
 //
 
 #import "MainViewController.h"
-//#import "CustomTVC.h"
-#import "Tweet.h"
-#import "Instagram.h"
 
 #import "TwitterAPI.h"
+#import "TWStatus.h"
+#import "IGMedia.h"
+
 #import "PostViewController.h"
 #import "AppDelegate.h"
 #import "Link.h"
 
 @interface MainViewController  ()
-<UIAlertViewDelegate, SETextViewDelegate>
+<CLLocationManagerDelegate, UIAlertViewDelegate, SETextViewDelegate>
 
-@property (nonatomic, strong) NSMutableArray*   tweetData;
-@property (nonatomic, assign) CGRect            defaultCellBodyFrame;
-@property (nonatomic, assign) CGRect            defaultCellFrame;
+@property (nonatomic) CLLocationManager* locManager;
+@property (nonatomic) CLLocationCoordinate2D currentCoord;
+
+@property (nonatomic, strong) NSMutableArray*   pins;
+
+@property (nonatomic, assign) CGFloat defaultCellH;
+@property (nonatomic, assign) CGFloat defaultCellBodyH;
+@property (nonatomic, assign) CGFloat defaultToPlaceBtnY;
+@property (nonatomic, assign) CGFloat defaultPostTimeLblY;
+
 @property (nonatomic, strong) UIRefreshControl* refreshControl;
 @property (nonatomic, assign) BOOL isLoading;
 @property (nonatomic, strong) UIActivityIndicatorView* ai ;
 @property (nonatomic, strong) PostViewController* postViewController;
 @property (nonatomic, strong) TwitterAPI* twitterApi;
 @property (nonatomic, assign) BOOL isInitialized;
-
-@property (nonatomic, assign) CGFloat cellBodyChangedHeight;
 
 @end
 
@@ -41,15 +46,8 @@
 
 //static NSString* const _cellId = @"CustomTVC";
 static NSString* const _cellId = @"BaseTableViewCell";
-static NSString* const _cellId2 = @"PowerCell";
 
-static NSString* const _instagram = @"instagram";
-static NSString* const _googlePlus = @"googlePlus";
-static NSString* const _facebook = @"facebook";
-static NSString* const _ocolo = @"ocolo";
-static NSString* const _twitter = @"twitter";
-
-static const CGFloat FONT_SIZE = 13.0f;
+static const CGFloat _fontSize = 12.0f;
 
 #pragma mark - LifeCycle
 
@@ -58,6 +56,8 @@ static const CGFloat FONT_SIZE = 13.0f;
     [super viewDidLoad];
 
     self.isInitialized = NO;
+    
+    [self.locManager startUpdatingLocation];
     
 //    AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
 //    if([self.navigationController isEqual:appDelegate.navigationController])=>YESを返す
@@ -71,28 +71,28 @@ static const CGFloat FONT_SIZE = 13.0f;
     [self.tableView registerNib:uinib
          forCellReuseIdentifier:_cellId];
     
-    UINib* uinib2 = [UINib nibWithNibName:@"PowerCell"
-                                  bundle:nil];
-    
-    [self.tableView registerNib:uinib2
-         forCellReuseIdentifier:_cellId2];
-    
-
 //TableViewのCellの登録と設定
 //id型のもので型が確定するものはその型にしておく
     
-    BaseTableViewCell* customTVC = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-    
-    //TODO:[位置情報のTextの高さを加算]
-    self.defaultCellBodyFrame = customTVC.body.frame;
-    self.defaultCellFrame = customTVC.frame;
+    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    self.defaultCellH = cell.height;
+    self.defaultCellBodyH = cell.bodyTv.height;
+    self.defaultPostTimeLblY = cell.postTimeLbl.y;
+    self.defaultToPlaceBtnY = cell.toPlaceBtn.y;
     
     [self.tableView addSubview:self.refreshControl];
   
 //  NavigationBarの設定　（更新中に表示するアイコン）
-    self.title = [NSString stringWithFormat:@"%@:%lu", NSStringFromClass(self.class), (unsigned long)[self.navigationController.viewControllers indexOfObject:self]];
+    self.title
+    = [NSString stringWithFormat:@"%@:%lu"
+       , NSStringFromClass(self.class)
+       , (unsigned long)[self.navigationController.viewControllers indexOfObject:self]];
     
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"投稿" style:UIBarButtonItemStylePlain  target:self action:@selector(leftBarBtnPushed:)];
+    self.navigationItem.leftBarButtonItem
+    = [[UIBarButtonItem alloc] initWithTitle:@"投稿"
+                                       style:UIBarButtonItemStylePlain
+                                      target:self
+                                      action:@selector(leftBarBtnPushed:)];
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
     
 //    編集ボタンを追加する.
@@ -117,65 +117,11 @@ static const CGFloat FONT_SIZE = 13.0f;
 
 #pragma mark - Delegate
 
-#pragma mark  BaseTableViewCellDelegate
-
--(void) tableViewCell:(BaseTableViewCell *) ocoloCell
-               postImageButtonTapped:(UIImageView *) image
-{
-//画像を他クラスへ送信するデリゲート
-    DLog("BaseTableViewCELL DELEGATE%@",image.description);
-
-}
-
--(void) tableViewCell:(BaseTableViewCell *)tableViewCell
-           tappedLink:(NSString*)link
-{
-    DLog(@"Called In Main %@ ",link);
-}
-
--(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-naviButtonTappedWithAddress:(NSString*)address
-             latitude:(CGFloat) latitude
-           longtitude:(CGFloat)longtitude
-{
-    DLog(@"CalledINMAIN%@,lati:%f,longti:%f",address,latitude,longtitude);
-
-}
-
--(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-accountImageButtonTappedWith:(NSString*)accountName
-{
-    DLog(@"CalledinMAin%@",accountName);
-
-}
-
--(void) tableViewCell:(BaseTableViewCell *) tableViewCell
-          accountNameTapped:(NSString *)accountName
-{
-    DLog(@"CalledinMAin%@",accountName);
-
-}
-
-#pragma mark  PostViewControllerDelegate
-
--(void) postViewController:(PostViewController *)postViewController postedTweet:(Tweet*)tweet
-{
-    [self.tweetData insertObject:tweet atIndex:0];
-//    NSIndexPath* indexPath = [NSIndexPath indexPathForItem:0 inSection:0];//先頭に追加
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];//先頭に追加
-    // インサート 指定したIndexPathの要素に対してだけデリゲートが呼ばれる
-    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-}
-
 #pragma mark TwitterAPIDelegate
 
 //TwitterAPI.mから,取得時に呼び出される.ツイート配列を引数とするデリゲートメソッド,
 -(void)twitterAPI:(TwitterAPI *)twitterAPI tweetData:(NSArray *)tweetData
 {
-    DLog("TWETTERAPIDELEGATE:::%d",[tweetData count]);
-    Tweet* tw=tweetData.firstObject;
-    DLog(@"tw%@ %@",tw.attributedBody,tw.address);
-    
     self.isLoading = NO;
     
     [self.ai stopAnimating];
@@ -183,25 +129,81 @@ accountImageButtonTappedWith:(NSString*)accountName
     
     [self.refreshControl endRefreshing];
     
-    [self.tweetData addObjectsFromArray:tweetData.mutableCopy];
+    [self.pins addObjectsFromArray:tweetData.mutableCopy];
     [self.tableView reloadData];
 }
 
 -(void)twitterAPI:(TwitterAPI *)twitterAPI errorAtLoadData:(NSError *)error
 {
     [self.refreshControl endRefreshing];
-
+    
     NSDictionary* dic = error.userInfo;
-//    NSString* erSt = dic[@"NSLocalizedDescription"];
+    //    NSString* erSt = dic[@"NSLocalizedDescription"];
     DLog(@"\n___________error:\n%@", dic[@"NSLocalizedDescription"]);
     DLog("%@", error.domain);
     DLog("%d", error.code);
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"タイムアウト"
-                                                        message:@"ツイート取得失敗"
-                                                       delegate:self
-                                              cancelButtonTitle:@"閉じる"
-                                              otherButtonTitles:nil];
+    
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"タイムアウト"
+                                                    message:@"ツイート取得失敗"
+                                                   delegate:self
+                                          cancelButtonTitle:@"閉じる"
+                                          otherButtonTitles:nil];
     [alert show];
+}
+
+#pragma mark  BaseTableViewCellDelegate
+
+-(void)           tableViewCell:(BaseTableViewCell *) tableViewCell
+tappedProfileImageButtonWithPin:(Pin *)pin
+{
+    DLOG(
+         @"\n\tprfImage"
+         @"\n\tsize:%@"
+         @"\n\turl :%@"
+         @"\n\tisMainThread:%d"
+         , NSStringFromCGSize(pin.image.size)
+         , pin.imageUrlStr
+         , [NSThread isMainThread]
+         );
+}
+
+-(void)        tableViewCell:(BaseTableViewCell *)tableViewCell
+tappedPostImageButtonWithPin:(Pin *)pin
+{
+    DLOG(
+         @"\n\tprfImage"
+         @"\n\tsize:%@"
+         @"\n\turl :%@"
+         @"\n\tisMainThread:%d"
+         , NSStringFromCGSize(pin.postImage.size)
+         , pin.postImageUrlStr
+         , [NSThread isMainThread]
+         );
+}
+
+-(void) tableViewCell:(BaseTableViewCell *)tableViewCell
+           tappedLink:(Link *)link
+{
+    DLog(@"Called In Main : %@ ", link.description);
+}
+
+-(void)      tableViewCell:(BaseTableViewCell *) tableViewCell
+tappedToPlaceButtonWithPin:(Pin *)pin
+{
+    DLog(@"CalledINMAIN : %@, lati:%f, longti:%f"
+         , pin.address, pin.coordinate.latitude, pin.coordinate.longitude);
+
+}
+
+#pragma mark  PostViewControllerDelegate
+
+-(void) postViewController:(PostViewController *)postViewController postedTweet:(Tweet*)tweet
+{
+    [self.pins insertObject:tweet atIndex:0];
+//    NSIndexPath* indexPath = [NSIndexPath indexPathForItem:0 inSection:0];//先頭に追加
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];//先頭に追加
+    // インサート 指定したIndexPathの要素に対してだけデリゲートが呼ばれる
+    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 #pragma mark UIAlertViewDelegate
@@ -255,41 +257,16 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 - (NSInteger) tableView:(UITableView *)tableView
   numberOfRowsInSection:(NSInteger)section
 {
-    return self.tweetData.count;
+    return self.pins.count;
 }
 
 //IndexPathで指定した要素のCellを返す.//テーブルの行を表示する必要が生じるたびに呼び出される
 -(UITableViewCell *)tableView:(UITableView *)tableView
         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    Tweet*     tweet     = self.tweetData[indexPath.row];
-    Instagram* instagram = self.tweetData[indexPath.row];
+    TWStatus* tweet = self.pins[indexPath.row];
 
-    //NSString * cellID = _cellId;
-    
-    DLog("cellForRow%@", [self.tweetData[indexPath.row] simpleBody]);
-    
-//    CELLでわける
-    DLog("TWEET TEXT%@", tweet.attributedBody);
-    
-    if(indexPath.row % 2 == 0)
-    {
-        return [self _makeTweetCellwith:tweet];
-    }
-
-    else if(indexPath.row % 2 == 1)
-    {
-        return [self _makeInstagramCellwith:instagram];
-    }
-//    else if(indexPath.row % 6 == 5)
-//    {
-//        return [self makeElCellwith:tweet];
-//    }
-    else
-    {
-        DLog("ERROR NO CELL");
-        return nil;
-    }
+    return [self _setupCellWithPin:tweet indexPath:indexPath];
 }
 
 //スワイプすると横にDeleteボタンが出るようにするメッソド
@@ -309,7 +286,7 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     if(editingStyle == UITableViewCellEditingStyleDelete)
     {
         DLog("DELETEButtonPushed");
-        [self.tweetData removeObjectAtIndex:indexPath.row];
+        [self.pins removeObjectAtIndex:indexPath.row];
         [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
@@ -319,77 +296,51 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 -(CGFloat)    tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//TableViewとそのIndexPathの高さ
-    Tweet* tweet = self.tweetData[indexPath.row];
-    NSAttributedString* body = tweet.attributedBody;
-    BOOL isImageExist = ((int)indexPath.row % 2 == 0) ? NO : YES;
     
-//    return (indexPath.row % 6 == 5 )?  self.defaultCellFrame.size.height:[self _cellHFromText:body];
-    DLog("idpath:%d  imgEX%hhd", indexPath.row, isImageExist);
-    return [self _cellHFromSnsBase:tweet];
+//TableViewとそのIndexPathの高さ
+    TWStatus* twStatus = self.pins[indexPath.row];
+    
+    CGFloat cellH = [self _cellHFromPin:twStatus];
+    
+    return cellH;
 }
 
--(CGFloat) _cellHFromSnsBase:(SnsBase*)snsBase
+-(CGFloat) _cellHFromPin:(Pin*)pin
 {
-    //Cell内の文字列のフォントを取得
-//    UIFont*   font = ((CustomTVC*)[self.tableView dequeueReusableCellWithIdentifier:_cellId]).body.font;
-//TableViewCell* ocCell= [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-//    UIFont*   font = ocCell.tweetText.font;
-//    UIFont* font = [UIFont systemFontOfSize:FONT_SIZE];
-//    UIFont font = ocCell.tweetText.font;
-//    DLog(@"font:%@", font);
+    if (pin == nil || pin.body == nil || pin.body.length <= 0)
+    {
+        return self.defaultCellBodyH;
+    }
     
-//    CGFloat CellBodyWidth =
+    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+
     //画像の有無で幅を変える
-    CGFloat bodyWidth
-    = (snsBase.postImageURL)
-    ? [BaseTableViewCell defaultHeightIsPostImage:YES]
-    : [BaseTableViewCell defaultHeightIsPostImage:NO];
-    
-    CGRect frameRect = [SETextView frameRectWithAttributtedString:snsBase.attributedBody
-                                                   constraintSize:CGSizeMake(bodyWidth, CGFLOAT_MAX)
+    CGFloat bodyH = [SETextView frameRectWithAttributtedString:pin.attributeBody
+                                                   constraintSize:CGSizeMake(cell.bodyTv.width, CGFLOAT_MAX)
                                                       lineSpacing:0.0f
-                                                             font:[UIFont systemFontOfSize:FONT_SIZE]];
+                                                             font:[UIFont systemFontOfSize:_fontSize]].size.height;
     
-    CGFloat cellBodyH = frameRect.size.height;
-    self.cellBodyChangedHeight = cellBodyH;
-//    DLog(@"\n\n\nATTTRIBUTETEXT%@", atrText.string);
-//
-//    DLog(@"CELLBODYH>>>>>:%f", cellBodyH);
-//    
-//    DLog(@"CELLdefoBODYH>>>>>:%f", self.defaultCellBodyFrame.size.height);
-//
+    CGFloat diffH = bodyH - self.defaultCellBodyH;
     
-//    デフォルト　＋（増分）
-    CGFloat cellH
-    = self.defaultCellFrame.size.height
-    + (cellBodyH - self.defaultCellBodyFrame.size.height);
-//    デフォルト　-（減分）
-//    CGFloat cellHm  = self.defaultCellFrame.size.height
-//    - (self.defaultCellBodyFrame.size.height - cellBodyH );
+    CGFloat cellH = diffH <= 0.0f ? self.defaultCellH: self.defaultCellH + diffH;
+    /*
+    DLOG(
+         @"\n\tdiffH           :%f"
+         @"\n\tbodyH           :%f"
+         @"\n\tdefaultCellBodyH:%f"
+         @"\n\tcellH           :%f"
+         , diffH
+         , bodyH
+         , self.defaultCellBodyH
+         , cellH
+         );
+     */
     
-//    デフォルトよりも高さが低い場合,Cellを縮める
-//    cellH = cellH < self.defaultCellFrame.size.height ? cellHm : cellH;
-    
- 
-    cellH = cellH < self.defaultCellFrame.size.height ? self.defaultCellFrame.size.height : cellH;
-    
-    //三項演算子構文↑↑
-//    DLog("CELLH : %f", cellH);
-    
-//    DLog("Default\n\tBODY:%f FRAME:%f",self.defaultCellBodyFrame.size.height,self.defaultCellFrame.size.height);
-    
-//    DLog("\n\tCell H         %f", cellH);
-//    DLog("\n\tCell BodyH     %f", cellBodyH);
-//    DLog("\n\tCell BodyDefoH %f", self.defaultCellBodyFrame.size.height);
-//    DLog("\n\tCell FrameDefoH %f", self.defaultCellFrame.size.height);
-////    DLog("\n\tReturned:%f",cellH+ocCell.spot.frame.size.height);
-    
-    return cellH;//+ocCell.spot.frame.size.height;//cell.spotの高さを加算
+    return cellH;
 }
 
 //セルが選択されたときに呼び出される.
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+-(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.editing)
     {
@@ -403,7 +354,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 #pragma mark UIScrollViewDelegate
 
--(void)scrollViewDidScroll:(UIScrollView *)scrollView
+-(void) scrollViewDidScroll:(UIScrollView *)scrollView
 {
 //    DLog(@"scrolling....\n\tpoint:%@", NSStringFromCGPoint(scrollView.contentOffset));
     CGSize  contentSize   = self.tableView.contentSize;
@@ -411,7 +362,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     CGFloat remain = contentSize.height - contentOffset.y;
     
-    if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.tweetData.count
+    if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.pins.count
 //       // FIXME : for debug
 //       && self.tweetData.count < 100
        )
@@ -421,123 +372,178 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
         self.ai.hidden = NO;
         [self.ai startAnimating];
     
-        Tweet* lastTweet = self.tweetData.lastObject;
+        TWStatus* lastTwStatus = self.pins.lastObject;
 
-        CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
+//        CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
         
 //        DLog(@"lastTweet.id:%llu", lastTweet.id);
 //        DLog(@"self.twieetApi:%@", self.twitterApi);
         
-        [self.twitterApi tweetsInNeighborWithCoordinate:OsakaEki
+        [self.twitterApi tweetsInNeighborWithCoordinate:self.currentCoord
                                                  radius:1
                                                   count:30
-                                                  maxId:lastTweet.id];
+                                                  maxId:strtoull([lastTwStatus.id UTF8String], NULL, 0)];
     }
 
 }
 
-#pragma mark Create cell
+#pragma mark CLLocationManagerDelegate
 
--(BaseTableViewCell *) _makeElCellwith:(Tweet*) tweet
+-(void) locationManager:(CLLocationManager *)manager
+     didUpdateLocations:(NSArray *)locations
 {
-    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId2];
-    //    DLog(@"classNm: %@", NSStringFromClass(((NSObject*)cell).class));
+    [manager stopUpdatingLocation];
+}
+
+-(void)locationManager:(CLLocationManager *)manager
+      didFailWithError:(NSError *)error
+{
+    DLOG(@"locaiton error:\n%@", error);
+}
+
+#pragma mark - Setup cell
+
+-(BaseTableViewCell *) _setupCellWithPin:(Pin*)pin
+                               indexPath:(NSIndexPath *)indexPath
+{
+    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    cell.delegate = self;
+
+    [cell setPin:pin currentCoord:self.currentCoord];
     
-    //    cell.body.lineBreakMode = NSLineBreakByCharWrapping;
-    //    cell.body.numberOfLines = 0;
-    
-    [cell.spotAi startAnimating];
-    
-    //  Cell中のTextLabelを設定
-    //Frameの左上を(origin)原点として,Bodyを配置
-    //Bodyの高さがCellの高さに設定されている
-    
-    cell.body.text = @"＿＿店名等＿＿";
-    
-    DLog("Address:%d Distance:%d", [tweet.address length],tweet.distance);
-    
-    if(([tweet.address length] > 0) && (tweet.distance > 0))
+    CGFloat diffH = [self _cellHFromPin:pin] - self.defaultCellH;
+    if (diffH <= 0.0f)
     {
-        [cell.spotAi stopAnimating];
-        NSString* meter = [NSString stringWithFormat:@"%d", tweet.distance];
-        cell.spot.text  = [NSString stringWithFormat:@"%@m %@", meter, tweet.address];
+        diffH = 0;
+    }
+
+    cell.height = self.defaultCellH + diffH;
+    cell.bodyTv.height = self.defaultCellBodyH + diffH;
+    cell.postTimeLbl.y = self.defaultPostTimeLblY + diffH;
+    cell.toPlaceBtn.y = self.defaultToPlaceBtnY + diffH;
+
+    [self _setImagesToCell:cell pin:pin indexPath:indexPath];
+
+    return cell;
+}
+
+-(void) _setImagesToCell:(BaseTableViewCell*)cell
+                     pin:(Pin*)pin
+               indexPath:(NSIndexPath *)indexPath
+{
+    cell.prfImage = nil;
+    cell.prfAi.hidden = NO;
+    [cell.prfAi startAnimating];
+    cell.postedImage = nil;
+    cell.postImageAi.hidden = NO;
+    [cell.postImageAi startAnimating];
+    
+    // プロフィール画像
+    if (pin.image)
+    {
+        cell.prfImage = pin.image;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            cell.prfAi.hidden = YES;
+        });
+    }
+    else if (pin.imageUrl)
+    {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSURL* url = [[NSURL alloc] initWithString:pin.imageUrlStr];
+            NSData* imageData = [NSData dataWithContentsOfURL:url];
+            UIImage* image = [UIImage imageWithData:imageData];
+
+            DLOG(
+                 @"\n\t1 prfImage"
+                 @"\n\tsize:%@"
+                 @"\n\turl :%@"
+                 @"\n\tdata:%d"
+                 @"\n\tisMainThread:%d"
+                 , NSStringFromCGSize(image.size)
+                 , url.absoluteString
+                 , imageData.length
+                 , [NSThread isMainThread]
+                 );
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                DLOG(
+                     @"\n\t2 prfImage"
+                     @"\n\tsize:%@"
+                     @"\n\turl :%@"
+                     , NSStringFromCGSize(image.size)
+                     , url.absoluteString
+                     );
+                
+                pin.image = image;
+                
+                BaseTableViewCell* tmpCell = (id)[self.tableView cellForRowAtIndexPath:indexPath];
+                tmpCell.prfImage = pin.image;
+                tmpCell.prfAi.hidden = YES;
+            });
+        });
     }
     else
     {
-        cell.spot.text = [NSString stringWithFormat:@" "];
+        cell.prfImage = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            cell.prfAi.hidden = YES;
+        });
     }
-
-    return cell;
-}
-
--(BaseTableViewCell *) _makeTweetCellwith:(Tweet*)tweet
-{
-    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     
-    cell.delegate = self;
-    
-//   cellクラス内のメソッドでデータをセット
-    cell.pin = tweet;
-//ツイート内容を表示するテキストラベルの大きさを設定
-    CGFloat imageWidth = cell.postedImageButton.frame.size.width;
-    //    instagram.postImage.size.width;
-    
-    CGFloat cellH = [self _cellHFromSnsBase:tweet];
-//    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height -50;
-    
-//    DLog("\n\t CellH:%f bodyH:%f", cellH, self.cellBodyChangedHeight);
-    CGFloat incrementWidth = 0.0;
-    if(cell.postedImageButton.hidden)
+    // 投稿画像
+    if (pin.postImage)
     {
-        incrementWidth = cell.postedImageButton.frame.size.width;
-        DLog("tweetImage  incrementWidth%f",incrementWidth);
+        cell.postedImage = pin.postImage;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            cell.postImageAi.hidden = YES;
+        });
     }
-    DLog("after ifincrementWidth%f",incrementWidth);
-    cell.body.frame = CGRectMake(
-                                 cell.body.frame.origin.x,
-                                 cell.body.frame.origin.y,
-                                 cell.body.frame.size.width + incrementWidth,
-                                 self.cellBodyChangedHeight//bodyH
-                                 );
-    return cell;
-}
-
--(BaseTableViewCell *) _makeInstagramCellwith:(Instagram*)instagram
-{
-    //    DLog("MAKE INSTAGRAMECELLLL");//celled
-    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-    cell.delegate = self;
-    
-    //   cellクラス内のメソッドでデータをセット
-    cell.pin = instagram;
-    
-    //ツイート内容を表示するテキストラベルの大きさを設定
-    CGFloat imageWidth = cell.postedImageButton.frame.size.width;
-    //    instagram.postImage.size.width;
-    DLog("instaImageWidth%f", imageWidth);
-    CGFloat cellH = [self _cellHFromSnsBase:instagram];
-    
-    
-    CGFloat bodyH = cellH - cell.prfImage.frame.size.height - cell.spot.frame.size.height - 50;
-    //    DLog("\n\t CellH:%f bodyH:%f", cellH, bodyH);cscscs
-    cell.body.frame = CGRectMake(
-                                 cell.body.frame.origin.x,
-                                 cell.body.frame.origin.y,
-                                 self.defaultCellBodyFrame.size.width,
-                                 self.cellBodyChangedHeight
-                                 );
-    return cell;
-}
-
--(NSString*) _meterToKilo:(NSInteger) meter
-{
-    if(meter > 1000)
+    else if (pin.postImageUrl)
     {
-        return [NSString stringWithFormat:@"%dKm", meter / 1000];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+//            NSData* imageData = [NSData dataWithContentsOfURL:pin.postImageUrl];
+            NSURL* url = [[NSURL alloc] initWithString:pin.postImageUrlStr];
+            NSData* imageData = [NSData dataWithContentsOfURL:url];
+            UIImage* image = [UIImage imageWithData:imageData];
+
+            DLOG(
+                 @"\n\t1 postImage"
+                 @"\n\tsize:%@"
+                 @"\n\turl :%@"
+                 @"\n\tdata:%d"
+                 @"\n\tisMainThread:%d"
+                 , NSStringFromCGSize(image.size)
+                 , url.absoluteString
+                 , imageData.length
+                 , [NSThread isMainThread]
+                 );
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                DLOG(
+                     @"\n\t2 postImage"
+                     @"\n\tsize:%@"
+                     @"\n\turl :%@"
+                     , NSStringFromCGSize(image.size)
+                     , url.absoluteString
+                     );
+                
+                pin.postImage = image;
+                
+                BaseTableViewCell* tmpCell = (id)[self.tableView cellForRowAtIndexPath:indexPath];
+                tmpCell.postedImage = pin.postImage;
+                tmpCell.postImageAi.hidden = YES;
+            });
+        });
     }
     else
     {
-        return [NSString stringWithFormat:@"%dm", meter];
+        cell.postedImage = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            cell.postImageAi.hidden = YES;
+        });
     }
 }
 
@@ -567,7 +573,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
             [indexSet addIndex:indexPath.row];
         }
         
-        [self.tweetData removeObjectsAtIndexes:indexSet];
+        [self.pins removeObjectsAtIndexes:indexSet];
         [self.tableView deleteRowsAtIndexPaths:selectedCells withRowAnimation:UITableViewRowAnimationFade];
         
         [self.tableView endUpdates];
@@ -600,7 +606,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     self.isLoading = YES;
     
-    [self.tweetData removeAllObjects];
+    [self.pins removeAllObjects];
     [self.tableView reloadData];
     
     //[self _requestTweets:0];
@@ -634,6 +640,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 #pragma mark - Accessor
 
+#pragma mark Private
+
 -(PostViewController *) postViewController
 {
     if(_postViewController == nil)
@@ -655,30 +663,31 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     return _twitterApi;
 }
 
-- (NSMutableArray *) tweetData
+- (NSMutableArray *) pins
 {
-    
-    //初期では,
-    if(_tweetData == nil)
+    if (_pins == nil)
     {
-        _tweetData = @[].mutableCopy;
+        _pins = @[].mutableCopy;
 
         NSBundle* bundle = [NSBundle mainBundle];
         NSString* path = [bundle pathForResource:@"sampleData" ofType:@"plist"];
         NSArray*  sampleData = [NSMutableArray arrayWithContentsOfFile:path];
         
-        for (NSString* tmpSampleData in sampleData){
-           Tweet* tweet =[[Tweet alloc] init];
-            tweet.simpleBody = tmpSampleData;
-            [_tweetData addObject:tweet];
+        for (NSString* tmpSampleData in sampleData)
+        {
+            TWStatus* twStatus = TWStatus.new;
+            twStatus.body = tmpSampleData;
+            [_pins addObject:twStatus];
         }
     }
-    return _tweetData;
+    
+    return _pins;
 }
 
--(UIRefreshControl *)refreshControl
+-(UIRefreshControl *) refreshControl
 {
-    if (_refreshControl == nil) {
+    if (_refreshControl == nil)
+    {
         _refreshControl = [[UIRefreshControl alloc] init];
         [_refreshControl addTarget:self
                             action:@selector(_refreshData:)
@@ -699,14 +708,30 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     
     return _ai;
 }
--(CGFloat) cellBodyChangedHeight
+
+-(CLLocationCoordinate2D) currentCoord
 {
-    if(_cellBodyChangedHeight == 0){
-        _cellBodyChangedHeight = 10;
+    CLLocationCoordinate2D coord = self.locManager.location.coordinate;
+    
+    if (CLLocationCoordinate2DIsValid(coord))
+    {
+        return coord;
     }
-    return _cellBodyChangedHeight;
+    else
+    {
+        return kCLLocationCoordinate2DInvalid;
+    }
 }
 
-
+-(CLLocationManager *) locManager
+{
+    if (_locManager == nil)
+    {
+        _locManager = [[CLLocationManager alloc] init];
+        _locManager.delegate = self;
+    }
+    
+    return _locManager;
+}
 
 @end

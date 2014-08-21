@@ -8,6 +8,8 @@
 
 #import "TwitterAPI.h"
 
+#import "TWStatus.h"
+
 @interface TwitterAPI ()
 
 @property(strong, nonatomic) ACAccountStore* accountStore;
@@ -201,15 +203,15 @@
                       {
 //                          DLog("TW6 index:%d", index);
                           
-                          NSDictionary* status = [twAr objectAtIndex:index];
-                          Tweet* tweet = [Tweet getSnsDataWithDictionary:status];
+                          NSDictionary* statusDic = [twAr objectAtIndex:index];
+                          TWStatus* twStatus = [TWStatus twStatusFromDic:statusDic];
                           
                           //  tweet.latitude
                           //                          DLog(@"body:%@",tweet.body);
                           //                          DLog(@"profileImageUrl:%@",tweet.profileImageUrl);
                           //                          DLog(@"lati %f , long%f",tweet.latitude,tweet.longitude);
                           
-                          [tweetData addObject:tweet];
+                          [tweetData addObject:twStatus];
                       }
                       // メインスレッドで実行(NSThread)
 //                                            [self performSelectorOnMainThread:@selector(_refresh)
@@ -423,15 +425,11 @@
                   // データ取得成功時
                   if (jsonDic.count > 0)
                   {
-//                      DLog("json\n\n%@",jsonDic);
-//                      見つかったツイート配列を格納
-                      Tweet* tweet    = [[Tweet alloc] init];
-                      
                       NSArray* cordAr = [jsonDic valueForKeyPath:@"coordinates.coordinates"];
-                      tweet.longitude = [[cordAr objectAtIndex:0] floatValue];//経度 西経　東経
-                      tweet.latitude  = [[cordAr objectAtIndex:1] floatValue];//緯度　北緯　南緯
-                      tweet.simpleBody      = jsonDic[@"text"];
-                      DLog("TweetBody:%@",tweet.simpleBody);
+                      TWStatus* twStatus = TWStatus.new;
+                      twStatus.coordinate = CLLocationCoordinate2DMake([[cordAr objectAtIndex:0] floatValue],
+                                                                       [[cordAr objectAtIndex:1] floatValue]);
+                      twStatus.body = jsonDic[@"text"];
                       
                       if(
                          self.delegate
@@ -440,7 +438,7 @@
                       {
                           // メインスレッドで実行(GCD)
                           dispatch_async(dispatch_get_main_queue(), ^{
-                              [self.delegate twitterAPI:self postedTweet:tweet];
+                              [self.delegate twitterAPI:self postedTweet:twStatus];
                           });
                       }
                       else{DLog("delegate_NULL");}

@@ -17,8 +17,10 @@
 
 #ifdef DEBUG
     #define DLog(fmt, ...) NSLog((@"%d:%s " fmt), __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__);
+    #define DLOG(fmt, ...) NSLog((@"%d:%s " fmt), __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__);
 #else
     #define DLog(...)
+    #define DLOG(...)
 #endif
 
 
@@ -31,3 +33,5 @@
 
 #import "NSString+FontAwesome.h"
 #import "UIFont+FontAwesome.h"
+
+#import "Categories.h"

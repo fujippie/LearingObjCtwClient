@@ -57,10 +57,6 @@
 //// プロフィール画像をダウンロードしたあとのキャッシュ
 //@property (nonatomic, strong) UIImage* profileImage;
 
--(NSString *) _formatTimeString:(NSString*) postDateStr;
-
--(NSInteger) _distanceWithLatitude:(CGFloat) latitude
-                         Longitude:(CGFloat) longitude;
 
 +(CLLocation *) getCurrentLocation;
 

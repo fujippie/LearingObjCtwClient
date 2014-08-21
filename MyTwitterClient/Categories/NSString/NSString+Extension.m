@@ -42,5 +42,14 @@
     return s;
 }
 
++(NSString *)stringIsSummarizedFromMeter:(NSInteger)meter
+{
+    NSInteger kmMeter = meter / 1000;
+    
+    if(kmMeter < 1)
+        return [NSString stringWithFormat:@"%dm", meter];
+    else
+        return [NSString stringWithFormat:@"%dkm", meter];
+}
 
 @end

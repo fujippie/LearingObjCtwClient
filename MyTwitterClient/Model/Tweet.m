@@ -39,7 +39,7 @@ static NSString* const _twitter = @"twitter";
     
     if([dic.allKeys containsObject:@"created_at"])
     {
-        tweet.postTime=[tweet _formatTimeString:dic[@"created_at"]];
+//        tweet.postTime = [tweet _formatTimeString:dic[@"created_at"]];
         DLog("TWEET:%@",tweet.simpleBody);
     }
     
@@ -115,7 +115,7 @@ static NSString* const _twitter = @"twitter";
                     tweet.longitude = [[coorinates objectAtIndex:1] floatValue];
                     DLog("location tweet:::%f %f",tweet.latitude,tweet.longitude);
 // 現在地との距離を代入
-                    tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
+//                    tweet.distance = [tweet _distanceWithLatitude: tweet.latitude Longitude: tweet.longitude];
                     
 //                    [tweet.locationAtTweet distanceToCurrentLocation];
                     

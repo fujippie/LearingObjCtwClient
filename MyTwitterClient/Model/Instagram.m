@@ -45,7 +45,7 @@
     
     if([dic.allKeys containsObject:@"created_at"])
     {
-        instagram.postTime=[instagram _formatTimeString:dic[@"created_at"]];
+//        instagram.postTime=[instagram _formatTimeString:dic[@"created_at"]];
         DLog("TWEET:%@",instagram.simpleBody);
     }
     
@@ -115,7 +115,7 @@
                     instagram.latitude = [[coorinates objectAtIndex:0] floatValue];
                     instagram.longitude = [[coorinates objectAtIndex:1] floatValue];
                     // 現在地との距離を代入
-                    instagram.distance = [instagram _distanceWithLatitude: instagram.latitude Longitude: instagram.longitude];
+//                    instagram.distance = [instagram _distanceWithLatitude: instagram.latitude Longitude: instagram.longitude];
                     //                    [tweet.locationAtTweet distanceToCurrentLocation];
                     
                     //(緯度，経度)　=> 住所

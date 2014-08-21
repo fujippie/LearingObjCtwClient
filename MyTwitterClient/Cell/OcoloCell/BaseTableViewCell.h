@@ -7,27 +7,26 @@
 //
 
 #import <UIKit/UIKit.h>
+
 #import "SETextView.h"
-#import "Tweet.h"
-#import "Instagram.h"
 
 @class BaseTableViewCell;
-@class SnsBase;
+@class Pin;
 @class Link;
 
 @protocol BaseTableViewCellDelegate <NSObject>
 
 -(void)           tableViewCell:(BaseTableViewCell *)tableViewCell
-tappedProfileImageButtonWithPin:(SnsBase*)pin;
+tappedProfileImageButtonWithPin:(Pin*)pin;
 
 -(void)        tableViewCell:(BaseTableViewCell *)tableviewCell
-tappedPostImageButtonWithPin:(SnsBase*)pin;
+tappedPostImageButtonWithPin:(Pin*)pin;
 
 -(void) tableViewCell:(BaseTableViewCell *)tableViewCell
            tappedLink:(Link*)link;
 
 -(void)      tableViewCell:(BaseTableViewCell *)tableViewCell
-tappedToPlaceButtonWithPin:(SnsBase*)pin;
+tappedToPlaceButtonWithPin:(Pin*)pin;
 
 @end
 
@@ -36,31 +35,38 @@ tappedToPlaceButtonWithPin:(SnsBase*)pin;
 
 #pragma mark - IBOutlet
 
-@property (weak, nonatomic) IBOutlet UIButton *prfImage;
+@property (strong, nonatomic) UIImage *prfImage; // 画像セット用
+
+@property (weak, nonatomic) IBOutlet UIButton *prfImageBtn;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* prfAi;
+@property (weak, nonatomic) IBOutlet UILabel* iconLbl;
 
-//iconの画像
-@property (weak, nonatomic) IBOutlet UILabel* postTime;
-
-@property (weak, nonatomic) IBOutlet UIImageView* snsLogo;
-
-@property (weak, nonatomic) IBOutlet UIButton* postedImageButton;
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView* postImageAi;
-
-@property (weak, nonatomic) IBOutlet SETextView* body;
-
-@property (weak, nonatomic) IBOutlet UILabel* spot;
+@property (weak, nonatomic) IBOutlet UILabel* distanceLbl;
+@property (weak, nonatomic) IBOutlet UILabel* spotLbl;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* spotAi;
 
-@property (weak, nonatomic) IBOutlet UIButton* toPlaceButton;
+@property (weak, nonatomic) IBOutlet SETextView* bodyTv;
+
+@property (strong, nonatomic) UIImage* postedImage; // 画像セット用
+
+@property (weak, nonatomic) IBOutlet UIButton* postedImageBtn;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView* postImageAi;
+
+@property (weak, nonatomic) IBOutlet UILabel* postTimeLbl;
+
+@property (weak, nonatomic) IBOutlet UIButton* toPlaceBtn;
 
 #pragma mark -
 
 @property (nonatomic, assign) id <BaseTableViewCellDelegate> delegate;
-@property (nonatomic) SnsBase* pin;
+@property (nonatomic) Pin* pin;
 
-#pragma mark - Caluculating
+#pragma mark - Default
 
-+(CGFloat) defaultHeightIsPostImage:(BOOL)isPostImage;
++(CGFloat) defaultBodyHeight;
+
+#pragma mark -
+
+-(void)setPin:(Pin *)pin currentCoord:(CLLocationCoordinate2D)currentCoord;
 
 @end
