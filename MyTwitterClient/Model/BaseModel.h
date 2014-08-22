@@ -17,4 +17,11 @@
 -(id) assignValueFromDic:(NSDictionary*)dic
                      key:(NSString*)key;
 
+/**
+ @param dic 検索対象の辞書
+ @param path KVCの仕様に準拠
+ */
+-(id)assignValueFromDic:(NSDictionary*)dic
+                   path:(NSString*)path;
+
 @end

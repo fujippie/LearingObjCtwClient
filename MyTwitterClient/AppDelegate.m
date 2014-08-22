@@ -19,10 +19,10 @@
 //1    self.mainViewController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
 //2    self.mainViewController = [[MainViewController alloc] initWithNibName:NSStringFromClass(MainViewController.class) bundle:nil];
     
-    self.mainViewController = [MainViewController newBindNib];
-    self.mainViewController.title = @"title";
+    self.homeListViewController = [HomeListViewController newBindNib];
+    self.homeListViewController.title = @"title";
     self.navigationController = [[UINavigationController alloc]
-                                       initWithRootViewController:self.mainViewController];
+                                       initWithRootViewController:self.homeListViewController];
     self.navigationController.navigationItem.title = @"title";
     self.window.rootViewController = self.navigationController;
     

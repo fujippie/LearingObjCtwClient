@@ -73,7 +73,7 @@
 /**
  非同期でのアドレス取得
  */
--(void) asyncAddress:(void (^) (NSString* address))addressBlock;
+-(void) addressToSynchronously:(void (^) (NSString* address))addressBlock;
 
 @end
 

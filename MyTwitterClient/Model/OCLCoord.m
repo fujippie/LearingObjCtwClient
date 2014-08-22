@@ -36,14 +36,15 @@
 -(NSString*) getDistanceWithUnit:(OCLCoord*)coord
 {
     NSString* ret = nil;
-    CLLocation* mine = [[CLLocation alloc]initWithLatitude:latitude longitude:longitude];
-    CLLocation* dest = [[CLLocation alloc]initWithLatitude:coord.latitude longitude:coord.longitude];
+    CLLocation* mine = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
+    CLLocation* dest = [[CLLocation alloc] initWithLatitude:coord.latitude longitude:coord.longitude];
     
     CLLocationDistance distance = [mine distanceFromLocation:dest];
     
     
-    if(distance >= 1000){
-        ret = [NSString stringWithFormat:@"%dkm",(int)(distance/1000)];
+    if(distance >= 1000)
+    {
+        ret = [NSString stringWithFormat:@"%dkm",(int)(distance / 1000)];
     }
     else{
         ret = [NSString stringWithFormat:@"%dm",(int)(distance)];

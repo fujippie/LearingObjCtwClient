@@ -84,18 +84,19 @@
          }
          // リクエストを出すAPIを指定
          NSURL* url = [NSURL URLWithString:@"https://api.twitter.com/1.1/search/tweets.json"];
-         //         [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/home_timeline.json"];
+         NSString* geocode = [NSString stringWithFormat:@"%f,%f,%dkm", coordinate.latitude, coordinate.longitude, radius];
          // リクエストのパラメータを設定
          NSMutableDictionary* params = @{
-                                         //                                  @"screen_name" : [accounts.firstObject username],
+//                                         @"screen_name" : [accounts.firstObject username],
                                          @"count"              : @(count).description,
                                          @"q"                  : @"",
-                                         @"geocode"            : @"34.701909,135.494977,1km",
-                                         @"display_coordinates": @"true",
-                                         @"include_entities"   : @"true"
+                                         @"geocode"            : geocode,
+//                                         @"display_coordinates": @"true",
+//                                         @"include_entities"   : @"true"
                                          }.mutableCopy;
          // ロードモア時に使用
-         if (maxTweetID != 0) {
+         if (maxTweetID != 0)
+         {
              [params setObject:@(maxTweetID - 1).description forKey:@"max_id"];
          }
          
@@ -119,29 +120,10 @@
           {
               NSHTTPURLResponse* urlResponse = (NSHTTPURLResponse*)response;
              
-              /*
-          }];
-         
-         // リクエストを投げる
-         [request
-          performRequestWithHandler:^ void
-          (NSData* responseData,
-           NSHTTPURLResponse* urlResponse,
-           NSError* error)
-          {
-               */
-//              [self.delegate setIsLoading:YES];
-//              [self.delegate animateAi:YES];
-//              dispatch_async(dispatch_get_main_queue(), ^{
-//                  [self.delegate endRefresh];
-//              });
-              
-              //              DLog(@"responsData\n%@", [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+//              DLog(@"responsData\n%@", [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
               
               // エラー処理
               if (error) {
-//                  [self.delegate setIsLoading:NO];
-//                  [self.delegate animateAi:NO];
                   DLog(@"urlResponse:%@, error:%@", urlResponse, error);
                   if(
                      self.delegate
@@ -157,8 +139,8 @@
               NSMutableArray* tweetData = @[].mutableCopy;
 
               // 通信成功時(200系)
-              if (200 <= urlResponse.statusCode && urlResponse.statusCode < 300) {
-//                  DLog(@"通信成功時(200系)");
+              if (200 <= urlResponse.statusCode && urlResponse.statusCode < 300)
+              {
                   NSError* e = nil;
                   NSDictionary* jsonDic = [NSJSONSerialization
                                            JSONObjectWithData:responseData
@@ -166,10 +148,10 @@
                                            error:&e
                                            ];
                   // エラー処理
-                  if (e) {
+                  if (e)
+                  {
                       DLog(@"e:%@", e);
-//                      [self.delegate setIsLoading:NO];
-//                      [self.delegate animateAi:NO];
+
                       if(
                          self.delegate
                          && [self.delegate respondsToSelector:@selector(twitterAPI:errorAtLoadData:)]
@@ -184,20 +166,13 @@
                   // データ取得成功時
                   if (jsonDic.count > 0)
                   {
-//                      [self.delegate setIsLoading:NO];
-//                      [self.delegate animateAi:NO];
-                      /*
-                       NSDictionary* jsonDic;
-                       jsonDic[@"apple"]
-                       jsonDic objectForKey:@"apple"]
-                       */
-                      
                       // 見つかったツイート配列を格納
                       NSArray* twAr = jsonDic[@"statuses"];
-//                      DLog(@"JSONDIC%@",jsonDic);
-                      DLog("\n\tJSON.count:%d", twAr.count);
+                      
+                      DLog(@"jsonDic:\n%@", jsonDic);
+                      
                       // ツイート配列からテキストのみを抽出
-                      //ツイート内容,緯度経度,IDを取得
+                      // ツイート内容,緯度経度,IDを取得
                       
                       for(int index = 0; index < [twAr count]; index++)
                       {
@@ -206,41 +181,20 @@
                           NSDictionary* statusDic = [twAr objectAtIndex:index];
                           TWStatus* twStatus = [TWStatus twStatusFromDic:statusDic];
                           
-                          //  tweet.latitude
-                          //                          DLog(@"body:%@",tweet.body);
-                          //                          DLog(@"profileImageUrl:%@",tweet.profileImageUrl);
-                          //                          DLog(@"lati %f , long%f",tweet.latitude,tweet.longitude);
+//                          DLog(@"body:%@",tweet.body);
+//                          DLog(@"profileImageUrl:%@",tweet.profileImageUrl);
+//                          DLog(@"lati %f , long%f",tweet.latitude,tweet.longitude);
                           
                           [tweetData addObject:twStatus];
                       }
-                      // メインスレッドで実行(NSThread)
-//                                            [self performSelectorOnMainThread:@selector(_refresh)
-//                                                                   withObject:nil
-//                                                                waitUntilDone:NO];
-//                      
-                      /*
-                       Tweet
-                       id
-                       user.profile_image_url
-                       text
-                       geo.coordinates
-                       */
-                      
-                      /*
-                       34.683015999977,135.477230003533
-                       34.683015999977,135.527178003877
-                       34.7177310034282,135.527178003877
-                       34.7177310034282,135.477230003533
-                       */
-                      //                      DLog(@"jsonArr:\n%@", jsonDic);
                   }
-                  else {
+                  else
+                  {
                       DLog(@"json なし");
                   }
                   
-                  // メインスレッドで実行(GCD)
+                  // メインスレッドで実行(GCD版)
                   dispatch_async(dispatch_get_main_queue(), ^{
-//                          [self.delegate _refresh];
                       DLog(@"delegate:%@", self.delegate);
                       if(
                          self.delegate
@@ -252,12 +206,15 @@
                       }
                       
                   });
+                  // メインスレッドで実行(NSThread版)
+//                  [self performSelectorOnMainThread:@selector(_refresh)
+//                                         withObject:nil
+//                                      waitUntilDone:NO];
               }
               // 通信失敗時
-              else {
+              else
+              {
                   DLog(@"request error:%@", urlResponse);
-//                  [self.delegate setIsLoading:NO];
-//                  [self.delegate animateAi:NO];
                   
                   if(
                      self.delegate
@@ -269,13 +226,8 @@
                   }
               }
               
-//              [self.delegate setIsLoading:NO];
-//              [self.delegate animateAi:NO];
           }];
      }];
-    //
-    //    return tweetData;
-    
 }
 
 - (void) asyncPostTweetWithBody:(NSString*)body

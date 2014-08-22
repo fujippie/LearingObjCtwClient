@@ -24,12 +24,33 @@
     
     twStatus.text = dic[@"text"];
 
-    if (![dic[@"geo"] isEqual:[NSNull null]])
+    // Geo
+    CLLocationCoordinate2D (^coordinateFromArray) (NSArray*) = ^(NSArray* coordArray)
+    {
+        CLLocationCoordinate2D coord = kCLLocationCoordinate2DInvalid;
+        
+        if (coordArray && [coordArray isKindOfClass:[NSArray class]] && coordArray.count >= 2)
+        {
+            double lat = [coordArray[0] doubleValue];
+            double lon = [coordArray[1] doubleValue];
+            coord = (CLLocationCoordinate2D){lat, lon};
+        }
+        
+        return coord;
+    };
+    if ([twStatus assignValueFromDic:dic key:@"geo"])
     {
         NSArray* coordinates = dic[@"geo"][@"coordinates"];
-        double lat = [coordinates[0] doubleValue];
-        double lon = [coordinates[1] doubleValue];
-        twStatus.geoCoordinates = (CLLocationCoordinate2D){lat, lon};
+        twStatus.geoCoordinates = coordinateFromArray(coordinates);
+    }
+    else if ([twStatus assignValueFromDic:dic path:@"retweeted_status.geo"])
+    {
+        NSArray* coordinates = [twStatus assignValueFromDic:dic path:@"retweeted_status.geo.coordinates"];
+        twStatus.geoCoordinates = coordinateFromArray(coordinates);
+    }
+    else
+    {
+        twStatus.geoCoordinates = kCLLocationCoordinate2DInvalid;
     }
     
     if (![dic[@"user"][@"profile_image_url"] isEqual:[NSNull null]])

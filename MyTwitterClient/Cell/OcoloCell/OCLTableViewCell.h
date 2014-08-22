@@ -10,27 +10,27 @@
 
 #import "SETextView.h"
 
-@class BaseTableViewCell;
+@class OCLTableViewCell;
 @class Pin;
 @class Link;
 
-@protocol BaseTableViewCellDelegate <NSObject>
+@protocol OCLTableViewCellDelegate <NSObject>
 
--(void)           tableViewCell:(BaseTableViewCell *)tableViewCell
+-(void)           oclTableViewCell:(OCLTableViewCell *)tableViewCell
 tappedProfileImageButtonWithPin:(Pin*)pin;
 
--(void)        tableViewCell:(BaseTableViewCell *)tableviewCell
+-(void)        oclTableViewCell:(OCLTableViewCell *)tableviewCell
 tappedPostImageButtonWithPin:(Pin*)pin;
 
--(void) tableViewCell:(BaseTableViewCell *)tableViewCell
+-(void) oclTableViewCell:(OCLTableViewCell *)tableViewCell
            tappedLink:(Link*)link;
 
--(void)      tableViewCell:(BaseTableViewCell *)tableViewCell
+-(void)      oclTableViewCell:(OCLTableViewCell *)tableViewCell
 tappedToPlaceButtonWithPin:(Pin*)pin;
 
 @end
 
-@interface BaseTableViewCell : UITableViewCell
+@interface OCLTableViewCell : UITableViewCell
 <SETextViewDelegate>
 
 #pragma mark - IBOutlet
@@ -43,7 +43,6 @@ tappedToPlaceButtonWithPin:(Pin*)pin;
 
 @property (weak, nonatomic) IBOutlet UILabel* distanceLbl;
 @property (weak, nonatomic) IBOutlet UILabel* spotLbl;
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView* spotAi;
 
 @property (weak, nonatomic) IBOutlet SETextView* bodyTv;
 
@@ -58,7 +57,7 @@ tappedToPlaceButtonWithPin:(Pin*)pin;
 
 #pragma mark -
 
-@property (nonatomic, assign) id <BaseTableViewCellDelegate> delegate;
+@property (nonatomic, assign) id <OCLTableViewCellDelegate> delegate;
 @property (nonatomic) Pin* pin;
 
 #pragma mark - Default

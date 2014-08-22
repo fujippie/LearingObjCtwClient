@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MainViewController.h"
+#import "HomeListViewController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow               *window;
-@property (strong, nonatomic) MainViewController     *mainViewController;
+@property (strong, nonatomic) HomeListViewController *homeListViewController;
 @property (strong, nonatomic) UINavigationController *navigationController;
 @end

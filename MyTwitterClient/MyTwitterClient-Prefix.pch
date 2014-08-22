@@ -18,11 +18,14 @@
 #ifdef DEBUG
     #define DLog(fmt, ...) NSLog((@"%d:%s " fmt), __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__);
     #define DLOG(fmt, ...) NSLog((@"%d:%s " fmt), __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__);
+    #define LOG_COORD(c) DLOG(@"lat:%f, lng:%f", c.latitude, c.longitude)
 #else
     #define DLog(...)
     #define DLOG(...)
+    #define LOG_COORD(...)
 #endif
 
+#define NSStringFromCLLocationCoordinate2D(c) [NSString stringWithFormat:@"{%f, %f}", c.latitude, c.longitude]
 
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>

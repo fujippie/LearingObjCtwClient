@@ -1,5 +1,5 @@
 //
-//  MainViewController.h
+//  HomeListViewController.h
 //  MyTwitterClient
 //
 //  Created by yuta_fujiwara on 2014/07/09.
@@ -10,16 +10,16 @@
 #import "BaseViewController.h"
 #import "PostViewController.h"
 #import "TwitterAPI.h"
-#import "BaseTableViewCell.h"
+#import "OCLTableViewCell.h"
 
-@interface MainViewController : BaseViewController
+@interface HomeListViewController : BaseViewController
 // デリゲートプロトコル参照定義
 <
 UITableViewDataSource
 , UITableViewDelegate
 , PostViewControllerDelegate
 , TwitterAPIDelegate
-, BaseTableViewCellDelegate
+, OCLTableViewCellDelegate
 >
 
 

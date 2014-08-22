@@ -1,12 +1,12 @@
 //
-//  MainViewController.m
+//  HomeListViewController.m
 //  MyTwitterClient
 //
 //  Created by yuta_fujiwara on 2014/07/09.
 //  Copyright (c) 2014年 Yuta Fujiwara. All rights reserved.
 //
 
-#import "MainViewController.h"
+#import "HomeListViewController.h"
 
 #import "TwitterAPI.h"
 #import "TWStatus.h"
@@ -16,13 +16,16 @@
 #import "AppDelegate.h"
 #import "Link.h"
 
-@interface MainViewController  ()
+@interface HomeListViewController  ()
 <CLLocationManagerDelegate, UIAlertViewDelegate, SETextViewDelegate>
+
+@property (nonatomic, assign) BOOL isInitialized;
+@property (nonatomic, assign) BOOL isLoading;
 
 @property (nonatomic) CLLocationManager* locManager;
 @property (nonatomic) CLLocationCoordinate2D currentCoord;
 
-@property (nonatomic, strong) NSMutableArray*   pins;
+@property (nonatomic, strong) NSMutableArray* pins;
 
 @property (nonatomic, assign) CGFloat defaultCellH;
 @property (nonatomic, assign) CGFloat defaultCellBodyH;
@@ -30,24 +33,28 @@
 @property (nonatomic, assign) CGFloat defaultPostTimeLblY;
 
 @property (nonatomic, strong) UIRefreshControl* refreshControl;
-@property (nonatomic, assign) BOOL isLoading;
-@property (nonatomic, strong) UIActivityIndicatorView* ai ;
+@property (nonatomic, strong) UIActivityIndicatorView* footerAi;
+
 @property (nonatomic, strong) PostViewController* postViewController;
 @property (nonatomic, strong) TwitterAPI* twitterApi;
-@property (nonatomic, assign) BOOL isInitialized;
+
+@property (nonatomic, strong) UIView*                  shadeView;
+@property (nonatomic, strong) UIActivityIndicatorView* shadeAi;
 
 @end
 
-@implementation MainViewController
+@implementation HomeListViewController
 // TODO: synthesizeの意味を理解する。
 //@synthesize isLoading;
 
 #pragma mark - Consts
 
 //static NSString* const _cellId = @"CustomTVC";
-static NSString* const _cellId = @"BaseTableViewCell";
+static NSString* const _cellId = @"OCLTableViewCell";
 
-static const CGFloat _fontSize = 12.0f;
+static CGFloat   const _fontSize = 12.0f;
+
+static CGFloat   const _footerPadding = 20.0f;
 
 #pragma mark - LifeCycle
 
@@ -57,24 +64,19 @@ static const CGFloat _fontSize = 12.0f;
 
     self.isInitialized = NO;
     
+    _retryCount = 3;
     [self.locManager startUpdatingLocation];
+    [self _onShade];
     
-//    AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-//    if([self.navigationController isEqual:appDelegate.navigationController])=>YESを返す
-
-//TableViewの追加と設定
-//    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(CustomTVC.class) bundle:nil]
-//         forCellReuseIdentifier:_cellId];
+    //　TableViewの追加と設定
     self.tableView.allowsSelection = NO;
-    UINib* uinib = [UINib nibWithNibName:NSStringFromClass([BaseTableViewCell class])
+    UINib* uinib = [UINib nibWithNibName:NSStringFromClass([OCLTableViewCell class])
                                   bundle:nil];
     [self.tableView registerNib:uinib
          forCellReuseIdentifier:_cellId];
     
-//TableViewのCellの登録と設定
-//id型のもので型が確定するものはその型にしておく
-    
-    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    // セルの高さ計算用にデフォルトサイズをストック
+    OCLTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     self.defaultCellH = cell.height;
     self.defaultCellBodyH = cell.bodyTv.height;
     self.defaultPostTimeLblY = cell.postTimeLbl.y;
@@ -82,22 +84,30 @@ static const CGFloat _fontSize = 12.0f;
     
     [self.tableView addSubview:self.refreshControl];
   
-//  NavigationBarの設定　（更新中に表示するアイコン）
+    //  NavigationBarの設定　（更新中に表示するアイコン）
     self.title
     = [NSString stringWithFormat:@"%@:%lu"
        , NSStringFromClass(self.class)
        , (unsigned long)[self.navigationController.viewControllers indexOfObject:self]];
     
+    // 投稿ボタン
     self.navigationItem.leftBarButtonItem
     = [[UIBarButtonItem alloc] initWithTitle:@"投稿"
                                        style:UIBarButtonItemStylePlain
                                       target:self
-                                      action:@selector(leftBarBtnPushed:)];
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"削除" style:UIBarButtonItemStylePlain  target:self action:@selector(rightBarBtnPushed:)];
+                                      action:@selector(_leftBarBtnPushed:)];
     
-//    編集ボタンを追加する.
+    // 削除ボタン.
     [self.editButtonItem setTitle:@"削除"];
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    // データのダウンロード
+    [self.pins removeAllObjects];
+    self.isLoading = YES;
+    [self.twitterApi tweetsInNeighborWithCoordinate:self.currentCoord
+                                             radius:1
+                                              count:30
+                                              maxId:0];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -119,26 +129,28 @@ static const CGFloat _fontSize = 12.0f;
 
 #pragma mark TwitterAPIDelegate
 
-//TwitterAPI.mから,取得時に呼び出される.ツイート配列を引数とするデリゲートメソッド,
--(void)twitterAPI:(TwitterAPI *)twitterAPI tweetData:(NSArray *)tweetData
+-(void)twitterAPI:(TwitterAPI *)twitterAPI
+        tweetData:(NSArray *)tweetData
 {
     self.isLoading = NO;
     
-    [self.ai stopAnimating];
-    self.ai.hidden = YES;
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.footerAi stopAnimating];
+        self.footerAi.hidden = YES;
+    });
+
     [self.refreshControl endRefreshing];
     
     [self.pins addObjectsFromArray:tweetData.mutableCopy];
     [self.tableView reloadData];
 }
 
--(void)twitterAPI:(TwitterAPI *)twitterAPI errorAtLoadData:(NSError *)error
+-(void)twitterAPI:(TwitterAPI *)twitterAPI
+  errorAtLoadData:(NSError *)error
 {
     [self.refreshControl endRefreshing];
     
     NSDictionary* dic = error.userInfo;
-    //    NSString* erSt = dic[@"NSLocalizedDescription"];
     DLog(@"\n___________error:\n%@", dic[@"NSLocalizedDescription"]);
     DLog("%@", error.domain);
     DLog("%d", error.code);
@@ -151,9 +163,9 @@ static const CGFloat _fontSize = 12.0f;
     [alert show];
 }
 
-#pragma mark  BaseTableViewCellDelegate
+#pragma mark  OCLTableViewCellDelegate
 
--(void)           tableViewCell:(BaseTableViewCell *) tableViewCell
+-(void)        oclTableViewCell:(OCLTableViewCell *) tableViewCell
 tappedProfileImageButtonWithPin:(Pin *)pin
 {
     DLOG(
@@ -167,7 +179,7 @@ tappedProfileImageButtonWithPin:(Pin *)pin
          );
 }
 
--(void)        tableViewCell:(BaseTableViewCell *)tableViewCell
+-(void)     oclTableViewCell:(OCLTableViewCell *)tableViewCell
 tappedPostImageButtonWithPin:(Pin *)pin
 {
     DLOG(
@@ -181,25 +193,25 @@ tappedPostImageButtonWithPin:(Pin *)pin
          );
 }
 
--(void) tableViewCell:(BaseTableViewCell *)tableViewCell
-           tappedLink:(Link *)link
+-(void) oclTableViewCell:(OCLTableViewCell *)tableViewCell
+              tappedLink:(Link *)link
 {
     DLog(@"Called In Main : %@ ", link.description);
 }
 
--(void)      tableViewCell:(BaseTableViewCell *) tableViewCell
+-(void)   oclTableViewCell:(OCLTableViewCell *) tableViewCell
 tappedToPlaceButtonWithPin:(Pin *)pin
 {
     DLog(@"CalledINMAIN : %@, lati:%f, longti:%f"
          , pin.address, pin.coordinate.latitude, pin.coordinate.longitude);
-
 }
 
 #pragma mark  PostViewControllerDelegate
 
--(void) postViewController:(PostViewController *)postViewController postedTweet:(Tweet*)tweet
+-(void) postViewController:(PostViewController *)postViewController
+               postedTweet:(TWStatus*)twStatus
 {
-    [self.pins insertObject:tweet atIndex:0];
+    [self.pins insertObject:twStatus atIndex:0];
 //    NSIndexPath* indexPath = [NSIndexPath indexPathForItem:0 inSection:0];//先頭に追加
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];//先頭に追加
     // インサート 指定したIndexPathの要素に対してだけデリゲートが呼ばれる
@@ -213,44 +225,15 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     self.isLoading = NO;
     
-//    [self.ai stopAnimating];
-//    self.ai.hidden = YES;
+    [self.footerAi stopAnimating];
+    self.footerAi.hidden = YES;
+    
     [self.refreshControl endRefreshing];
     
     [self.tableView reloadData];
 }
 
 #pragma mark UITableViewDataSource
-
-- (CGFloat) tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    return 10;
-}
-
-- (UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    DLog("FOOOTER_IN_SECTION");
-    
-    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 44) ];
-    view.backgroundColor = [UIColor clearColor];
-    
-    //    self.ai.center= CGPointMake(self.tableView.tableFooterView.frame.size.width/2,
-    //                                 self.tableView.tableFooterView.frame.size.height/2);
-    self.ai.center = view.center;
-    
-    [view addSubview:self.ai];
-    
-    if(self.isLoading == YES)
-    {
-        return view;
-    }
-    else
-    {
-        return [[UIView alloc] init];
-    }
-    
-    return view;
-}
 
 //TableViewがReloadされたときに呼び出される.Tableの要素数を返す.
 //新たにCellが表示される度に呼ばれる.
@@ -282,16 +265,46 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath
 commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
  forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //    editingStyleはUITableViewCellEditingStyleInsert,UITableViewCellEditingStyleDeleteのどちらかをとる
-    if(editingStyle == UITableViewCellEditingStyleDelete)
+//    editingStyleはUITableViewCellEditingStyleInsert,UITableViewCellEditingStyleDeleteのどちらかをとる
+    if (editingStyle == UITableViewCellEditingStyleDelete)
     {
         DLog("DELETEButtonPushed");
         [self.pins removeObjectAtIndex:indexPath.row];
-        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath]
+                              withRowAnimation:UITableViewRowAnimationFade];
     }
 }
 
 #pragma mark UITableViewDelegate
+
+- (CGFloat)    tableView:(UITableView *)tableView
+heightForFooterInSection:(NSInteger)section
+{
+    return self.footerAi.width + _footerPadding;
+}
+
+- (UIView *) tableView:(UITableView *)tableView
+viewForFooterInSection:(NSInteger)section
+{
+    if (self.isLoading == NO && self.pins.count == 0)
+    {
+        return [[UIView alloc] init];
+    }
+
+    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0,
+                                                            0,
+                                                            self.tableView.width,
+                                                            self.footerAi.height + _footerPadding
+                                                            )
+                    ];
+    view.backgroundColor = [UIColor clearColor];
+    
+    self.footerAi.center = view.center;
+    
+    [view addSubview:self.footerAi];
+    
+    return view;
+}
 
 -(CGFloat)    tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -305,42 +318,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     return cellH;
 }
 
--(CGFloat) _cellHFromPin:(Pin*)pin
-{
-    if (pin == nil || pin.body == nil || pin.body.length <= 0)
-    {
-        return self.defaultCellBodyH;
-    }
-    
-    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
-
-    //画像の有無で幅を変える
-    CGFloat bodyH = [SETextView frameRectWithAttributtedString:pin.attributeBody
-                                                   constraintSize:CGSizeMake(cell.bodyTv.width, CGFLOAT_MAX)
-                                                      lineSpacing:0.0f
-                                                             font:[UIFont systemFontOfSize:_fontSize]].size.height;
-    
-    CGFloat diffH = bodyH - self.defaultCellBodyH;
-    
-    CGFloat cellH = diffH <= 0.0f ? self.defaultCellH: self.defaultCellH + diffH;
-    /*
-    DLOG(
-         @"\n\tdiffH           :%f"
-         @"\n\tbodyH           :%f"
-         @"\n\tdefaultCellBodyH:%f"
-         @"\n\tcellH           :%f"
-         , diffH
-         , bodyH
-         , self.defaultCellBodyH
-         , cellH
-         );
-     */
-    
-    return cellH;
-}
-
 //セルが選択されたときに呼び出される.
--(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+-(void)       tableView:(UITableView *)tableView
+didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.editing)
     {
@@ -348,7 +328,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     else
     {
 //       編集モードでなければ,CELLの選択を外す.
-     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
 
@@ -356,33 +336,31 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 
 -(void) scrollViewDidScroll:(UIScrollView *)scrollView
 {
-//    DLog(@"scrolling....\n\tpoint:%@", NSStringFromCGPoint(scrollView.contentOffset));
     CGSize  contentSize   = self.tableView.contentSize;
     CGPoint contentOffset = self.tableView.contentOffset;
     
     CGFloat remain = contentSize.height - contentOffset.y;
     
-    if(remain < self.tableView.frame.size.height * 1 && self.isLoading == NO && self.isInitialized && self.pins.count
-//       // FIXME : for debug
-//       && self.tweetData.count < 100
+    if(
+       remain < self.tableView.frame.size.height * 1
+       && self.isLoading == NO
+       && self.isInitialized
+       && self.pins.count
        )
     {
         self.isLoading = YES;
         
-        self.ai.hidden = NO;
-        [self.ai startAnimating];
-    
+        self.footerAi.hidden = NO;
+        [self.footerAi startAnimating];
+
         TWStatus* lastTwStatus = self.pins.lastObject;
 
-//        CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
-        
-//        DLog(@"lastTweet.id:%llu", lastTweet.id);
-//        DLog(@"self.twieetApi:%@", self.twitterApi);
-        
+        unsigned long long maxId = lastTwStatus.id ? strtoull([lastTwStatus.id UTF8String], NULL, 0) : 0;
         [self.twitterApi tweetsInNeighborWithCoordinate:self.currentCoord
                                                  radius:1
                                                   count:30
-                                                  maxId:strtoull([lastTwStatus.id UTF8String], NULL, 0)];
+                                                  maxId:maxId
+         ];
     }
 
 }
@@ -393,20 +371,72 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
      didUpdateLocations:(NSArray *)locations
 {
     [manager stopUpdatingLocation];
+    [self _offShade];
 }
+
+NSInteger _retryCount = 3;
 
 -(void)locationManager:(CLLocationManager *)manager
       didFailWithError:(NSError *)error
 {
     DLOG(@"locaiton error:\n%@", error);
+
+    if (_retryCount != 0)
+    {
+        [UIAlertView showWithMessage:@"GPSが無効"];
+        [NSThread sleepForTimeInterval:1];
+        [manager startUpdatingLocation];
+        _retryCount--;
+    }
+    else
+    {
+        [UIAlertView showWithMessage:@"GPSが無効"];
+        
+        [self _offShade];
+    }
 }
 
 #pragma mark - Setup cell
 
--(BaseTableViewCell *) _setupCellWithPin:(Pin*)pin
+-(CGFloat) _cellHFromPin:(Pin*)pin
+{
+    if (pin == nil || pin.body == nil || pin.body.length <= 0)
+    {
+        return self.defaultCellBodyH;
+    }
+    
+    OCLTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    
+    //画像の有無で幅を変える
+    CGFloat bodyH = [SETextView frameRectWithAttributtedString:pin.attributeBody
+                                                constraintSize:CGSizeMake(cell.bodyTv.width, CGFLOAT_MAX)
+                                                   lineSpacing:0.0f
+                                                          font:[UIFont systemFontOfSize:_fontSize]].size.height;
+    
+    CGFloat diffH = bodyH - self.defaultCellBodyH;
+    
+    CGFloat cellH = diffH <= 0.0f ? self.defaultCellH: self.defaultCellH + diffH;
+    
+    /*
+     DLOG(
+     @"\n\tdiffH           :%f"
+     @"\n\tbodyH           :%f"
+     @"\n\tdefaultCellBodyH:%f"
+     @"\n\tcellH           :%f"
+     , diffH
+     , bodyH
+     , self.defaultCellBodyH
+     , cellH
+     );
+     */
+    
+    return cellH;
+}
+
+-(OCLTableViewCell *) _setupCellWithPin:(Pin*)pin
                                indexPath:(NSIndexPath *)indexPath
 {
-    BaseTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
+    OCLTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
     cell.delegate = self;
 
     [cell setPin:pin currentCoord:self.currentCoord];
@@ -422,12 +452,28 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     cell.postTimeLbl.y = self.defaultPostTimeLblY + diffH;
     cell.toPlaceBtn.y = self.defaultToPlaceBtnY + diffH;
 
+    // ユーザーサムネイル、投稿画像
     [self _setImagesToCell:cell pin:pin indexPath:indexPath];
+    
+    // 住所
+    cell.spotLbl.text  = @"取得中...";
+    [pin addressToSynchronously:^(NSString *address)
+     {
+         if (address)
+         {
+             cell.spotLbl.text  = address;
+         }
+         else
+         {
+             cell.spotLbl.text = @"―";
+         }
+     }];
+
 
     return cell;
 }
 
--(void) _setImagesToCell:(BaseTableViewCell*)cell
+-(void) _setImagesToCell:(OCLTableViewCell*)cell
                      pin:(Pin*)pin
                indexPath:(NSIndexPath *)indexPath
 {
@@ -453,31 +499,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
             NSData* imageData = [NSData dataWithContentsOfURL:url];
             UIImage* image = [UIImage imageWithData:imageData];
 
-            DLOG(
-                 @"\n\t1 prfImage"
-                 @"\n\tsize:%@"
-                 @"\n\turl :%@"
-                 @"\n\tdata:%d"
-                 @"\n\tisMainThread:%d"
-                 , NSStringFromCGSize(image.size)
-                 , url.absoluteString
-                 , imageData.length
-                 , [NSThread isMainThread]
-                 );
-            
             dispatch_async(dispatch_get_main_queue(), ^{
-                
-                DLOG(
-                     @"\n\t2 prfImage"
-                     @"\n\tsize:%@"
-                     @"\n\turl :%@"
-                     , NSStringFromCGSize(image.size)
-                     , url.absoluteString
-                     );
-                
                 pin.image = image;
                 
-                BaseTableViewCell* tmpCell = (id)[self.tableView cellForRowAtIndexPath:indexPath];
+                OCLTableViewCell* tmpCell = (id)[self.tableView cellForRowAtIndexPath:indexPath];
                 tmpCell.prfImage = pin.image;
                 tmpCell.prfAi.hidden = YES;
             });
@@ -508,31 +533,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
             NSData* imageData = [NSData dataWithContentsOfURL:url];
             UIImage* image = [UIImage imageWithData:imageData];
 
-            DLOG(
-                 @"\n\t1 postImage"
-                 @"\n\tsize:%@"
-                 @"\n\turl :%@"
-                 @"\n\tdata:%d"
-                 @"\n\tisMainThread:%d"
-                 , NSStringFromCGSize(image.size)
-                 , url.absoluteString
-                 , imageData.length
-                 , [NSThread isMainThread]
-                 );
-            
             dispatch_async(dispatch_get_main_queue(), ^{
-                
-                DLOG(
-                     @"\n\t2 postImage"
-                     @"\n\tsize:%@"
-                     @"\n\turl :%@"
-                     , NSStringFromCGSize(image.size)
-                     , url.absoluteString
-                     );
-                
                 pin.postImage = image;
                 
-                BaseTableViewCell* tmpCell = (id)[self.tableView cellForRowAtIndexPath:indexPath];
+                OCLTableViewCell* tmpCell = (id)[self.tableView cellForRowAtIndexPath:indexPath];
                 tmpCell.postedImage = pin.postImage;
                 tmpCell.postImageAi.hidden = YES;
             });
@@ -588,11 +592,17 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     [self.tableView setEditing:editing animated:animated];
 }
 
-#pragma mark - Event
+#pragma mark - Action
 
-- (IBAction)postedImage:(id)sender
+#pragma mark IBAction
+
+#pragma mark Event
+
+-(void) _leftBarBtnPushed:(id)sender
 {
     DLog("");
+    
+    [self presentViewController:self.postViewController animated:YES completion:nil];
 }
 
 -(void) _refreshData:(UIRefreshControl *) refreshControl
@@ -609,12 +619,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     [self.pins removeAllObjects];
     [self.tableView reloadData];
     
-    //[self _requestTweets:0];
-    
-    CLLocationCoordinate2D OsakaEki = CLLocationCoordinate2DMake(34.701909, 135.494977);
-    
-    [self.twitterApi tweetsInNeighborWithCoordinate:OsakaEki radius:10.0 count:30 maxId:0];
-    // [self.tweetData addObjectsFromArray:tmpTWar];
+    [self.twitterApi tweetsInNeighborWithCoordinate:self.locManager.location.coordinate
+                                             radius:1
+                                              count:30
+                                              maxId:0];
 }
 
 -(void) _refresh
@@ -626,16 +634,22 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     }
 }
 
--(IBAction) rightBarBtnPushed:(id)sender
+#pragma mark - Util
+
+-(void) _onShade
 {
-    DLog("\n編集モードに変更.");
+    if (!self.shadeView.superview)
+    {
+        [self.view addSubview:self.shadeView];
+    }
+
+    self.shadeAi.hidden = NO;
+    [self.shadeAi startAnimating];
 }
--(IBAction)leftBarBtnPushed:(id)sender
+
+-(void) _offShade
 {
-    DLog("\n左上のボタンが押されました.");
-    [self presentViewController:self.postViewController animated:YES completion:nil];
-//    [postView helloPostDel];
-    
+    [self.shadeView removeFromSuperview];
 }
 
 #pragma mark - Accessor
@@ -669,8 +683,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     {
         _pins = @[].mutableCopy;
 
-        NSBundle* bundle = [NSBundle mainBundle];
-        NSString* path = [bundle pathForResource:@"sampleData" ofType:@"plist"];
+        NSBundle* bundle     = [NSBundle mainBundle];
+        NSString* path       = [bundle pathForResource:@"sampleData" ofType:@"plist"];
         NSArray*  sampleData = [NSMutableArray arrayWithContentsOfFile:path];
         
         for (NSString* tmpSampleData in sampleData)
@@ -697,16 +711,18 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     return _refreshControl;
 }
 
-- (UIActivityIndicatorView*) ai
+- (UIActivityIndicatorView*) footerAi
 {
-    if(_ai == nil)
+    if (_footerAi == nil)
     {
-        _ai =[[UIActivityIndicatorView alloc] init];
-        _ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
-        _ai.hidesWhenStopped = YES; // ActivityIndicatorを残すときNo
+        _footerAi = [[UIActivityIndicatorView alloc] init];
+        _footerAi.frame = CGRectMake(0, 0, 10, 10);
+        _footerAi.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+        _footerAi.color = [UIColor darkGrayColor];
+        _footerAi.hidesWhenStopped = YES; // ActivityIndicatorを残すときNo
     }
     
-    return _ai;
+    return _footerAi;
 }
 
 -(CLLocationCoordinate2D) currentCoord
@@ -732,6 +748,24 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
     }
     
     return _locManager;
+}
+
+-(UIView *)shadeView
+{
+    if (_shadeView == nil)
+    {
+        _shadeView = [[UIView alloc] initWithFrame:self.view.frame];
+        _shadeView.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.7];
+        
+        self.shadeAi = [[UIActivityIndicatorView alloc] initWithFrame:_shadeView.frame];
+        self.shadeAi.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+        self.shadeAi.hidesWhenStopped = YES;
+        
+        [_shadeView addSubview:self.shadeAi];
+        [self.shadeAi startAnimating];
+    }
+    
+    return _shadeView;
 }
 
 @end

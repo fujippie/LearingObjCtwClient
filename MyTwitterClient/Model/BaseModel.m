@@ -35,4 +35,27 @@
     return nil;
 }
 
+-(id)assignValueFromDic:(NSDictionary*)dic
+                   path:(NSString*)path
+{
+    if (
+        dic
+        && [dic valueForKeyPath:path]
+        )
+    {
+        if ([[dic valueForKeyPath:path] isKindOfClass:[NSString class]])
+        {
+            NSString* tmpStr = [dic valueForKeyPath:path];
+            if (tmpStr == nil || tmpStr.length <= 0 || [tmpStr isEqualToString:@"<null>"])
+            {
+                return nil;
+            }
+        }
+        
+        return [dic valueForKeyPath:path];
+    }
+    
+    return nil;
+}
+
 @end

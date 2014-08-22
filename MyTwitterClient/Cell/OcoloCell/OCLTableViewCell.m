@@ -5,21 +5,14 @@
 //  Created by yuta_fujiwara on 2014/07/28.
 //  Copyright (c) 2014年 Yuta Fujiwara. All rights reserved.
 //
-#import "BaseTableViewCell.h"
+#import "OCLTableViewCell.h"
 
 #import "Link.h"
 #import "Pin.h"
 #import "TWStatus.h"
 #import "IGMedia.h"
 
-@implementation BaseTableViewCell
-
-static NSString* const _oclLogoNm = @"ocolo";
-static NSString* const _twLogoNm  = @"twitter";
-static NSString* const _igLogoNm  = @"instagram";
-static NSString* const _gpLogoNm  = @"googlePlus";
-static NSString* const _fbLogoNm  = @"facebook";
-static NSString* const _pwLogoNm  = @"power";
+@implementation OCLTableViewCell
 
 #pragma mark - LifeCycle
 
@@ -36,44 +29,35 @@ static NSString* const _pwLogoNm  = @"power";
 
 - (IBAction) tappedPostedImage:(UIButton *)imageButton
 {
-    //引数のUIボタンの画像をデリゲートでMainViewCTRに渡す.
-    DLog("ImageTapped");
-    
     if(
        self.delegate
-       && [self.delegate respondsToSelector:@selector(tableViewCell:tappedPostImageButtonWithPin:)]
+       && [self.delegate respondsToSelector:@selector(oclTableViewCell:tappedPostImageButtonWithPin:)]
        )
     {
-        [self.delegate tableViewCell:self
+        [self.delegate oclTableViewCell:self
                          tappedPostImageButtonWithPin:self.pin];
     }
 }
 
 - (IBAction) tappedToPlaceButton:(UIButton *)toPlaceButton
 {
-    DLog("toPlaceButton");
-    
-//緯度、経度をCell内でデータを持っていないので取れない
-//    Mainで呼び出す
     if(
        self.delegate
-       && [self.delegate respondsToSelector:@selector(tableViewCell:tappedToPlaceButtonWithPin:)]
+       && [self.delegate respondsToSelector:@selector(oclTableViewCell:tappedToPlaceButtonWithPin:)]
        )
     {
-        [self.delegate  tableViewCell:self tappedToPlaceButtonWithPin:self.pin];
+        [self.delegate  oclTableViewCell:self tappedToPlaceButtonWithPin:self.pin];
     }
 }
 
 - (IBAction) tappedPlfImageButton:(UIButton*)sender
 {
-    DLog("PLFImageButton");
-    
     if(
        self.delegate
-       && [self.delegate respondsToSelector:@selector(tableViewCell:tappedProfileImageButtonWithPin:)]
+       && [self.delegate respondsToSelector:@selector(oclTableViewCell:tappedProfileImageButtonWithPin:)]
        )
     {
-        [self.delegate tableViewCell:self tappedProfileImageButtonWithPin:self.pin];
+        [self.delegate oclTableViewCell:self tappedProfileImageButtonWithPin:self.pin];
     }
 }
 
@@ -83,37 +67,28 @@ static NSString* const _pwLogoNm  = @"power";
    clickedOnLink:(SELinkText *)link
          atIndex:(NSUInteger)charIndex
 {
-    DLog("Called in CELL clickedOnLink%@",link.text);
     NSString* clickedText = link.text;
     id linkObj = link.object;
 
     NSString*     linkURLStr = @"";
     NSDictionary* linkDic    = @{};
-    DLog(@"LinkObjectCLASSNAME:%@",NSStringFromClass([link.object class]));
-    
-    
 
-//    継承関係が同じか？isKindOfClass そのクラスかisMemberOfClass
     if ([linkObj isKindOfClass:[NSString class]])
     {
-         DLog("linkObjIs....:NSString");
         linkURLStr = (NSString*)linkObj;//http....
     }
     else if ([linkObj isKindOfClass:[NSDictionary class]])
     {
         linkDic = (NSDictionary*)linkObj;
-        //@:   screen_name
-        //#:   text
     }
     else
     {
-        DLog("linkObjがNSString,NSDictionaryではない%@",linkObj);
         if(
            self.delegate
-           && [self.delegate respondsToSelector:@selector(tableViewCell:tappedLink:)]
+           && [self.delegate respondsToSelector:@selector(oclTableViewCell:tappedLink:)]
            )
         {
-           [self.delegate tableViewCell:self tappedLink:nil];
+           [self.delegate oclTableViewCell:self tappedLink:nil];
         }
        
         return NO;
@@ -137,23 +112,15 @@ static NSString* const _pwLogoNm  = @"power";
                          ,[linkDic[@"text"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
     }
 
-    if (url)
-    {
-        //        [self performSegueWithIdentifier:@"WebView" sender:self];
-        DLog("URL_TAPPED\tURL:%@", url);
-    }
-    
     Link* linkInCell = [[Link alloc] init];
     linkInCell.text = link.text;
     linkInCell.url  = url;
-    DLog(@"\n\tLinkIncell%@",linkInCell.url);
     if(
        self.delegate
-       && [self.delegate respondsToSelector:@selector(tableViewCell:tappedLink:)]
+       && [self.delegate respondsToSelector:@selector(oclTableViewCell:tappedLink:)]
        )
     {
-        DLog("CELLLL");
-        [self.delegate tableViewCell:self tappedLink:linkInCell];
+        [self.delegate oclTableViewCell:self tappedLink:linkInCell];
     }
     
     return YES;
@@ -167,7 +134,7 @@ static NSString* const _pwLogoNm  = @"power";
     
     if (defaultBodyHeight <= 0.0f)
     {
-        BaseTableViewCell* cell = [[[NSBundle mainBundle] loadNibNamed:NSStringFromClass([self class])
+        OCLTableViewCell* cell = [[[NSBundle mainBundle] loadNibNamed:NSStringFromClass([self class])
                                                                  owner:nil
                                                                options:nil]
                                    objectAtIndex:0];
@@ -213,10 +180,7 @@ static NSString* const _pwLogoNm  = @"power";
 
 -(void) _setupCellWith:(Pin*)pin currentCoord:(CLLocationCoordinate2D)currentCoord
 {
-    //    cell.tweetText.delegate = cell;
-    // セルが作られた時,回り始める
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.spotAi startAnimating];
         [self.postImageAi startAnimating];
         [self.prfAi startAnimating];
     });
@@ -227,18 +191,12 @@ static NSString* const _pwLogoNm  = @"power";
     [self _setPostImageWithPin:pin];
     [self _setPostTimeWithPin:pin];
     
-    //[self _setPostImageWithSnsBase:(Instagram*)snsBase];
-    
     self.iconLbl.font = [UIFont fontAwesomeFontOfSize:self.iconLbl.font.pointSize];
     self.iconLbl.text = [NSString fontAwesomeIconStringForEnum:pin.categoryIconId];
-    //  CELLにツイート(文字列)をセット
-    // テクストにリンクをつける　＋リンクをタップしたときに検知
 }
 
 -(void) _setProfileImageWithPin:(Pin*)pin
 {
-    //    dispatch_async(dispatch_get_main_queue(), ^{
-    
     [self.prfImageBtn setImage:[UIImage imageNamed:@"noImage"] forState:UIControlStateNormal];
 
     self.prfImageBtn.layer.cornerRadius  = self.prfImageBtn.frame.size.width / 2;
@@ -283,37 +241,39 @@ static NSString* const _pwLogoNm  = @"power";
 -(void) _setAddressAndDistanceWithPin:(Pin*)pin
                          currentCoord:(CLLocationCoordinate2D)currentCoord
 {
-    DLOG(
-         @"\n\tlat:%f"
-         @"\n\tlng:%f"
-         , currentCoord.latitude
-         , currentCoord.longitude
-         );
+//    DLOG(
+//         @"\n\tlat:%f"
+//         @"\n\tlng:%f"
+//         , currentCoord.latitude
+//         , currentCoord.longitude
+//         );
     
     if (CLLocationCoordinate2DIsValid(currentCoord))
     {
-        DLOG(@"\n\n*****************\n\n");
-        
-        //        self.distanceLbl.font = [UIFont fontAwesomeFontOfSize:self.distanceLbl.font.pointSize];
-        //        NSString* distanceStr = [NSString fontAwesomeIconStringForEnum:FAFlagCheckered];
+//        self.distanceLbl.font = [UIFont fontAwesomeFontOfSize:self.distanceLbl.font.pointSize];
+//        NSString* distanceStr = [NSString fontAwesomeIconStringForEnum:FAFlagCheckered];
         NSInteger meter = [pin distanceFromCurrentCoord:currentCoord];
-        //        distanceStr = [distanceStr stringByAppendingFormat:@" %@", [NSString stringIsSummarizedFromMeter:meter]];
-        //        self.distanceLbl.text = distanceStr;
-        self.distanceLbl.text = [NSString stringIsSummarizedFromMeter:meter];
+//        distanceStr = [distanceStr stringByAppendingFormat:@" %@", [NSString stringIsSummarizedFromMeter:meter]];
+//        self.distanceLbl.text = distanceStr;
+        if (meter >= NSIntegerMax)
+        {
+            self.distanceLbl.text = @"―m";
+        }
+        else
+        {
+            self.distanceLbl.text = [NSString stringIsSummarizedFromMeter:meter];
+        }
+        
+        // TODO: for debug
+        if (meter > 1000)
+        {
+            LOG_COORD(pin.coordinate);
+        }
     }
     
     if (pin.address)
     {
-        [self.spotAi stopAnimating];
         self.spotLbl.text  = [NSString stringWithFormat:@"%@", pin.address];
-    }
-    else
-    {
-        [pin asyncAddress:^(NSString *address)
-         {
-             [self.spotAi stopAnimating];
-             self.spotLbl.text  = [NSString stringWithFormat:@"%@", address];
-         }];
     }
 }
 
@@ -363,8 +323,6 @@ static NSString* const _pwLogoNm  = @"power";
 {
     if (pin.created)
     {
-        DLOG(@"\n\tself.postTimeLbl.font.pointSize:%f", self.postTimeLbl.font.pointSize);
-
 //        NSString* distanceStr = [NSString fontAwesomeIconStringForEnum:FAClockO];
 //        self.postTimeLbl.text = [distanceStr stringByAppendingFormat:@" %@", [pin.created timeLineFormat]];
 //        self.postTimeLbl.font = [UIFont fontAwesomeFontOfSize:self.postTimeLbl.font.pointSize];

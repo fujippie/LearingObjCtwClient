@@ -214,14 +214,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 #pragma mark TwitterAPIDelegate
 
 - (void) twitterAPI:(TwitterAPI *)twitterAPI
-        postedTweet:(Tweet *)tweet
+        postedTweet:(TWStatus *)twStatus
 {
     DLog(@"isMainThread:%@", [NSThread isMainThread] ? @"YES" : @"NO");//YES
     
     if (self.delegate != nil &&
        [self.delegate respondsToSelector:@selector(postViewController:postedTweet:)])
     {
-        [self.delegate postViewController:self postedTweet:tweet];
+        [self.delegate postViewController:self postedTweet:twStatus];
     }
     
     self.postButton.enabled = YES;

@@ -21,24 +21,20 @@
 		22583C051991ACC500DAB788 /* MyTwitterClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22583C041991ACC500DAB788 /* MyTwitterClientTests.m */; };
 		227B6D4F1991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */; };
 		227B6D501991AD8C00F8B51C /* UIViewController+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */; };
-		227B6D531991AD8C00F8B51C /* PowerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D301991AD8C00F8B51C /* PowerCell.xib */; };
-		227B6D541991AD8C00F8B51C /* PowerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D301991AD8C00F8B51C /* PowerCell.xib */; };
-		227B6D551991AD8C00F8B51C /* BaseTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* BaseTableViewCell.m */; };
-		227B6D561991AD8C00F8B51C /* BaseTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* BaseTableViewCell.m */; };
-		227B6D571991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D331991AD8C00F8B51C /* BaseTableViewCell.xib */; };
-		227B6D581991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D331991AD8C00F8B51C /* BaseTableViewCell.xib */; };
+		227B6D551991AD8C00F8B51C /* OCLTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* OCLTableViewCell.m */; };
+		227B6D561991AD8C00F8B51C /* OCLTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D321991AD8C00F8B51C /* OCLTableViewCell.m */; };
+		227B6D571991AD8C00F8B51C /* OCLTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D331991AD8C00F8B51C /* OCLTableViewCell.xib */; };
+		227B6D581991AD8C00F8B51C /* OCLTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D331991AD8C00F8B51C /* OCLTableViewCell.xib */; };
 		227B6D591991AD8C00F8B51C /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D361991AD8C00F8B51C /* BaseViewController.m */; };
 		227B6D5A1991AD8C00F8B51C /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D361991AD8C00F8B51C /* BaseViewController.m */; };
-		227B6D5B1991AD8C00F8B51C /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D391991AD8C00F8B51C /* MainViewController.m */; };
-		227B6D5C1991AD8C00F8B51C /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D391991AD8C00F8B51C /* MainViewController.m */; };
-		227B6D5D1991AD8C00F8B51C /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D3A1991AD8C00F8B51C /* MainViewController.xib */; };
-		227B6D5E1991AD8C00F8B51C /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D3A1991AD8C00F8B51C /* MainViewController.xib */; };
+		227B6D5B1991AD8C00F8B51C /* HomeListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D391991AD8C00F8B51C /* HomeListViewController.m */; };
+		227B6D5C1991AD8C00F8B51C /* HomeListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D391991AD8C00F8B51C /* HomeListViewController.m */; };
+		227B6D5D1991AD8C00F8B51C /* HomeListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D3A1991AD8C00F8B51C /* HomeListViewController.xib */; };
+		227B6D5E1991AD8C00F8B51C /* HomeListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D3A1991AD8C00F8B51C /* HomeListViewController.xib */; };
 		227B6D5F1991AD8C00F8B51C /* PostViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D3D1991AD8C00F8B51C /* PostViewController.m */; };
 		227B6D601991AD8C00F8B51C /* PostViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D3D1991AD8C00F8B51C /* PostViewController.m */; };
 		227B6D611991AD8C00F8B51C /* PostViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D3E1991AD8C00F8B51C /* PostViewController.xib */; };
 		227B6D621991AD8C00F8B51C /* PostViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D3E1991AD8C00F8B51C /* PostViewController.xib */; };
-		227B6D631991AD8C00F8B51C /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D411991AD8C00F8B51C /* Tweet.m */; };
-		227B6D641991AD8C00F8B51C /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D411991AD8C00F8B51C /* Tweet.m */; };
 		227B6D651991AD8C00F8B51C /* TwitterAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D431991AD8C00F8B51C /* TwitterAPI.m */; };
 		227B6D661991AD8C00F8B51C /* TwitterAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 227B6D431991AD8C00F8B51C /* TwitterAPI.m */; };
 		227B6D671991AD8C00F8B51C /* female.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 227B6D471991AD8C00F8B51C /* female.jpeg */; };
@@ -98,14 +94,13 @@
 		227B6DD01991C6A000F8B51C /* twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DCF1991C6A000F8B51C /* twitter.png */; };
 		227B6DD21991C6B200F8B51C /* ocolo.png in Resources */ = {isa = PBXBuildFile; fileRef = 227B6DD11991C6B200F8B51C /* ocolo.png */; };
 		22B9A3A51999931500C11D33 /* Osaka.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 22B9A3A41999931500C11D33 /* Osaka.gpx */; };
-		22B9A3A81999DE0D00C11D33 /* SnsBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9A3A71999DE0D00C11D33 /* SnsBase.m */; };
-		22B9A3AB199A1F8D00C11D33 /* Instagram.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B9A3AA199A1F8D00C11D33 /* Instagram.m */; };
 		22C161F719A4603C00EEF26B /* NSDate+String.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161E619A4603C00EEF26B /* NSDate+String.m */; };
 		22C161F819A4603C00EEF26B /* NSObject+PropertyList.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161E919A4603C00EEF26B /* NSObject+PropertyList.m */; };
 		22C161F919A4603C00EEF26B /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161EC19A4603C00EEF26B /* NSString+Extension.m */; };
 		22C161FA19A4603C00EEF26B /* UIAlertView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161EF19A4603C00EEF26B /* UIAlertView+Extension.m */; };
 		22C161FB19A4603C00EEF26B /* UIBarButtonItem+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161F219A4603C00EEF26B /* UIBarButtonItem+Extension.m */; };
 		22C161FC19A4603C00EEF26B /* UIView+Frame.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C161F519A4603C00EEF26B /* UIView+Frame.m */; };
+		3067CA8F19A6F07600954E87 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3067CA8E19A6F07600954E87 /* CoreText.framework */; };
 		30CE097619A49B1A00D71DB9 /* BaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 30CE097519A49B1A00D71DB9 /* BaseModel.m */; };
 		30CE097719A49B1A00D71DB9 /* BaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 30CE097519A49B1A00D71DB9 /* BaseModel.m */; };
 		30CE097E19A49B3700D71DB9 /* IGMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 30CE097A19A49B3700D71DB9 /* IGMedia.m */; };
@@ -274,20 +269,17 @@
 		22583C041991ACC500DAB788 /* MyTwitterClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyTwitterClientTests.m; sourceTree = "<group>"; };
 		227B6D2A1991AD8C00F8B51C /* UIViewController+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Extensions.h"; sourceTree = "<group>"; };
 		227B6D2B1991AD8C00F8B51C /* UIViewController+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Extensions.m"; sourceTree = "<group>"; };
-		227B6D301991AD8C00F8B51C /* PowerCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PowerCell.xib; sourceTree = "<group>"; };
-		227B6D311991AD8C00F8B51C /* BaseTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTableViewCell.h; sourceTree = "<group>"; };
-		227B6D321991AD8C00F8B51C /* BaseTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTableViewCell.m; sourceTree = "<group>"; };
-		227B6D331991AD8C00F8B51C /* BaseTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BaseTableViewCell.xib; sourceTree = "<group>"; };
+		227B6D311991AD8C00F8B51C /* OCLTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCLTableViewCell.h; sourceTree = "<group>"; };
+		227B6D321991AD8C00F8B51C /* OCLTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCLTableViewCell.m; sourceTree = "<group>"; };
+		227B6D331991AD8C00F8B51C /* OCLTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OCLTableViewCell.xib; sourceTree = "<group>"; };
 		227B6D351991AD8C00F8B51C /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
 		227B6D361991AD8C00F8B51C /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
-		227B6D381991AD8C00F8B51C /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
-		227B6D391991AD8C00F8B51C /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
-		227B6D3A1991AD8C00F8B51C /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		227B6D381991AD8C00F8B51C /* HomeListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeListViewController.h; sourceTree = "<group>"; };
+		227B6D391991AD8C00F8B51C /* HomeListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeListViewController.m; sourceTree = "<group>"; };
+		227B6D3A1991AD8C00F8B51C /* HomeListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeListViewController.xib; sourceTree = "<group>"; };
 		227B6D3C1991AD8C00F8B51C /* PostViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostViewController.h; sourceTree = "<group>"; };
 		227B6D3D1991AD8C00F8B51C /* PostViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostViewController.m; sourceTree = "<group>"; };
 		227B6D3E1991AD8C00F8B51C /* PostViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PostViewController.xib; sourceTree = "<group>"; };
-		227B6D401991AD8C00F8B51C /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
-		227B6D411991AD8C00F8B51C /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
 		227B6D421991AD8C00F8B51C /* TwitterAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterAPI.h; sourceTree = "<group>"; };
 		227B6D431991AD8C00F8B51C /* TwitterAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterAPI.m; sourceTree = "<group>"; };
 		227B6D471991AD8C00F8B51C /* female.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = female.jpeg; sourceTree = "<group>"; };
@@ -341,10 +333,6 @@
 		227B6DCF1991C6A000F8B51C /* twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter.png; sourceTree = "<group>"; };
 		227B6DD11991C6B200F8B51C /* ocolo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ocolo.png; sourceTree = "<group>"; };
 		22B9A3A41999931500C11D33 /* Osaka.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Osaka.gpx; path = MyTwitterClient/Resources/Osaka.gpx; sourceTree = "<group>"; };
-		22B9A3A61999DE0D00C11D33 /* SnsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnsBase.h; sourceTree = "<group>"; };
-		22B9A3A71999DE0D00C11D33 /* SnsBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnsBase.m; sourceTree = "<group>"; };
-		22B9A3A9199A1F8D00C11D33 /* Instagram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instagram.h; sourceTree = "<group>"; };
-		22B9A3AA199A1F8D00C11D33 /* Instagram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Instagram.m; sourceTree = "<group>"; };
 		22C161E519A4603C00EEF26B /* NSDate+String.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+String.h"; sourceTree = "<group>"; };
 		22C161E619A4603C00EEF26B /* NSDate+String.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+String.m"; sourceTree = "<group>"; };
 		22C161E819A4603C00EEF26B /* NSObject+PropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+PropertyList.h"; sourceTree = "<group>"; };
@@ -358,6 +346,7 @@
 		22C161F419A4603C00EEF26B /* UIView+Frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Frame.h"; sourceTree = "<group>"; };
 		22C161F519A4603C00EEF26B /* UIView+Frame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Frame.m"; sourceTree = "<group>"; };
 		22C161F619A4603C00EEF26B /* Categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Categories.h; sourceTree = "<group>"; };
+		3067CA8E19A6F07600954E87 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		30CE097419A49B1A00D71DB9 /* BaseModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseModel.h; sourceTree = "<group>"; };
 		30CE097519A49B1A00D71DB9 /* BaseModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseModel.m; sourceTree = "<group>"; };
 		30CE097919A49B3700D71DB9 /* IGMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IGMedia.h; sourceTree = "<group>"; };
@@ -506,6 +495,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3067CA8F19A6F07600954E87 /* CoreText.framework in Frameworks */,
 				30CE0AAB19A49EDE00D71DB9 /* libsqlite3.dylib in Frameworks */,
 				227B6D781991AE3000F8B51C /* CoreLocation.framework in Frameworks */,
 				227B6D761991AE2800F8B51C /* Accounts.framework in Frameworks */,
@@ -552,6 +542,7 @@
 		22583BDE1991ACC500DAB788 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3067CA8E19A6F07600954E87 /* CoreText.framework */,
 				30CE0AAA19A49EDE00D71DB9 /* libsqlite3.dylib */,
 				227B6D791991AF8D00F8B51C /* SECoreTextView */,
 				227B6D771991AE3000F8B51C /* CoreLocation.framework */,
@@ -638,10 +629,9 @@
 		227B6D2F1991AD8C00F8B51C /* OcoloCell */ = {
 			isa = PBXGroup;
 			children = (
-				227B6D301991AD8C00F8B51C /* PowerCell.xib */,
-				227B6D311991AD8C00F8B51C /* BaseTableViewCell.h */,
-				227B6D321991AD8C00F8B51C /* BaseTableViewCell.m */,
-				227B6D331991AD8C00F8B51C /* BaseTableViewCell.xib */,
+				227B6D311991AD8C00F8B51C /* OCLTableViewCell.h */,
+				227B6D321991AD8C00F8B51C /* OCLTableViewCell.m */,
+				227B6D331991AD8C00F8B51C /* OCLTableViewCell.xib */,
 			);
 			path = OcoloCell;
 			sourceTree = "<group>";
@@ -660,9 +650,9 @@
 		227B6D371991AD8C00F8B51C /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				227B6D381991AD8C00F8B51C /* MainViewController.h */,
-				227B6D391991AD8C00F8B51C /* MainViewController.m */,
-				227B6D3A1991AD8C00F8B51C /* MainViewController.xib */,
+				227B6D381991AD8C00F8B51C /* HomeListViewController.h */,
+				227B6D391991AD8C00F8B51C /* HomeListViewController.m */,
+				227B6D3A1991AD8C00F8B51C /* HomeListViewController.xib */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -692,12 +682,6 @@
 				30CE098319A49B5600D71DB9 /* Pin.m */,
 				30CE09C219A49CD600D71DB9 /* OCLCoord.h */,
 				30CE09C319A49CD600D71DB9 /* OCLCoord.m */,
-				22B9A3A61999DE0D00C11D33 /* SnsBase.h */,
-				22B9A3A71999DE0D00C11D33 /* SnsBase.m */,
-				227B6D401991AD8C00F8B51C /* Tweet.h */,
-				227B6D411991AD8C00F8B51C /* Tweet.m */,
-				22B9A3A9199A1F8D00C11D33 /* Instagram.h */,
-				22B9A3AA199A1F8D00C11D33 /* Instagram.m */,
 				227B6D421991AD8C00F8B51C /* TwitterAPI.h */,
 				227B6D431991AD8C00F8B51C /* TwitterAPI.m */,
 				30CE0A7C19A49E8900D71DB9 /* Link.h */,
@@ -1189,14 +1173,13 @@
 				227B6DCC1991C18700F8B51C /* googlePlus.png in Resources */,
 				22583BEA1991ACC500DAB788 /* InfoPlist.strings in Resources */,
 				22B9A3A51999931500C11D33 /* Osaka.gpx in Resources */,
-				227B6D571991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */,
+				227B6D571991AD8C00F8B51C /* OCLTableViewCell.xib in Resources */,
 				227B6D671991AD8C00F8B51C /* female.jpeg in Resources */,
 				227B6DC31991AF8D00F8B51C /* default_user_icon@2x.png in Resources */,
 				227B6DCE1991C19100F8B51C /* facebook.png in Resources */,
 				227B6D611991AD8C00F8B51C /* PostViewController.xib in Resources */,
-				227B6D5D1991AD8C00F8B51C /* MainViewController.xib in Resources */,
+				227B6D5D1991AD8C00F8B51C /* HomeListViewController.xib in Resources */,
 				227B6D6B1991AD8C00F8B51C /* sampleData.plist in Resources */,
-				227B6D531991AD8C00F8B51C /* PowerCell.xib in Resources */,
 				227B6D691991AD8C00F8B51C /* noImage.png in Resources */,
 				227B6DC11991AF8D00F8B51C /* default_user_icon.png in Resources */,
 				30CE0A1319A49D3000D71DB9 /* BlocksKit-Info.plist in Resources */,
@@ -1210,10 +1193,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				22583C031991ACC500DAB788 /* InfoPlist.strings in Resources */,
-				227B6D581991AD8C00F8B51C /* BaseTableViewCell.xib in Resources */,
-				227B6D541991AD8C00F8B51C /* PowerCell.xib in Resources */,
+				227B6D581991AD8C00F8B51C /* OCLTableViewCell.xib in Resources */,
 				227B6D6E1991AD8C00F8B51C /* power.jpeg in Resources */,
-				227B6D5E1991AD8C00F8B51C /* MainViewController.xib in Resources */,
+				227B6D5E1991AD8C00F8B51C /* HomeListViewController.xib in Resources */,
 				227B6DC21991AF8D00F8B51C /* default_user_icon.png in Resources */,
 				227B6DC41991AF8D00F8B51C /* default_user_icon@2x.png in Resources */,
 				227B6D6A1991AD8C00F8B51C /* noImage.png in Resources */,
@@ -1247,7 +1229,6 @@
 				30CE0A4319A49D3000D71DB9 /* UIActionSheet+BlocksKit.m in Sources */,
 				30CE0A1919A49D3000D71DB9 /* NSIndexSet+BlocksKit.m in Sources */,
 				30CE0A3919A49D3000D71DB9 /* NSURLConnection+BlocksKit.m in Sources */,
-				22B9A3A81999DE0D00C11D33 /* SnsBase.m in Sources */,
 				30CE0A6819A49D7200D71DB9 /* FMDatabaseQueue.m in Sources */,
 				30CE0A2D19A49D3000D71DB9 /* NSOrderedSet+BlocksKit.m in Sources */,
 				30CE09C419A49CD600D71DB9 /* OCLCoord.m in Sources */,
@@ -1269,7 +1250,6 @@
 				227B6DBB1991AF8D00F8B51C /* SETextSelection.m in Sources */,
 				30CE09B119A49BE600D71DB9 /* InstagramModel.m in Sources */,
 				30CE0A6219A49D7200D71DB9 /* FMDatabase.m in Sources */,
-				227B6D631991AD8C00F8B51C /* Tweet.m in Sources */,
 				30CE0AA419A49EC200D71DB9 /* AFURLResponseSerialization.m in Sources */,
 				30CE0A3519A49D3000D71DB9 /* A2DynamicDelegate.m in Sources */,
 				30CE0A3319A49D3000D71DB9 /* A2BlockInvocation.m in Sources */,
@@ -1310,7 +1290,6 @@
 				30CE0A6619A49D7200D71DB9 /* FMDatabasePool.m in Sources */,
 				30CE0A3B19A49D3000D71DB9 /* NSObject+A2BlockDelegate.m in Sources */,
 				30CE09A719A49BE600D71DB9 /* InstagramEngine.m in Sources */,
-				22B9A3AB199A1F8D00C11D33 /* Instagram.m in Sources */,
 				227B6DA31991AF8D00F8B51C /* SECompatibility.m in Sources */,
 				22583BEC1991ACC500DAB788 /* main.m in Sources */,
 				30CE0A2719A49D3000D71DB9 /* NSObject+BKAssociatedObjects.m in Sources */,
@@ -1330,8 +1309,8 @@
 				30CE0A6A19A49D7200D71DB9 /* FMResultSet.m in Sources */,
 				30CE098019A49B3700D71DB9 /* TWStatus.m in Sources */,
 				30CE0A2319A49D3000D71DB9 /* NSMutableOrderedSet+BlocksKit.m in Sources */,
-				227B6D5B1991AD8C00F8B51C /* MainViewController.m in Sources */,
-				227B6D551991AD8C00F8B51C /* BaseTableViewCell.m in Sources */,
+				227B6D5B1991AD8C00F8B51C /* HomeListViewController.m in Sources */,
+				227B6D551991AD8C00F8B51C /* OCLTableViewCell.m in Sources */,
 				30CE0A2919A49D3000D71DB9 /* NSObject+BKBlockExecution.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1407,9 +1386,8 @@
 				30CE0A2E19A49D3000D71DB9 /* NSOrderedSet+BlocksKit.m in Sources */,
 				30CE0A5419A49D3000D71DB9 /* UIView+BlocksKit.m in Sources */,
 				30CE0AA519A49EC200D71DB9 /* AFURLResponseSerialization.m in Sources */,
-				227B6D5C1991AD8C00F8B51C /* MainViewController.m in Sources */,
+				227B6D5C1991AD8C00F8B51C /* HomeListViewController.m in Sources */,
 				30CE0A2C19A49D3000D71DB9 /* NSObject+BKBlockObservation.m in Sources */,
-				227B6D641991AD8C00F8B51C /* Tweet.m in Sources */,
 				227B6DBE1991AF8D00F8B51C /* SETextSelectionView.m in Sources */,
 				30CE0A5619A49D3000D71DB9 /* UIWebView+BlocksKit.m in Sources */,
 				30CE0A1A19A49D3000D71DB9 /* NSIndexSet+BlocksKit.m in Sources */,
@@ -1427,7 +1405,7 @@
 				30CE0A9F19A49EC200D71DB9 /* AFSecurityPolicy.m in Sources */,
 				227B6DAA1991AF8D00F8B51C /* SELinkText.m in Sources */,
 				227B6DAC1991AF8D00F8B51C /* SESelectionGrabber.m in Sources */,
-				227B6D561991AD8C00F8B51C /* BaseTableViewCell.m in Sources */,
+				227B6D561991AD8C00F8B51C /* OCLTableViewCell.m in Sources */,
 				30CE0A6719A49D7200D71DB9 /* FMDatabasePool.m in Sources */,
 				22583C051991ACC500DAB788 /* MyTwitterClientTests.m in Sources */,
 				227B6DB41991AF8D00F8B51C /* SETextInput.m in Sources */,

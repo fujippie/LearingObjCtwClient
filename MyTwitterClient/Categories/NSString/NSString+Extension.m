@@ -46,10 +46,12 @@
 {
     NSInteger kmMeter = meter / 1000;
     
-    if(kmMeter < 1)
+    if (meter == 0)
+        return @"すぐそこ";
+    else if(kmMeter < 1)
         return [NSString stringWithFormat:@"%dm", meter];
     else
-        return [NSString stringWithFormat:@"%dkm", meter];
+        return [NSString stringWithFormat:@"%dkm", kmMeter];
 }
 
 @end

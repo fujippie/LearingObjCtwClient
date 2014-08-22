@@ -8,14 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "TwitterAPI.h"
-#import "Tweet.h"
 
 @class PostViewController;
 
 @protocol PostViewControllerDelegate <NSObject>
 
 -(void) postViewController:(PostViewController*)postViewController
-               postedTweet:(Tweet*)tweet;
+               postedTweet:(TWStatus*)twStatus;
 @end
 
 @interface PostViewController : UIViewController
