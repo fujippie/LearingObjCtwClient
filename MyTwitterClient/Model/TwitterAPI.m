@@ -169,7 +169,7 @@
                       // 見つかったツイート配列を格納
                       NSArray* twAr = jsonDic[@"statuses"];
                       
-                      DLog(@"jsonDic:\n%@", jsonDic);
+//                      DLog(@"jsonDic:\n%@", jsonDic);
                       
                       // ツイート配列からテキストのみを抽出
                       // ツイート内容,緯度経度,IDを取得

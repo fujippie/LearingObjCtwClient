@@ -22,7 +22,7 @@
     NSNumber* num = [twStatus assignValueFromDic:dic key:@"id"];
     twStatus.id = num.description;
     
-    twStatus.text = dic[@"text"];
+    twStatus.text = [twStatus assignValueFromDic:dic key:@"text"];
 
     // Geo
     CLLocationCoordinate2D (^coordinateFromArray) (NSArray*) = ^(NSArray* coordArray)

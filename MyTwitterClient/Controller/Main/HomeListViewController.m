@@ -49,7 +49,6 @@
 
 #pragma mark - Consts
 
-//static NSString* const _cellId = @"CustomTVC";
 static NSString* const _cellId = @"OCLTableViewCell";
 
 static CGFloat   const _fontSize = 12.0f;
@@ -86,20 +85,21 @@ static CGFloat   const _footerPadding = 20.0f;
   
     //  NavigationBarの設定　（更新中に表示するアイコン）
     self.title
-    = [NSString stringWithFormat:@"%@:%lu"
+    = [NSString stringWithFormat:@"%@:%d"
        , NSStringFromClass(self.class)
-       , (unsigned long)[self.navigationController.viewControllers indexOfObject:self]];
+       , [self.navigationController.viewControllers indexOfObject:self]];
     
+    /*
     // 投稿ボタン
     self.navigationItem.leftBarButtonItem
     = [[UIBarButtonItem alloc] initWithTitle:@"投稿"
                                        style:UIBarButtonItemStylePlain
                                       target:self
                                       action:@selector(_leftBarBtnPushed:)];
-    
     // 削除ボタン.
     [self.editButtonItem setTitle:@"削除"];
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+     */
     
     // データのダウンロード
     [self.pins removeAllObjects];
@@ -402,7 +402,7 @@ NSInteger _retryCount = 3;
 {
     if (pin == nil || pin.body == nil || pin.body.length <= 0)
     {
-        return self.defaultCellBodyH;
+        return self.defaultCellH;
     }
     
     OCLTableViewCell* cell = [self.tableView dequeueReusableCellWithIdentifier:_cellId];
@@ -412,7 +412,6 @@ NSInteger _retryCount = 3;
                                                 constraintSize:CGSizeMake(cell.bodyTv.width, CGFLOAT_MAX)
                                                    lineSpacing:0.0f
                                                           font:[UIFont systemFontOfSize:_fontSize]].size.height;
-    
     CGFloat diffH = bodyH - self.defaultCellBodyH;
     
     CGFloat cellH = diffH <= 0.0f ? self.defaultCellH: self.defaultCellH + diffH;
